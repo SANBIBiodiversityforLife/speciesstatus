@@ -1,0 +1,97 @@
+{% extends "website/_base.html" %}
+{% load static %}
+
+{% block css %}
+<link href="{% static 'style.css' %}" rel="stylesheet">
+{% endblock css %}
+
+
+{% block carousel %}
+	<div id="main-carousel-text">
+		<div class="container"><div class="row">
+			<div class="col-md-12 text-center">
+				<h1>Search for species</h1>
+				<form action="/Search" class="navbar-form" method="get">                    
+					<div class="input-group col-md-8">
+						<input name="searchterm" id="searchterm" type="text" class="search-query form-control input-lg" autocomplete="off" placeholder="Enter common name, ecological traits, scientific names, etc." data-provide="typeahead" data-items="4" data-source="">
+						<div class="input-group-btn">
+							<button type="submit" class="btn btn-info btn-lg">
+								Search
+								<span class="glyphicon glyphicon-search"></span>
+							</button>
+						</div>
+					</div>
+				</form>
+				<div class="secondary-button">
+					<span>Alternatively,</span> <a href="#svgcontainer" class="btn btn-warning" role="button" id="explore">Explore SANBI's taxonomic tree</a>
+				</div>
+			</div>
+		</div></div>
+	</div>
+
+ <!-- 		<div id="homebg">
+		<video playsinline autoplay muted loop poster="polina.jpg" id="bgvid">
+			<source src="{% static 'fishswimming.mp4' %}" type="video/mp4">
+		</video>
+	</div> -->
+	
+<div id="carousel" class="carousel slide" data-ride="carousel">
+	  <div class="carousel-inner" role="listbox">
+		<div class="item active">
+		  <img src="{% static 'img/carousel/1.jpg' %}" alt="...">
+		</div>
+	  </div>
+	</div>
+{% endblock %}
+
+
+{% block content %}
+<div id="news">
+<h2 id="frontpage-news">Latest news <small>from <a href="http://www.sanbi.org/news">sanbi.org</a></small></h2>
+<div class="row">
+	<article class="col-md-4">
+		<h3><a href="http://www.sanbi.org/news/new-free-state-biodiversity-plan-available-bgis" title="New Free State Biodiversity Plan available on BGIS'">New Free State Biodiversity Plan available on BGIS</a> <small>13 September 2016</small></h3>
+		<p>News article on BGIS updates The following information is now available on the BGIS website: 
+		2015 Free State Biodiversity Plan Interactive Map
+		Veldfire Risk Classification
+		2015 Free State...</p>
+	</article>
+	<article class="col-md-4">
+		<h3><a href="http://www.sanbi.org/news/south-african-nie-approves-first-four-small-grants-0" title="South African NIE approves first four small grants'">South African NIE approves first four small grants</a> <small>15 June 2016</small></h3>
+        <p>The South African National Biodiversity Institute (SANBI) as the National Implementing Entity (NIE) and its partners, Executing Entity (SouthSouthNorth) and locally based Facilitating Agencies (Conservation...</p>
+	</article>
+	<article class="col-md-4">
+		<h3><a href="http://www.sanbi.org/news/new-free-state-biodiversity-plan-available-bgis" title="New Free State Biodiversity Plan available on BGIS'">New Free State Biodiversity Plan available on BGIS</a> <small>13 September 2016</small></h3>
+		<p>News article on BGIS updates The following information is now available on the BGIS website: 
+		2015 Free State Biodiversity Plan Interactive Map
+		Veldfire Risk Classification
+		2015 Free State...</p>
+	</article>
+</div>
+<p class="rss-footer">Read more news on <a href="http://www.sanbi.org/news">sanbi.org</a></p>
+</div>
+{% endblock content %}
+
+{% block subcontent %}
+    <div class="container">
+<div id="triangles">
+	<div id="svgparent">
+		<div id="svgcontainer">
+			<svg id='lifetree'></svg>
+		</div>
+	</div>
+</div>
+</div>
+{% endblock subcontent %}
+
+{% block js %}
+<script>
+  var lineage = $.parseJSON('{{ lineage|safe }}');
+  //var dr = $.parseJSON('{{ rec_d|safe }}');
+  //var dt = $.parseJSON('{{ plain_d|safe }}');
+</script>
+<!--<script src="https://d3js.org/d3.v3.min.js"></script>-->
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/trianglify/0.4.0/trianglify.min.js"></script>
+<script src="{% static 'script.js' %}"></script>
+{% endblock js %}
