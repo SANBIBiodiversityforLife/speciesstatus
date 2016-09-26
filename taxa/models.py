@@ -5,6 +5,7 @@ from django.contrib.postgres.fields import IntegerRangeField
 from mptt.models import MPTTModel, TreeForeignKey
 from biblio.models import Reference
 from people.models import Person
+from django.utils.text import slugify
 
 
 class Rank(models.Model):
@@ -45,6 +46,27 @@ class Taxon(MPTTModel):
 
     # The current taxa of a species
     current_name = models.ForeignKey('Taxon', on_delete=models.SET_NULL, null=True, blank=True)
+
+    # Used to make friendly URLs
+    slug = models.SlugField(max_length=200  )
+
+    # Overrides the default save so that we can get a nice URL
+    def save(self, *args, **kwargs):
+        if not self.id:
+            if self.rank == Rank.objects.get(name='Species'):
+                self.slug = slugify(self.parent + ' ' + self.name)
+            else:
+                self.slug = slugify(self.name)
+
+        super(Taxon, self).save(*args, **kwargs)
+
+    # A taxon has synonyms if another taxon is listed as the current name, these are the 'sibling' type nodes
+    def synonyms(self):
+        if self.current_name:
+            # This should really include the current name taxon
+            return Taxon.objects.filter(current_name=self.current_name)
+        else:
+            return Taxon.objects.filter(current_name=self)
 
     # Handles when a node changes name (name changes but it stays as it is in the tree)
     def name_change(self, new_name):
@@ -125,10 +147,27 @@ class Taxon(MPTTModel):
     def __str__(self):
         return self.name
 
+    # Return a correctly formatted (name + author + date) full name
+    def get_full_name(self):
+        # Get the number of descriptions and the last description
+        descriptions_count = self.descriptions.count()
+        last_description = self.descriptions.last()
+
+        # Animals and plants format their full names in different ways when there's more than one description
+        plants = Taxon.objects.get(name='Plantae')
+        is_plant = self.is_descendant_of(plants)
+
+        # If there's only one result or it's a plant then just return the description
+        if descriptions_count == 1 or is_plant:
+            return '<em>{}</em>, <span class="species-description">{}</span>'.format(self.name, str(last_description))
+        # Otherwise it's an animal and there's more than 1 description
+        else:
+            return '<em>{}</em>, <span class="species-description">({})</span>'.format(self.name, last_description)
+
 
 class Description(models.Model):
     # The species that was described
-    taxon = models.ForeignKey(Taxon)
+    taxon = models.ForeignKey(Taxon, related_name='descriptions')
 
     # Where the species was first described, will contain author + year
     reference = models.ForeignKey(Reference, on_delete=models.CASCADE, null=True, blank=True)
@@ -138,18 +177,21 @@ class Description(models.Model):
     weight = models.PositiveSmallIntegerField(default=0)
 
     def __str__(self):
-        return self.taxon.name + ' - ' + ', '.join(str(a) for a in self.reference.authors.all())
+        return self.reference.get_citation_for_taxon()
 
 
 class Language(models.Model):
     name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
 
 
 class CommonName(models.Model):
     """Species may have multiple common names in different languages"""
     name = models.CharField(max_length=200, null=True, blank=True)
     language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True, blank=True)
-    taxon = models.ForeignKey(Taxon, on_delete=models.CASCADE, null=True, blank=True)
+    taxon = models.ForeignKey(Taxon, on_delete=models.CASCADE, null=True, blank=True, related_name='common_names')
 
     # Additionally, store the reference where this common name is first noted
     reference = models.ForeignKey(Reference, on_delete=models.SET_NULL, null=True, blank=True)
@@ -158,9 +200,15 @@ class CommonName(models.Model):
         # Ensure that we don't duplicate common names for a taxon
         unique_together = ('taxon', 'name')
 
+    def __str__(self):
+        if self.reference:
+            return '{} ({}, referenced in {})'.format(self.name, self.language, self.reference.get_citation_for_taxon)
+        else:
+            return '{} ({})'.format(self.name, self.language)
+
 
 class Info(models.Model):
-    taxon = models.OneToOneField(Taxon)
+    taxon = models.OneToOneField(Taxon, related_name='info')
 
     # Describing the species
     morphology = models.TextField(blank=True)
@@ -181,7 +229,7 @@ class Info(models.Model):
 
 class GeneralDistribution(models.Model):
     """Multiple distribution polygons + corresponding residency status can be associated with a taxon"""
-    taxon = models.ForeignKey(Taxon)
+    taxon = models.ForeignKey(Taxon, related_name='general_distributions')
 
     # Specific distribution will come from observations in the wild, but this will give them a rough idea of it
     distribution_polygon = models.PolygonField(null=True, blank=True)
@@ -220,5 +268,8 @@ class AnimalInfo(models.Model):
 
 
 class Image(models.Model):
-    taxon = models.ForeignKey(Taxon)
+    taxon = models.ForeignKey(Taxon, related_name='images')
     url = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.url

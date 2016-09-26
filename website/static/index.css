@@ -1,0 +1,90 @@
+/* Main page carousel */
+#carousel {
+	position: relative;
+	top: -50px;
+	max-height: 500px;
+	z-index: -1;
+	overflow: hidden;
+	margin-bottom: -20px;
+	border-bottom: 1px solid #666;
+}
+#main-carousel-text  {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	margin-top: 100px;
+	z-index: 1;
+}
+#main-carousel-text .input-group-btn {
+	width: 1%;
+}
+
+/* Heading in carousel */
+#main-carousel-text h1 {
+	color: rgba(255,255,255,0.8);
+	text-shadow:1px 1px 10px rgba(0, 0, 0, 0.8);
+  font-weight: bold;
+  font-size: 5em;
+  text-align: center;
+	margin-bottom: 20px;
+
+	/* Transition. */
+	-o-transition:.5s;
+	-ms-transition:.5s;
+	-moz-transition:.5s;
+	-webkit-transition:.5s;
+	/* ...and now for the proper property */
+	transition:.5s;
+}
+#main-carousel-text:hover h1 {
+	color: rgba(255,255,255,1);
+	text-shadow:1px 1px 2	0px rgba(0, 0, 0, 1);
+}
+
+/* Secondary heading/alternate buttons */
+.secondary-button {
+	text-align: center;
+	margin-top: 40px;
+}
+.secondary-button span.text {
+	color: rgba(255,255,255,0.9);
+	text-shadow:1px 1px 10px rgba(0, 0, 0, 0.8);
+  font-weight: bold;
+  font-size: 2em;
+	margin-top: 10px;
+	margin-right: 10px;
+	vertical-align: middle;
+}
+
+/* Video bg */
+video#bgvid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: url('static/img/carousel/1.jpg') no-repeat;
+  background-size: cover;
+	z-index: -1;
+}
+#homebg {
+	height: 400px;
+	overflow: hidden;
+}
+
+/* News */
+#frontpage-news {
+	font-size: 3em;
+	text-align: center;
+	margin-bottom: 20px;
+}
+#news {
+	margin-bottom: 40px;
+}
+p.rss-footer {
+	text-align: center;
+	border-top: 1px solid #CFCFCF;
+	padding-top: 15px;
+	margin-bottom: 15px;
+	margin-top: 15px;
+}

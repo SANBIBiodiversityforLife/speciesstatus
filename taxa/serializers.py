@@ -1,60 +1,72 @@
 from rest_framework import serializers
-from taxa.models import Taxon
+from taxa.models import Taxon, Info, CommonName
 from rest_framework_recursive.fields import RecursiveField
 
 
 class ChildrenInfoField(serializers.RelatedField):
     """Used to return count, primary key, name and rank for all child nodes of a taxon, rather than just their pk"""
     def to_representation(self, value):
-        child_count = Taxon.objects.get(id=value.pk).get_descendant_count()
-        return {'count': child_count, 'pk': value.pk, 'name': value.name, 'rank': value.rank.pk}
+        child_count = Taxon.objects.get(id=value.id).get_descendant_count()
+        return {'count': child_count, 'id': value.id, 'name': value.name, 'rank': value.rank.id}
 
 
-class TaxonSerializer(serializers.Serializer):
-    pk = serializers.IntegerField(read_only=True)
-    name = serializers.CharField(required=False, allow_blank=True, max_length=100)
-    parent = serializers.StringRelatedField(required=False, read_only=True)
+class TaxonLineageSerializer(serializers.ModelSerializer):
     children = ChildrenInfoField(required=False, many=True, read_only=True)
+    parent = serializers.StringRelatedField(required=False, read_only=True)
     rank = serializers.PrimaryKeyRelatedField(read_only=True)
 
-    def create(self, validated_data):
-        """"""
-        return TaxonSerializer.objects.create(**validated_data)
+    class Meta:
+        model = Taxon
+        fields = ('id', 'name', 'parent', 'rank', 'children')
 
-    def update(self, instance, validated_data):
-        """"""
-        instance.pk = validated_data.get('pk', instance.pk)
-        instance.name = validated_data.get('name', instance.name)
-        instance.children = validated_data.get('children', instance.children)
-        # instance.parent = validated_data.get('parent', instance.parent)
-        instance.save()
-        return instance
-'''
+
+class CommonNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CommonName
+        fields = ('name', 'language')
+
+
+class AncestorSerializer(serializers.ModelSerializer):
+    rank = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = Taxon
+        fields = ('id', 'name', 'rank')
+
+
+class TaxonInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Info
+        fields = ('morphology',
+                  'diagnostics',
+                  'movement',
+                  'reproduction',
+                  'trophic',
+                  'uses',
+                  'distribution',
+                  'habitat',
+                  'altitude_or_depth_range')
+
+
 class TaxonSerializer(serializers.ModelSerializer):
-    #parent = serializers.RelatedField(many=True)
-    #parent = serializers.RelatedField(many=True)
-    parent = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='name'
-    )
-    children = serializers.SlugRelatedField(
-        read_only=True,
-        many=True,
-        slug_field='name'
-    )
+    children = ChildrenInfoField(required=False, many=True, read_only=True)
+    rank = serializers.StringRelatedField(read_only=True)
+    descriptions = serializers.StringRelatedField(read_only=True, many=True)
+    common_names = serializers.StringRelatedField(many=True)
+    synonyms = serializers.StringRelatedField(read_only=True, many=True)
+    images = serializers.StringRelatedField(many=True)
+    info = TaxonInfoSerializer()
 
     class Meta:
         model = Taxon
-        fields = ('id', 'name', 'parent', 'children', 'updated', 'rank', 'references')'''
-
-
-#class TaxonRecursiveSerializer(serializers.Serializer):
-#    name = serializers.CharField()
-#    children = serializers.ListField(child=RecursiveField())
-
-class TaxonRecursiveSerializer(serializers.ModelSerializer):
-    parent = RecursiveField(allow_null=True)
-
-    class Meta:
-        model = Taxon
-        fields = ('id', 'name', 'parent')
+        fields = ('id',
+                  'name',
+                  'rank',
+                  'children',
+                  'descriptions',
+                  'info',
+                  'images',
+                  'general_distributions',
+                  'get_full_name',
+                  'common_names',
+                  'synonyms')

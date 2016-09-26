@@ -16,42 +16,20 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from website import views as website_views
-from taxa import views as taxa_views
-from taxa import models as taxa_models
-
-from rest_framework import routers, serializers, viewsets
-
-
-# Serializers define the API representation
-class TaxonSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = taxa_models.Taxon
-        fields = ('name', 'author', 'rank', 'reference')
-
-
-# ViewSets define the view behavior
-class TaxonViewSet(viewsets.ModelViewSet):
-    queryset = taxa_models.Taxon.objects.all()
-    serializer_class = TaxonSerializer
-
-
-# Routers provide an easy way of automatically determining the URL conf
-router = routers.DefaultRouter()
-router.register(r'species', TaxonViewSet)
-
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
 
-    # Wire up our API using automatic URL routing
-    url(r'api/^', include(router.urls)),
-
     # Include login URLs for the browsable API
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
+    #url(r'^api/', website_views.api_root, name='api_root'),
+
     # Import of content
-    url(r'^taxa/import-seakeys$', taxa_views.import_seakeys, name='import_seakeys'),
+    # url(r'^taxa/import-seakeys$', taxa_views.import_seakeys, name='import_seakeys'),
+
+    url(r'^taxa/', include('taxa.urls')),
 
     # Index
-    url(r'^$', website_views.index, name='index'),
+    url(r'^$', website_views.IndexView.as_view(), name='index'),
 ]

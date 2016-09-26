@@ -11,6 +11,9 @@
     <!-- Bootstrap -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- Site styles -->
+    <link href="{% static 'style.css' %}" rel="stylesheet">
+
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -21,7 +24,7 @@
     <!-- Custom css -->
     {% block css %}{% endblock %}
   </head>
-  <body>
+  <body{% block body_attributes %}{% endblock %}>
     <nav class="navbar navbar-default navbar-main">
       <div class="container">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -38,7 +41,8 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav">
-            <li><a href="#">Map View</a></li>
+            <li><a href="#"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span> Search map</a></li>
+            <li><a href="#"><span class="glyphicon glyphicon-tree-conifer" aria-hidden="true"></span> Explore taxonomic tree</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
@@ -53,9 +57,9 @@
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
     </nav>
-	
-	<!-- Carousel -->
-	{% block carousel %}{% endblock %}
+
+    <!-- Banner heading -->
+    {% block heading %}{% endblock %}
 	
     <!-- Main content -->
     <div class="container">
