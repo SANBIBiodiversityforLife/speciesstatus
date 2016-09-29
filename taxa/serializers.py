@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from taxa.models import Taxon, Info, CommonName
 from rest_framework_recursive.fields import RecursiveField
+from biblio.serializers import ReferenceDOISerializer
 
 
 class ChildrenInfoField(serializers.RelatedField):
@@ -10,7 +11,15 @@ class ChildrenInfoField(serializers.RelatedField):
         return {'count': child_count, 'id': value.id, 'name': value.name, 'rank': value.rank.id}
 
 
+class ChildrenInfoFieldF(serializers.RelatedField):
+    """Used to return count, primary key, name and rank for all child nodes of a taxon, rather than just their pk"""
+    def to_representation(self, value):
+        child_count = Taxon.objects.get(id=value).get_descendant_count()
+        return {child_count}
+
+
 class TaxonLineageSerializer(serializers.ModelSerializer):
+    #children_info = ChildrenInfoFieldF(read_only=True, source='id')
     children = ChildrenInfoField(required=False, many=True, read_only=True)
     parent = serializers.StringRelatedField(required=False, read_only=True)
     rank = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -20,10 +29,13 @@ class TaxonLineageSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'parent', 'rank', 'children')
 
 
+
 class CommonNameSerializer(serializers.ModelSerializer):
+    reference = ReferenceDOISerializer()
+
     class Meta:
         model = CommonName
-        fields = ('name', 'language')
+        fields = ('name', 'language', 'reference')
 
 
 class AncestorSerializer(serializers.ModelSerializer):

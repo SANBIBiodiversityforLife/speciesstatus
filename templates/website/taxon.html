@@ -19,18 +19,20 @@
         {% if not forloop.first %}<a href="{% url 'taxa_detail' item.id %}">{% endif %}
         {{ item.name }}
         {% if not forloop.first %}</a>{% endif %}
-        {% if not forloop.last %}<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>{% endif %}
+        {% if not forloop.last %}<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+        {% else %}<a href="{% url 'lineage_pk' item.id %}" type="button" class="btn btn-warning btn-sm">View tree</a>
+        {% endif %}
         {% endfor %}
       </div>
 
       <!-- Name and rank -->
-      <h1>{{ taxon.get_full_name|safe }}</h1>
+      <h1>{{ taxon.data.get_full_name|safe }}</h1>
       <hr>
-      <p>Rank: {{ taxon.rank }}, {% if taxon.synonyms %}Synonyms: {{ taxon.synonyms|join:" // " }}{% else %}Name status: Accepted{% endif %}</p>
+      <p>Rank: {{ taxon.data.rank }}, {% if taxon.data.synonyms %}Synonyms: {{ taxon.data.synonyms|join:" // " }}{% else %}Name status: Accepted{% endif %}</p>
 
       <!-- Common names -->
-      <h2>Common names: {{ taxon.common_names|join:" // " }}{% if user.is_authenticated %}
-    <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#commonNamesModal">Add</button>{% endif %}</h2>
+      <h2>Common names: {{ taxon.data.common_names|join:" // " }}{% if user.is_authenticated %}
+      <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-backdrop="static" data-target="#commonNamesModal">Add</button>{% endif %}</h2>
     </div>
 	</section>
 {% endblock %}
@@ -38,26 +40,28 @@
 {% block content %}
 <!-- Images -->
 <div id="species-images">
-  {% for img_url in taxon.images %}
+  {% for img_url in taxon.data.images %}
   <img src="{{ img_url }}">
   {% endfor %}
 </div>
 
 <!-- Main content of species page -->
 <div class="row">
-  <div class="col-md-9"><div id="species-info">
-  {% for key, item in taxon.info.items %}
+  <div class="col-md-9"><section id="species-info">
+  {% for key, item in taxon.data.info.items %}
   {% if item %}
-    <h2 id="{{ key }}">{{ key }}{% if user.is_authenticated %}
-    <button type="button" class="btn btn-info btn-sm">Edit</button>{% endif %}</h2>
-    {{ item|safe }}
+    <article>
+      <h2 id="{{ key }}Anchor"><span>{{ key }}</span>{% if user.is_authenticated %}
+      <button type="button" class="btn btn-info btn-sm info-modal-trigger" data-toggle="modal" data-target="#infoModal">Edit</button>{% endif %}</h2>
+      <div class="item-info">{{ item|safe }}</div>
+    </article>
   {% endif %}
   {% endfor %}
-  </div></div>
+  </section></div>
   <div class="col-md-3">
     <ul id="species-side-nav" class="nav nav-pills nav-stacked" data-spy="affix" data-offset-top="20" data-offset-bottom="200">
-      {% for key, item in taxon.info.items %}{% if item %}
-      <li><a href="#{{ key }}">{{ key }}</a></li>
+      {% for key, item in taxon.data.info.items %}{% if item %}
+      <li><a href="#{{ key }}Anchor">{{ key }}</a></li>
       {% endif %}{% endfor %}
     </ul>
   </div>
@@ -66,25 +70,49 @@
 
 
 
-<!-- Modal -->
+<!-- Common names modal -->
 <div class="modal fade" id="commonNamesModal" tabindex="-1" role="dialog" aria-labelledby="commonNamesModalLabel">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Add common name</h4>
+        <h3 class="modal-title" id="commonNamesModalLabel">Add common name</h3>
       </div>
-
-      <!-- Common names form -->
-      <form action="#" method="POST" class="form-inline">
       <div class="modal-body">
+        <form action="{{ taxon.info.id }}" method="POST" >
           {% csrf_token %}
-          {% render_form cn template_pack='rest_framework/inline' %}
-          <input type="submit" value="Save">
+          <div class="form-group">
+
+          </div><!--class="form-inline"template_pack='rest_framework/inline' -->
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Info modal -->
+<div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3 class="modal-title" id="infoModalLabel"></h3>
+      </div>
+      <div class="modal-body">
+        <form action="{{ taxon.info.id }}" method="POST" >
+          {% csrf_token %}
+          <div class="form-group info-form-group">
+
+          </div><!--class="form-inline"template_pack='rest_framework/inline' -->
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
         <button type="button" class="btn btn-primary">Save changes</button>
       </div>
     </div>
@@ -95,8 +123,24 @@
 {% block js %}
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/trianglify/1.0.1/trianglify.min.js"></script>
+<script src="{% static 'ckeditor/ckeditor.js' %}"></script>
 <script>
+
 $(document).ready(function() {
+  // Fix for ckeditor in a bootstrap modal
+  // See http://stackoverflow.com/questions/22637455/how-to-use-ckeditor-in-a-bootstrap-modal
+  jQuery.fn.modal.Constructor.prototype.enforceFocus = function () {
+    modal_this = this
+    jQuery(document).on('focusin.modal', function (e) {
+      if (modal_this.$element[0] !== e.target && !modal_this.$element.has(e.target).length
+              && !jQuery(e.target.parentNode).hasClass('cke_dialog_ui_input_select')
+              && !jQuery(e.target.parentNode).hasClass('cke_dialog_ui_input_text')) {
+          modal_this.$element.focus()
+      }
+    })
+  };
+
+  // Add triangle background
 	var params = {
 	  height: $('.triangles').outerHeight(),
 		width: $('.triangles').outerWidth(),
@@ -106,7 +150,29 @@ $(document).ready(function() {
 	var pattern = new Trianglify(params);
 	$('.triangles').attr('style', 'background: url(' + pattern.png() + ') no-repeat center center');
 
+  // Place correct data when modal shows
+  $('#infoModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget); // Button that triggered the modal
+    var label = button.parent().children('span').text();
+    var text = button.parent().parent().children('.item-info').html();
+    var modal = $(this);
+    modal.find('.modal-title').text('Edit ' + label);
+    var textarea = '<textarea id="ckeditor" name="' + label + '" class="form-control">' + text + '</textarea>';
+    modal.find('.info-form-group').html(textarea);
+  });
+  $('#infoModal').on('shown.bs.modal', function (event) {
+    console.log($('#ckeditor').attr('name'));
+    CKEDITOR.replace($('#ckeditor').attr('name'));
+
+
+
+  });
+
+
+;
+
 });
+
 </script>
 {% endblock js %}
 

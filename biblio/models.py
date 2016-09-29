@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.postgres.fields import IntegerRangeField
+from django.contrib.postgres.fields import IntegerRangeField, HStoreField
 from people.models import Person
 from polymorphic.models import PolymorphicModel
 
@@ -13,7 +13,7 @@ class Reference(PolymorphicModel):
 
     # Ok let's try something different, things must have a bibtex entry in json
     # Can't be bothered trying to set up my own references management system, let's try just use mendeley's
-    bibtex = models.CharField(max_length=500, blank=True, null=True)
+    bibtex = HStoreField()
 
     def __str__(self):
         if self.title:
