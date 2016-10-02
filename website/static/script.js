@@ -52,12 +52,12 @@ $(document).ready(function() {
 
 	// Used to assign colors to ranks
 	function get_rank_colour(d) {
-		rank = d.data.data.rank;
+		rank = d.data.rank;
 		if(rank == 9) {
 			return main_color;
 		}
 		else {
-			return blendColors(main_color, secondary_color, (d.data.data.rank / max_rank))
+			return blendColors(main_color, secondary_color, (d.data.rank / max_rank))
 		}
 	}
 
@@ -115,7 +115,7 @@ $(document).ready(function() {
 
     // D3 requires a hierarchy object which then gets made into a tree
     var root = d3.hierarchy(dataTree);
-    //var root = d3.hierarchy(dataTree[0]);
+    var root = d3.hierarchy(dt[0]);
 
     tree(root);
     //console.log(root['children'][0]['children'][0]['children'][0]['children'][0]);
@@ -145,8 +145,8 @@ $(document).ready(function() {
       .style("fill", get_rank_colour)
       .attr("x", function(d) { return d.name })
       .style("text-anchor", "middle")
-      .text(function(d) {console.log(d);
-        return d.data.data.name;
+      .text(function(d) {
+        return d.data.name;
         if(d.data.rank == max_rank || d.data.name == "Life") {
           return d.data.name;
         }
