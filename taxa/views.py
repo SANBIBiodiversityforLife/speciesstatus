@@ -35,6 +35,8 @@ from rest_framework.response import Response
 from rest_framework import filters, permissions
 from rest_framework import mixins
 from django.shortcuts import get_object_or_404
+from mptt.utils import drilldown_tree_for_node
+from itertools import chain
 
 
 
@@ -114,15 +116,39 @@ class TaxonListView(generics.ListAPIView):
                      'common_names__name')
 
 
+class ChildrenView(generics.RetrieveAPIView):
+    queryset = models.Taxon.objects.all()
+    #serializer_class = serializers.TaxonChildrenSerializer
+    serializer_class = serializers.TaxonBasicSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        children = instance.get_children()
+        serializer = self.get_serializer(children, many=True)
+        instance_serializer = self.get_serializer(instance)
+        return Response({'children': serializer.data, 'parent': instance_serializer.data})
+
+
 class LineageView(generics.RetrieveAPIView):
     queryset = models.Taxon.objects.all()
-    serializer_class = serializers.TaxonLineageSerializer
+    serializer_class = serializers.TaxonBasicSerializer
     template_name = 'website/tree.html'
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        ancestors = instance.get_ancestors(include_self=True)
-        serializer = self.get_serializer(ancestors, many=True)
+        #ancestors = instance.get_ancestors(include_self=True)
+        ancestors = drilldown_tree_for_node(instance)
+
+        nodes = []
+        for node in ancestors:
+            nodes.append(node)
+            siblings = node.get_siblings()
+            if len(siblings) > 0:
+                nodes += siblings
+
+        serializer = self.get_serializer(nodes, many=True)
+
+        # How the heck do you access the entire thing in template? no idea, have to make it a param
         if TemplateHTMLRenderer in self.renderer_classes:
             params = {"lineage": JSONRenderer().render(serializer.data)}
             return Response(params)

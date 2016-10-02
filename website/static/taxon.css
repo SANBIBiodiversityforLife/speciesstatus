@@ -35,7 +35,7 @@
 #species-side-nav {
   margin-top: 20px;
 }
-#species-images {
+#species-images, #species-images img {
   height: 250px;
 }
 .cke_dialog

@@ -7,27 +7,37 @@ from biblio.serializers import ReferenceDOISerializer
 class ChildrenInfoField(serializers.RelatedField):
     """Used to return count, primary key, name and rank for all child nodes of a taxon, rather than just their pk"""
     def to_representation(self, value):
-        child_count = Taxon.objects.get(id=value.id).get_descendant_count()
-        return {'count': child_count, 'id': value.id, 'name': value.name, 'rank': value.rank.id}
+        child_count = Taxon.objects.get(id=value.id).get_children().count()
+        return {'count': child_count, 'id': value.id, 'name': value.name, 'rank': value.rank.id, 'parent_id': value.id }
 
 
-class ChildrenInfoFieldF(serializers.RelatedField):
-    """Used to return count, primary key, name and rank for all child nodes of a taxon, rather than just their pk"""
-    def to_representation(self, value):
-        child_count = Taxon.objects.get(id=value).get_descendant_count()
-        return {child_count}
-
-
-class TaxonLineageSerializer(serializers.ModelSerializer):
-    #children_info = ChildrenInfoFieldF(read_only=True, source='id')
-    children = ChildrenInfoField(required=False, many=True, read_only=True)
-    parent = serializers.StringRelatedField(required=False, read_only=True)
+class TaxonBasicSerializer(serializers.ModelSerializer):
+    parent = serializers.PrimaryKeyRelatedField(read_only=True)
     rank = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Taxon
-        fields = ('id', 'name', 'parent', 'rank', 'children')
+        fields = ('id', 'name', 'parent', 'rank')
 
+
+class TaxonChildrenSerializer(serializers.ModelSerializer):
+    children = ChildrenInfoField(required=False, many=True, read_only=True)
+    rank = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = Taxon
+        fields = ('id', 'name', 'rank', 'children')
+
+
+class TaxonLineageSerializer(serializers.ModelSerializer):
+    children = ChildrenInfoField(required=False, many=True, read_only=True)
+    parent = serializers.StringRelatedField(required=False, read_only=True)
+    parent_id = serializers.PrimaryKeyRelatedField(required=False, read_only=True, source='parent')
+    rank = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = Taxon
+        fields = ('id', 'name', 'parent', 'rank', 'children', 'parent_id')
 
 
 class CommonNameSerializer(serializers.ModelSerializer):

@@ -1,4 +1,2 @@
+from biblio import models
 
-from django.shortcuts import render
-
-# Create your views here.
