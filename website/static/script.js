@@ -52,7 +52,7 @@ $(document).ready(function() {
 
 	// Used to assign colors to ranks
 	function get_rank_colour(d) {
-		rank = d.data.rank;
+		rank = d.data.data.rank;
 		if(rank == 9) {
 			return main_color;
 		}
@@ -60,9 +60,21 @@ $(document).ready(function() {
 			return blendColors(main_color, secondary_color, (d.data.rank / max_rank))
 		}
 	}
+  
+  // Draws a curve between two points
+  function connector(d) {
+    return 'M' + d.x + ',' + (d.y - 18) + 
+      "C" + (d.x + d.parent.x) / 2 + "," + (d.y - 25) + 
+      " " + (d.x + d.parent.x) / 2 + "," + (d.parent.y + 25) + 
+      " " + d.parent.x + "," + (d.parent.y + 17);
+    /*return 'M' + d.x + ',' + d.y +
+        'C' + (d.x + d.parent.x) / 2 + ',' + d.y +
+        ' ' + (d.x + d.parent.x) / 2 + ',' + d.parent.y +
+        ' ' + d.parent.x + ',' + d.parent.y;*/
+  };   
 
 	// Transition vars
-	var duration = 750;
+	var duration = 500;
 
   // Get the width of the container element for the tree
 	width = $('#svgcontainer').width();
@@ -105,8 +117,8 @@ $(document).ready(function() {
     var dataTree = d3.stratify()
       .id(function(d){ return d.id; })
       .parentId(function(d){  return d.parent; })
-      (json);
-    console.log(dataTree);
+      (JSON.parse(JSON.stringify(json)));
+
     //var dataTree = stratify(json);
     //temp = JSON.parse(JSON.stringify(dataTree));
     
@@ -115,10 +127,14 @@ $(document).ready(function() {
 
     // D3 requires a hierarchy object which then gets made into a tree
     var root = d3.hierarchy(dataTree);
-    var root = d3.hierarchy(dt[0]);
-
+    
+    
+    
     tree(root);
-    //console.log(root['children'][0]['children'][0]['children'][0]['children'][0]);
+    
+    // Normalize for fixed-depth.
+    root.each(function(d) { d.y = d.depth * 100; d.x0 = d.x; d.y0 = d.y; });
+    //console.log(root['children'][0]['children'][0]['children'][0]['children'][0]);d.y = d.depth * 180; 
     return root;
   }
 
@@ -136,17 +152,16 @@ $(document).ready(function() {
       .attr("r", 4)
       .attr("transform", function(d) { return "translate(0,16)"; })
       .attr("class", "lower-circle")
-      .style("stroke", get_rank_colour)
-      .style("fill", "#000000");
+      .style("stroke", "#000000")
+      .style("fill", "#FFFFFF");
 
     // Add text
     node.append("text")
       .attr("dy", 3)
-      .style("fill", get_rank_colour)
-      .attr("x", function(d) { return d.name })
+      .style("fill", '#FFFFFF')
       .style("text-anchor", "middle")
       .text(function(d) {
-        return d.data.name;
+        return d.data.data.name;
         if(d.data.rank == max_rank || d.data.name == "Life") {
           return d.data.name;
         }
@@ -166,14 +181,14 @@ $(document).ready(function() {
     node.insert("rect",":first-child")
       .style("fill", '#000000')
       .style("fill-opacity", function(d) {
-          if(d.children || d.data.rank == max_rank) { return 0.5; }
+          if(d.children || d.data.data.rank == max_rank) { return 0.5; }
           else { return 0.2; }
         }
       )
       .attr('height', function(d) { return d.textheight + 10; })
       .attr('width', function(d) { return d.textwidth + 10; })
       .attr("transform", function(d) {
-        if(d.data.rank == 9) {
+        if(d.data.data.rank == 9) {
           return "translate(-" +  ((d.textwidth + 10) / 2) + ",-" +  ((d.textheight + 30) / 2) + ")";
         }
         return "translate(-" +  ((d.textwidth + 10) / 2) + ",-" +  ((d.textheight + 15) / 2) + ")";
@@ -183,55 +198,29 @@ $(document).ready(function() {
   }
 
   function updateTree(source, shallowestDepth = 0) {
+    /* 
+     * Nodes
+     */
     // Data join with source data, keeping ids so it knows about the same nodes
     var node = g.selectAll(".node")
       .data(source.descendants() , function(d) { return d.data.id; });
-    var link = g.selectAll(".link")
-      .data(source.descendants().slice(2).reverse())
-      //.data(source.descendants().slice(1).reverse())
-    
-    // Remove old elements first, with a transition
-    // Find the shallowest depth in the old element, that's the parent
-    var oldNode = node.exit();
-    var oldLink = link.exit();
-    
-    oldNode.transition()
-      .duration(duration)
-      .attr("transform", function(d) { 
-        // Get the parent they have to contract into
-        var shallowestParent = d;
-        do { shallowestParent = shallowestParent.parent; }
-        while(shallowestParent.depth > shallowestDepth);
-        return "translate(" + shallowestParent.x + "," + shallowestParent.y + ")"; 
-      })
-      .remove();
-    oldLink.transition()
-      .duration(duration)
-      .attr("d", function(d) {
-        // Get the parent they have to contract into
-        var shallowestParent = d;
-        do { shallowestParent = shallowestParent.parent; }
-        while(shallowestParent.depth > shallowestDepth);
-        console.log(shallowestParent);
-        return 'M' + d.x + ',' + (d.y - 18)
-        + "C" + (d.x + shallowestParent.x) / 2 + "," + (d.y - 25)
-        + " " + (d.x + shallowestParent.x) / 2 + "," + (shallowestParent.y + 25)
-        + " " + shallowestParent.x + "," + (shallowestParent.y + 17);
-      })
-      .remove();
-    
     
     // Data enter, this starts doing things to all the new nodes
-    var newNodes = node.enter()
+    var nodeEnter = node.enter()
       .append("g")
-      .attr("class", function(d) { return "rank-" + d.data.rank + " node" + (d.children ? " node--internal" : " node--leaf"); })
-      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
+      .attr("class", function(d) { return "rank-" + d.data.data.rank + " node" + (d.children ? " node--internal" : " node--leaf"); })
+      .attr("transform", function(d) {
+        console.log(d);
+        console.log(d.parent == null);
+        if(d.parent != null) {
+          return "translate(" + d.parent.x + "," + d.parent.y + ")";
+        }
+        return "translate(" + d.x + "," + d.y + ")"; 
+      })
       .on("click", click);
     
-    
     // Add text + bg + circles to the nodes
-    drawElements(newNodes);
-    
+    drawElements(nodeEnter);
     
     // Add pretty hover class for each taxon node
     $('g').hover(function() {
@@ -239,59 +228,92 @@ $(document).ready(function() {
     }, function() {
       $(this).children('rect').removeClass('recthover');
     });
-
+    
     // Transition nodes to their new position.
-    //node.transition()
-    //    .duration(duration)
-    //    .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
-
-
-    // Draw the links between nodes
+    var nodeMerge = node.merge(nodeEnter).transition()
+      .duration(duration)
+      .attr('transform', function (d) {
+        return 'translate(' + d.x + ',' + d.y + ')';
+      });
+    nodeMerge.selectAll('rect').style("fill-opacity", function(d) {
+      if(d.children || d.data.data.rank == max_rank) { return 0.5; }
+      else { return 0.2; }
+    });
+      
+    // Get the old elements for removal
+    var oldNode = node.exit();
+    
+    // Find the shallowest depth in the old element, that's the parent
+    oldNode.each(function(d) {
+        var shallowestParent = d;
+        do { shallowestParent = shallowestParent.parent; }
+        while(shallowestParent.depth > shallowestDepth);
+        d.shallowestParentX = shallowestParent.x;
+        d.shallowestParentY = shallowestParent.y; 
+    });
+    
+    // Transition the old nodes out
+    var transitionedNodes = oldNode.transition()
+      .duration(duration)
+      .attr("transform", function(d) { 
+        return "translate(" + d.shallowestParentX + "," + d.shallowestParentY + ")"; 
+      });
+    oldNode.selectAll('rect').transition()
+      .style("fill-opacity", 0)
+      .duration(duration/2)
+    oldNode.selectAll('text').transition()
+      .style("fill-opacity", 0)
+      .duration(duration/2)
+    oldNode.selectAll('circle').transition()
+      .style("fill-opacity", 0)
+      .duration(duration/3)
+    transitionedNodes.remove();
+    
+    /* 
+     * Links
+     */
     var link = g.selectAll(".link")
-      .data(source.descendants().slice(1).reverse())
-      .enter().insert("path",":first-child")
+      .data(source.descendants().slice(1).reverse(), function(d) { return d.data.id; })
+    
+    // Draw the links between nodes
+    var linkEnter = link.enter()
+      .insert("path",":first-child")
       .attr("class", "link")
       .style("stroke", function(d) {
         if(d.children) {
           return line_color;
         }
-        return blendColors(main_color, secondary_color, (d.data.rank / max_rank))
+        return blendColors(main_color, secondary_color, (d.data.data.rank / max_rank))
       })
-      .attr("d", function(d) {
-        return 'M' + d.x + ',' + (d.y - 18)
-        + "C" + (d.x + d.parent.x) / 2 + "," + (d.y - 25)
-        + " " + (d.x + d.parent.x) / 2 + "," + (d.parent.y + 25)
-        + " " + d.parent.x + "," + (d.parent.y + 17);
+      .attr("d",  function (d) {
+        var o = {x: d.parent.x0, y: d.parent.y0, parent: {x: d.parent.x0, y: d.parent.y0}};
+        return connector(o);
       });
-      /*.attr("d", function(d) {
-        return 'M' + d.x0 + ',' + (d.y0 - 18)
-        + "C" + (d.x0 + d.parent.x0) / 2 + "," + (d.y0 - 25)
-        + " " + (d.x0 + d.parent.x0) / 2 + "," + (d.parent.y0 + 25)
-        + " " + d.parent.x0 + "," + (d.parent.y0 + 17);
-      });*/
-
+      
     // Transition links to their new position.
-    // link.transition().duration(duration)
-
-    // Transition exiting nodes to the parent's new position.
-    /*link.exit().transition()
-        .duration(duration)
-        .attr("d", function(d) {
-          return 'M' + source.x + ',' + (source.y - 18)
-          + "C" + (source.x + source.parent.x) / 2 + "," + (source.y - 25)
-          + " " + (source.x + source.parent.x) / 2 + "," + (source.parent.y + 25)
-          + " " + source.parent.x + "," + (source.parent.y + 17);
-        })
-        .remove();
-
-    // Stash the old positions for transition.
-    node.each(function(d) {
-      d.x0 = d.x;
-      d.y0 = d.y;
-    });*/
+    var linkMerge = link.merge(linkEnter).transition()
+      .duration(0)
+      .attr('d', connector);
+      
+    // Style the links
+    linkMerge.style("stroke", function(d) {
+      if(d.children) {
+        return line_color;
+      }
+      return blendColors(main_color, secondary_color, (d.data.data.rank / max_rank))
+    })
+    
+    // Transition the old links out
+    var oldLink = link.exit();
+    oldLink.transition()
+      .duration(duration/2)
+      .attr("d", function(d) {
+        var o = {x: d.x, y: d.y, parent: {x: d.x, y: d.y}};
+        return connector(o);
+      })
+      .remove();
   }
   
-
   // Toggle children on click.
   function click(d) {
     // If the node does not have any pre-loaded children
@@ -300,52 +322,33 @@ $(document).ready(function() {
       
       // Get the JSON lineage for it
       d3.json(jsonPath, function(error, json) {
-        // Add parent to lineage as a proper object
-        // lineage.push(json['parent']);
-        
         // Get the children
         children = json['children'];
         
-        // Iterate through the lineage and hide the children for the siblings of the same rank as the pushed node
-          /*lineage.forEach(function(node, i) {
-            console.log('index ' + i + ' /// node rank' + node.rank + ' / ' + node.name)
-          });
-          forDel = []*/
-          //console.log(children);  
-          new_lineage = [];
+        // Make a new lineage array, can't use the one previously stored because
+        // of javascript variables mutability being weird
+        new_lineage = [];
         lineage_flat.forEach(function(node, i) {
-            recalcIndex = lineage.indexOf(node);
-          //console.log('index ' + recalcIndex + ' node rank ' + node.rank + ' / ' + node.name + ' vs clicked thing rank ' + d.data.rank )
-          if(node.rank > d.data.rank && node.rank != 9) {
-            //console.log('removing ' + recalcIndex + ' ' + node.name);
-            //lineage.splice(recalcIndex, 1);
-            
+          recalcIndex = lineage.indexOf(node);
+          // The node.rank 9 is in there because Life for some reason has rank 9
+          // Basically we want to exclude all nodes of a lower rank than the one clicked
+          if(node.rank > d.data.data.rank && node.rank != 9) {           
+            // console.log(node); - we don't want these nodes
           }
-          else {
-            //node._children = node.children;
-            //delete node.children;
-            new_lineage.push(node);
-            
-          }
-          //else if(node.rank == d.data.rank && node.id != d.data.id) {
-            
-            //node._children = node.children;
-            //node.children = [];
-          //}
+          else { new_lineage.push(node); }
         });
         
-        //lineage = new_lineage;
-        //console.log('ffff'); console.log(lineage);
+        // Append the children to the new lineage
         children.forEach(function(child) {
           new_lineage.push(child);
         });
+        
+        // Javascript is weird. We need a deep copy of new_lineage
         temp = JSON.parse(JSON.stringify(new_lineage));
         new_lineage = JSON.parse(JSON.stringify(temp));
-
-        root = getTreeData(new_lineage);
         
-        //console.log(root['children'][0]['children'][0]['children'][0]['children'][0]);
-        //console.log(root);
+        // Turn it into a tree and update our svg
+        root = getTreeData(new_lineage);
         updateTree(root, d.depth);
        });
     }
