@@ -123,6 +123,7 @@
 {% block js %}
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/trianglify/1.0.1/trianglify.min.js"></script>
+<script src="{% static 'bibtex-js-master/src/bibtex_js.js' %}"></script>
 <script src="{% static 'ckeditor/ckeditor.js' %}"></script>
 <script>
 
@@ -134,6 +135,7 @@ $(document).ready(function() {
     jQuery(document).on('focusin.modal', function (e) {
       if (modal_this.$element[0] !== e.target && !modal_this.$element.has(e.target).length
               && !jQuery(e.target.parentNode).hasClass('cke_dialog_ui_input_select')
+              && !jQuery(e.target.parentNode).hasClass('cke_dialog_ui_input_textarea')
               && !jQuery(e.target.parentNode).hasClass('cke_dialog_ui_input_text')) {
           modal_this.$element.focus()
       }

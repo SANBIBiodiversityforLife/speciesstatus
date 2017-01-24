@@ -87,6 +87,7 @@ svg { width: 100%; height: auto; }
 
 
 rect {
+  fill: #000000;
 	/* Transition. */
 	-o-transition:.2s;
 	-ms-transition:.2s;
@@ -105,8 +106,20 @@ text {
 	cursor: pointer;
 }
 .lower-circle:hover {
-	fill: #FFF !important;
+	fill: #FFF793 !important;
 }
-.recthover {
+rect:hover {
+	fill: #FFEC1C !important;
+}
+.text-group {
+	/* Transition. */
+	-o-transition:.2s;
+	-ms-transition:.2s;
+	-moz-transition:.2s;
+	-webkit-transition:.2s;
+	/* ...and now for the proper property */
+	transition:.2s;
+}
+.text-group:hover rect {
 	fill: #FFEC1C !important;
 }

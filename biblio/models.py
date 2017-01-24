@@ -28,6 +28,10 @@ class Reference(PolymorphicModel):
     def get_link(self):
         return self.get_citation_for_taxon()
 
+    def save(self):
+
+        super(Reference, self).save()
+
 
 class Authorship(models.Model):
     person = models.ForeignKey(Person)

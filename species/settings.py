@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'website',
     'taxa',
     'people',
-    'biblio'
+    'biblio',
+    'redlist'
 ]
 
 MIDDLEWARE = [
@@ -151,3 +152,7 @@ REST_FRAMEWORK = {
     ),
     'PAGE_SIZE': 10
 }
+
+
+# Application specific settings
+MENDELEY_SETTINGS = {'ID': '3513', 'SECRET': 'gOVvM5RmKseDgcmH', 'REDIRECT': 'http://species.sanbi.org'}

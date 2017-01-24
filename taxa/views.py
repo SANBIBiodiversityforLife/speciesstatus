@@ -112,13 +112,12 @@ class TaxonListView(generics.ListAPIView):
                      'info__trophic',
                      'info__uses',
                      'info__distribution',
-                     'info__habitat',
+                     #'info__habitat',
                      'common_names__name')
 
 
 class ChildrenView(generics.RetrieveAPIView):
     queryset = models.Taxon.objects.all()
-    #serializer_class = serializers.TaxonChildrenSerializer
     serializer_class = serializers.TaxonBasicSerializer
 
     def retrieve(self, request, *args, **kwargs):
@@ -136,7 +135,6 @@ class LineageView(generics.RetrieveAPIView):
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        #ancestors = instance.get_ancestors(include_self=True)
         ancestors = drilldown_tree_for_node(instance)
 
         nodes = []

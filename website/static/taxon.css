@@ -40,5 +40,28 @@
 }
 .cke_dialog
 {
-    z-index: 10055 !important;
+  z-index: 10055 !important;
+}
+textarea.cke_dialog_ui_input_textarea {
+  height: 100px !important;
+}
+label.cke_dialog_ui_labeled_label {
+  display: block !important;
+  font-weight: bold;
+}
+label.cke_dialog_ui_labeled_label a {
+  background-color: #326c96;
+  color: #FFF;
+ -moz-border-radius: 6px;
+ border-radius: 6px;
+ padding: 2px 7px;
+ font-weight: normal;
+}
+
+/* Center the button */
+.cke_dialog_ui_vbox_child {
+  text-align: center;
+}
+.cke_dialog_ui_button {
+  margin-bottom: 20px;
 }

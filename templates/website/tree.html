@@ -7,17 +7,18 @@
 {% endblock css %}
 
 {% block heading %}
-<div id="triangles">
-  <div id="svgparent">
-    <div id="svgcontainer">
-      <svg id='lifetree'></svg>
+  <div id="triangles">
+    <div id="svgparent">
+      <div id="svgcontainer">
+        <svg id='lifetree'></svg>
+      </div>
     </div>
   </div>
-</div>
 {% endblock %}
 
 {% block content %}
 <div class="container">
+
 </div>
 {% endblock content %}
 
@@ -28,6 +29,11 @@
 <script>
 
 var lineage = $.parseJSON('{{ lineage|safe }}');
+
+// These two URLs are used in the script.js
+var getChildrenUrl = "{% url 'api_children' 0 %}";
+var taxaDetailUrl = "{% url 'taxa_detail' 0 %}";
+
 $(document).ready(function() {
 });
 </script>

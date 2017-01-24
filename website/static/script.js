@@ -1,38 +1,6 @@
-$(document).ready(function() {
-  // Lineage variable should contain a flat set of elements with parent/child attributes, we need to turn it into a tree
-  // Create the tree array http://stackoverflow.com/a/38900233/4034849 
-  function unflatten(treeArray, parent) {
-    var dTree = {};
-    
-    // Get the parent, this is the one we're working on. When we first initiate it, set it to 0
-    parent = typeof parent !== 'undefined' ? parent : {id: 0};
-    
-    // Find all of the nodes which are children to this parent
-    var childrenArray = treeArray.filter(function(child) {
-      return child.parent == parent.id;
-    });
-
-    if (childrenArray.length > 0) {
-      if (parent.id == 0) { // Frankly i don't understand why this works
-        dTree = childrenArray;
-      } else {
-        // Keep on setting children
-        parent['children'] = childrenArray;
-      }
-      
-      // Loop over all the children and do the same to them
-      // I guess objects are immutable in js, so once you go into the function and 
-      // start setting the children for every object it gets set everywhere
-      childrenArray.forEach(function(child) {
-        unflatten(treeArray, child);
-      })
-    }
-
-    return dTree;
-  }; 
-  
-  // WTF js.
-  var lineage_flat;
+$(document).ready(function() {  
+	// WTF js.
+	var lineage_flat;
   
 	// Color manipulation functions and settings for the tree
 	function shadeColor2(color, percent) {
@@ -44,7 +12,7 @@ $(document).ready(function() {
 		return "#"+(0x1000000+(Math.round((R2-R1)*p)+R1)*0x10000+(Math.round((G2-G1)*p)+G1)*0x100+(Math.round((B2-B1)*p)+B1)).toString(16).slice(1);
 	}
   
-  // Color variables
+    // Color variables
 	var main_color = '#FFFFFF';
 	var secondary_color = '#FFFFFF';
 	var line_color = '#FFF793';
@@ -61,17 +29,13 @@ $(document).ready(function() {
 		}
 	}
   
-  // Draws a curve between two points
-  function connector(d) {
-    return 'M' + d.x + ',' + (d.y - 18) + 
-      "C" + (d.x + d.parent.x) / 2 + "," + (d.y - 25) + 
-      " " + (d.x + d.parent.x) / 2 + "," + (d.parent.y + 25) + 
-      " " + d.parent.x + "," + (d.parent.y + 17);
-    /*return 'M' + d.x + ',' + d.y +
-        'C' + (d.x + d.parent.x) / 2 + ',' + d.y +
-        ' ' + (d.x + d.parent.x) / 2 + ',' + d.parent.y +
-        ' ' + d.parent.x + ',' + d.parent.y;*/
-  };   
+	// Draws a curve between two points
+	function connector(d) {
+	return 'M' + d.x + ',' + (d.y - 18) +
+	  "C" + (d.x + d.parent.x) / 2 + "," + (d.y - 25) +
+	  " " + (d.x + d.parent.x) / 2 + "," + (d.parent.y + 25) +
+	  " " + d.parent.x + "," + (d.parent.y + 17);
+	};   
 
 	// Transition vars
 	var duration = 500;
@@ -93,48 +57,26 @@ $(document).ready(function() {
 
   // Create and return a d3 tree object of the correct width and height, run the root hierarchy element through it
   var tree = d3.tree().size([width-200, height - 160]);
-
-
   var root = getTreeData(lineage);
   updateTree(root);
 
   // Get the data for the tree
-  function getTreeData(json) {
-    //console.log(json);
-    
-    // Set life parent to 0, that's what our function above needs
-    //json[0].parent = 0;
-    
+  function getTreeData(json) {    
     // Save the flat lineage, we have to do this weird parse thing to make a deep copy
     lineage_flat = JSON.parse(JSON.stringify(json));
     
-    //dataTree = unflatten(json);
-    var temp1 = JSON.parse(JSON.stringify(json));
-    temp1[0].parent = 0;
-    var dt = unflatten(temp1); 
-    console.log(dt);
-    
+    // This seems to unflatten arrays of objects with parentIds and parents. Wish I'd known about it sooner.
     var dataTree = d3.stratify()
       .id(function(d){ return d.id; })
       .parentId(function(d){  return d.parent; })
       (JSON.parse(JSON.stringify(json)));
 
-    //var dataTree = stratify(json);
-    //temp = JSON.parse(JSON.stringify(dataTree));
-    
-    //console.log('tree');
-    //console.log(temp[0]['children'][0]['children'][0]['children'][0]['children'][0]);
-
     // D3 requires a hierarchy object which then gets made into a tree
     var root = d3.hierarchy(dataTree);
-    
-    
-    
     tree(root);
     
-    // Normalize for fixed-depth.
+    // Normalize for fixed-depth, also we do some fancy transitions so save a copy of original xys
     root.each(function(d) { d.y = d.depth * 100; d.x0 = d.x; d.y0 = d.y; });
-    //console.log(root['children'][0]['children'][0]['children'][0]['children'][0]);d.y = d.depth * 180; 
     return root;
   }
 
@@ -149,14 +91,19 @@ $(document).ready(function() {
 
     // Add the circles below each node
     node.append("circle")
-      .attr("r", 4)
+      .attr("r", 5)
       .attr("transform", function(d) { return "translate(0,16)"; })
       .attr("class", "lower-circle")
       .style("stroke", "#000000")
-      .style("fill", "#FFFFFF");
+      .style("fill", function(d) {
+        return d.data.data.child_count > 0 ? "#FFFFFF" : "#000000";
+      })
+      .on("click", click);
 
     // Add text
-    node.append("text")
+    var textGroup = node.append('g').attr('class', 'text-group').append("svg:a")
+      .attr("xlink:href", function(d){ return taxaDetailUrl.slice(0, -1) + d.data.id; })  ;
+    textGroup.append("text")
       .attr("dy", 3)
       .style("fill", '#FFFFFF')
       .style("text-anchor", "middle")
@@ -178,8 +125,8 @@ $(document).ready(function() {
       });
 
     // Add clickable background rectangle so it looks nicer
-    node.insert("rect",":first-child")
-      .style("fill", '#000000')
+    textGroup
+      .insert("rect",":first-child")
       .style("fill-opacity", function(d) {
           if(d.children || d.data.data.rank == max_rank) { return 0.5; }
           else { return 0.2; }
@@ -210,24 +157,14 @@ $(document).ready(function() {
       .append("g")
       .attr("class", function(d) { return "rank-" + d.data.data.rank + " node" + (d.children ? " node--internal" : " node--leaf"); })
       .attr("transform", function(d) {
-        console.log(d);
-        console.log(d.parent == null);
         if(d.parent != null) {
           return "translate(" + d.parent.x + "," + d.parent.y + ")";
         }
         return "translate(" + d.x + "," + d.y + ")"; 
-      })
-      .on("click", click);
+      });
     
     // Add text + bg + circles to the nodes
     drawElements(nodeEnter);
-    
-    // Add pretty hover class for each taxon node
-    $('g').hover(function() {
-      $(this).children('rect').addClass('recthover');
-    }, function() {
-      $(this).children('rect').removeClass('recthover');
-    });
     
     // Transition nodes to their new position.
     var nodeMerge = node.merge(nodeEnter).transition()
@@ -235,7 +172,7 @@ $(document).ready(function() {
       .attr('transform', function (d) {
         return 'translate(' + d.x + ',' + d.y + ')';
       });
-    nodeMerge.selectAll('rect').style("fill-opacity", function(d) {
+    nodeMerge.select('rect', ':first-child').style("fill-opacity", function(d) {
       if(d.children || d.data.data.rank == max_rank) { return 0.5; }
       else { return 0.2; }
     });
@@ -318,7 +255,7 @@ $(document).ready(function() {
   function click(d) {
     // If the node does not have any pre-loaded children
     if (!d.children && !d._children) {
-      var jsonPath = '/taxa/api/children/' + d.data.id;
+      var jsonPath =  getChildrenUrl.slice(0, -1) +  d.data.id;
       
       // Get the JSON lineage for it
       d3.json(jsonPath, function(error, json) {

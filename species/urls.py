@@ -29,6 +29,7 @@ urlpatterns = [
     # url(r'^taxa/import-seakeys$', taxa_views.import_seakeys, name='import_seakeys'),
 
     url(r'^taxa/', include('taxa.urls')),
+    url(r'^biblio/', include('biblio.urls')),
 
     # Index
     url(r'^$', website_views.IndexView.as_view(), name='index'),

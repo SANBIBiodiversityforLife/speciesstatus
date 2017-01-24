@@ -11,13 +11,21 @@ class ChildrenInfoField(serializers.RelatedField):
         return {'count': child_count, 'id': value.id, 'name': value.name, 'rank': value.rank.id, 'parent_id': value.id }
 
 
+class ChildCountField(serializers.RelatedField):
+    """Used to return count, primary key, name and rank for all child nodes of a taxon, rather than just their pk"""
+    def to_representation(self, value):
+        child_count = Taxon.objects.get(id=value).get_children().count()
+        return child_count
+
+
 class TaxonBasicSerializer(serializers.ModelSerializer):
     parent = serializers.PrimaryKeyRelatedField(read_only=True)
     rank = serializers.PrimaryKeyRelatedField(read_only=True)
+    child_count = ChildCountField(read_only=True, source='id')
 
     class Meta:
         model = Taxon
-        fields = ('id', 'name', 'parent', 'rank')
+        fields = ('id', 'name', 'parent', 'rank', 'child_count')
 
 
 class TaxonChildrenSerializer(serializers.ModelSerializer):
@@ -66,7 +74,7 @@ class TaxonInfoSerializer(serializers.ModelSerializer):
                   'trophic',
                   'uses',
                   'distribution',
-                  'habitat',
+                  #'habitat',
                   'altitude_or_depth_range')
 
 

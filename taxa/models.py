@@ -1,7 +1,7 @@
 from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
 from django.utils import formats
-from django.contrib.postgres.fields import IntegerRangeField
+from django.contrib.postgres.fields import IntegerRangeField, ArrayField, DateRangeField
 from mptt.models import MPTTModel, TreeForeignKey
 from biblio.models import Reference
 from people.models import Person
@@ -14,6 +14,16 @@ class Rank(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Habitat(models.Model):
+    name = models.CharField(max_length=300, unique=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
 
 
 class Taxon(MPTTModel):
@@ -214,22 +224,110 @@ class Info(models.Model):
     morphology = models.TextField(blank=True)
     diagnostics = models.TextField(blank=True)
 
-    movement = models.TextField(blank=True)
-    reproduction = models.TextField(blank=True)
+    # Trophic strategy
     trophic = models.TextField(blank=True)
     uses = models.TextField(blank=True)
 
+    # Random!
+    # cites = models.
+
     # Where the species exists
     distribution = models.TextField(blank=True)
-    habitat = models.TextField(blank=True)
+    habitat_narrative = models.TextField(blank=True)
+    habitats = models.ManyToManyField(Habitat, blank=True,
+                                      help_text="<strong>Start typing to search through options.</strong> ")
 
     # Land dwelling plants/animals have altitude, sea dwellers get depth
     altitude_or_depth_range = IntegerRangeField(null=True, blank=True)
+
+    # Size
+    maturity_size_female = models.PositiveSmallIntegerField(null=True, blank=True)
+    maturity_size_male = models.PositiveSmallIntegerField(null=True, blank=True)
+    max_size = models.PositiveSmallIntegerField(null=True, blank=True)
+    birth_size = models.PositiveSmallIntegerField(null=True, blank=True)
+    MM = "MM"
+    CM = "CM"
+    M = "M"
+    SIZE_UNIT_CHOICES = (
+        (CM, 'CM'),
+        (MM, 'MM'),
+        (M, 'M'),
+    )
+    size_units = models.CharField(max_length=2, choices=SIZE_UNIT_CHOICES, null=True, blank=True)
+
+    # Life history - Age
+    generational_length = IntegerRangeField(null=True, blank=True)
+    generational_length_narrative = models.TextField(blank=True)
+    maturity_age_female = models.PositiveSmallIntegerField(null=True, blank=True)
+    maturity_age_male = models.PositiveSmallIntegerField(null=True, blank=True)
+    longevity = models.PositiveSmallIntegerField(null=True, blank=True)
+    reproductive_age = models.PositiveSmallIntegerField(null=True, blank=True)
+    gestation_time = models.DecimalField(null=True, blank=True, max_digits=5, decimal_places=2)
+    reproductive_periodicity = models.DecimalField(null=True, blank=True, max_digits=5, decimal_places=2)
+    average_fecundity = models.DecimalField(null=True, blank=True, max_digits=5, decimal_places=2)
+    natural_mortality = models.DecimalField(null=True, blank=True, max_digits=5, decimal_places=2)
+    YEARS = 'Y'
+    MONTHS = 'M'
+    DAYS = 'D'
+    HOURS = 'H'
+    AGE_UNIT_CHOICES = (
+        (YEARS, 'Years'),
+        (MONTHS, 'Months'),
+        (DAYS, 'Days'),
+        (HOURS, 'Hours'),
+    )
+    age_units = models.CharField(max_length=1, choices=AGE_UNIT_CHOICES, null=True, blank=True)
+
+    # Reproduction
+    reproduction = models.TextField(blank=True)
+    EGG_LAYING = 'O'
+    LIVE_BIRTH = 'V'
+    PARTHENOGENESIS = 'P'
+    FREE_LIVING_LARVAE = 'F'
+    WATER_BREEDING = 'W'
+    REPRODUCTIVE_TYPE_CHOICES = (
+        (EGG_LAYING, 'Egg laying'),
+        (LIVE_BIRTH, 'Live birth'),
+        (PARTHENOGENESIS, 'Parthenogenesis'),
+        (FREE_LIVING_LARVAE, 'Free living larvae'),
+        (WATER_BREEDING, 'Water breeding'),
+    )
+    reproductive_type = ArrayField(
+        models.CharField(choices=REPRODUCTIVE_TYPE_CHOICES, max_length=1, null=True, blank=True), null=True, blank=True
+    )
+
+    # Movement behaviour
+    movement = models.TextField(blank=True)
+    FULL_MIGRANT = 'FM'
+    ALTITUDINAL_MIGRANT = 'AM'
+    NOT_MIGRANT = 'NM'
+    NOMADIC = 'NO'
+    UNKNOWN = 'UN'
+    MIGRATION_TYPE_CHOICES = (
+        (FULL_MIGRANT, 'Full migrant'),
+        (ALTITUDINAL_MIGRANT, 'Altitudinal migrant'),
+        (NOT_MIGRANT, 'Not a migrant'),
+        (NOMADIC, 'Nomadic'),
+        (UNKNOWN, 'Unknown'),
+    )
+    migration_patterns = models.CharField(choices=MIGRATION_TYPE_CHOICES, max_length=2, null=True, blank=True)
+    CONGREGATORY = 'CO'
+    DISPERSIVE = 'DI'
+    CONGREGATORY_YEAR_ROUND = 'CY'
+    CONGREGATORY_CHOICES = (
+        (CONGREGATORY, 'Congregatroy'),
+        (DISPERSIVE, 'Dispersive'),
+        (CONGREGATORY_YEAR_ROUND, 'Congregatory year round'),
+    )
+    congregatory = models.CharField(choices=CONGREGATORY_CHOICES, max_length=2, null=True, blank=True)
 
 
 class GeneralDistribution(models.Model):
     """Multiple distribution polygons + corresponding residency status can be associated with a taxon"""
     taxon = models.ForeignKey(Taxon, related_name='general_distributions')
+
+    # Record the date range between which the observations were made
+    date = DateRangeField(null=True, blank=True)
 
     # Specific distribution will come from observations in the wild, but this will give them a rough idea of it
     distribution_polygon = models.PolygonField(null=True, blank=True)
@@ -242,6 +340,7 @@ class GeneralDistribution(models.Model):
     INVASIVE = 'INV'
     VAGRANT = 'VAG'
     NEAR_ENDEMIC = 'NEN'
+    EXTINCT = 'EXT'
     UNKNOWN = 'UNK'
     RESIDENCY_CHOICES = (
         (NATIONAL_ENDEMIC, 'National endemic'),
@@ -251,6 +350,7 @@ class GeneralDistribution(models.Model):
         (INVASIVE, 'Invasive'),
         (VAGRANT, 'Vagrant'),
         (NEAR_ENDEMIC, 'Near endemic'),
+        (EXTINCT, 'Extinct'),
         (UNKNOWN, 'Unknown'),
     )
     residency_status = models.CharField(max_length=3, choices=RESIDENCY_CHOICES)
