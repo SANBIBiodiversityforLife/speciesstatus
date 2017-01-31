@@ -1,0 +1,23 @@
+Order,affiliation,credit_type,email,firstName,initials,internal_taxon_id,lastName,nickname,user_id
+2,Odonata Specialist Group,Assessor,falseemail@john.simaika.com,John,J.,15543,Simaika,"",1125
+1,University of Stellenbosch,Assessor,samways@sun.ac.za,Michael,M.J.,15543,Samways,"",2946
+1,IUCN SSC Dragonfly Specialist Group,Assessor,f.suhling@tu-bs.de,Frank,F.,168007,Suhling,"",1119
+3,Odonata Specialist Group,Assessor,falseemail@john.simaika.com,John,J.,60068,Simaika,"",1125
+4,University of Stellenbosch,Assessor,samways@sun.ac.za,Michael,M.J.,60068,Samways,"",2946
+2,"IUCN SSC Dragonfly Specialist Group; BioCart - Ökologische Gutachten & Studien, Germany",Assessor,biocartkipping@email.de,Jens,J.,60068,Kipping,"",55641482
+1,IUCN SSC Dragonfly Specialist Group,Assessor,f.suhling@tu-bs.de,Frank,F.,60068,Suhling,"",1119
+1,IUCN SSC Dragonfly Red List Authority,Reviewer,violacl@t-online.de,Viola,V.,15543,Clausnitzer,"",1099
+2,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,15543,Suhling,"",1119
+3,Odonata Specialist Group,Reviewer,falseemail@john.simaika.com,John,J.,168007,Simaika,"",1125
+5,Red List Unit,Reviewer,caroline.pollock@iucn.org,Caroline,C.M.,168007,Pollock,"",182
+4,University of Stellenbosch,Reviewer,samways@sun.ac.za,Michael,M.J.,168007,Samways,"",2946
+1,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,168007,Suhling,"",1119
+4,Odonata Specialist Group,Reviewer,falseemail@john.simaika.com,John,J.,184261,Simaika,"",1125
+5,Red List Unit,Reviewer,caroline.pollock@iucn.org,Caroline,C.M.,184261,Pollock,"",182
+3,University of Stellenbosch,Reviewer,samways@sun.ac.za,Michael,M.J.,184261,Samways,"",2946
+2,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,184261,Suhling,"",1119
+2,Odonata Specialist Group,Reviewer,falseemail@john.simaika.com,John,J.,63219,Simaika,"",1125
+5,Red List Unit,Reviewer,caroline.pollock@iucn.org,Caroline,C.M.,63219,Pollock,"",182
+3,University of Stellenbosch,Reviewer,samways@sun.ac.za,Michael,M.J.,63219,Samways,"",2946
+4,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,63219,Suhling,"",1119
+1,Red List Unit,Facilitator,caroline.pollock@iucn.org,Caroline,C.M.,60068,Pollock,"",182

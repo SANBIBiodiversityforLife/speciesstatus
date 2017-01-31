@@ -1,0 +1,206 @@
+internal_taxon_id,language,name,primary
+596,English,Golden Banana Frog,false
+1301,English,Hogsback Chirping Frog,false
+1301,English,Hogsback Frog,false
+1301,English,Rattray's Forest Frog,false
+1301,English,Rattray's Frog,false
+1301,Afrikaans,Hogsback-kwetterpadda,false
+3069,English,Cape Rain Frog,false
+3069,English,Giant Rain Frog,false
+3070,English,Desert Rain Frog,false
+3176,English,Amatola Toad,false
+3176,English,Amathole Toad,true
+3441,English,Cape Caco,false
+3441,English,Cape Froglet,false
+3441,English,Cape Metal Frog,false
+3441,English,Cross-marked Frog,false
+3441,English,Dainty Frog,false
+3441,English,Cape Dainty Frog,true
+3442,English,Poynton’s Caco,false
+3442,English,Poynton's Dainty Frog,false
+3776,English,Rose’s Mountain Toadlet,false
+9772,English,Hewitt’s African Ghost Frog,false
+9772,Afrikaans,Elandsberg-spookpadda,false
+9772,Afrikaans,Hewitt se Spookpadda,false
+9772,English,Hewitt’s Ghost Frog,true
+9773,English,Table Mountain Ghost Frog,false
+10644,English,Pickersgill's Reed Frog,false
+11700,English,Long-toed Tree Frog,false
+11700,English,Weza Forest Tree Frog,true
+13318,English,Micro Frog,false
+13318,English,Cape Flats Frog,true
+23124,English,Cape Platanna,false
+23124,English,Gill's Platanna,false
+54359,English,Aquatic River Frog,false
+54359,English,Ice Frog,false
+54359,English,Large-mouthed Frog,false
+54359,English,Maluti River Frog,false
+54393,English,Bush Squeaker,false
+54573,English,Sand Toad,false
+54648,English,Karoo Toad,false
+54659,English,African Common Toad,false
+54659,English,Gutteral Toad,false
+54723,English,Panther Toad,false
+54723,English,Southern Panther Toad,false
+54723,English,Western Leopard Toad,true
+54724,English,Eastern Leopard Toad,false
+54745,English,Ranger’s Toad,false
+54748,English,Paradise Toad,false
+54801,English,Tradouw's Mountain Toad,false
+54885,English,African Red Toad,false
+54885,English,African Split-skin Toad,false
+55273,English,Natal Ghost Frog,false
+55274,English,Eastern Ghost Frog,false
+55275,English,Purcell's Ghost Frog,false
+55276,English,Royal Ghost Frog,false
+55279,English,Guinea Snout-burrower,true
+55280,English,Spotted Burrowing Frog,false
+55280,English,Spotted Shovel-nosed Frog,false
+55280,English,Spotted Snout-burrower,false
+55281,English,Marbled Snout-burrower,true
+56059,English,Pickersgill's Banana Frog,false
+56065,English,Knysna Banana Frog,false
+56065,English,Knysna Spiny Reed Frog,false
+56065,English,Knysna Leaf-folding Frog,true
+56078,English,Intermediate Spiny Reed Frog,false
+56078,English,Natal Banana Frog,false
+56078,English,Natal Spiny Reed Frog,false
+56078,Afrikaans,Natalse Blaarnespadda,false
+56078,Afrikaans,Natalse Blaarvoupadda,false
+56078,English,Natal Leaf-folding Frog,true
+56108,English,Sharp-nosed Reed Frog,false
+56108,English,Sharp-headed Long Reed Frog,true
+56163,English,Marbled Reed Frog,false
+56163,English,Painted Reed Frog,false
+56236,English,Bubbling Kassina,false
+56236,English,Burbling Kassina,false
+56236,English,Common Bubbling Kassina,false
+56236,English,Running Frog,false
+56236,English,Senegal Frog,false
+56236,English,Senegal Kassina,false
+56236,English,Senegal Kassin's Frog,false
+56236,English,Senegal Running Frog,false
+56236,English,Senegal Land Frog,true
+56297,English,Weale's Running Frog,false
+57711,English,Common Rain Frog,false
+57711,English,Strawberry Rain Frog,false
+57712,English,Common Rain Frog,false
+57713,Afrikaans,Bilbo se Blaasoppadda ,false
+57713,Afrikaans,Bilbo se Reënpadda,false
+57713,English,Bilbo's Rain Frog,true
+57714,English,Black Rain Frog,false
+57715,English,Mountain Rain Frog,false
+57716,English,Mozambique Rain Frog,false
+57717,English,Namaqua Rain Frog,false
+57719,English,Rose’s Rain Frog,false
+57720,English,Whistling Rain Frog,false
+57721,English,Northern Forest Rain Frog,false
+57722,English,Plaintive Rain Frog,false
+57722,English,Rough Rain Frog,false
+57950,English,Marbled Rubber Frog,false
+57951,English,Banded Rubber Frog,false
+58057,English,Bainskloof Moss Frog,false
+58058,English,Drewes’ Moss Frog,false
+58059,English,Hewitt’s Moss Frog,false
+58060,English,Landdros Moss Frog,false
+58061,English,Lightfoot’s Moss Frog,false
+58062,English,Mistbelt Moss Frog,false
+58062,English,Ngongoni Moss Frog,false
+58062,English,Mistbelt Chirping Frog,true
+58063,English,De Villier’s Moss Frog,false
+58066,English,Boettger's Caco,false
+58066,English,Boettger's Frog,false
+58066,English,Boettger's Froglet,false
+58066,English,Boettger's Metal Frog,false
+58066,English,Common Caco,false
+58066,English,Common Dainty Frog,false
+58066,English,Dainty Frog,false
+58066,English,Boettger’s Dainty Frog,true
+58067,English,Karoo Dainty Frog,false
+58069,English,Namaqua Caco,false
+58069,English,Namaqua Dainty Frog,false
+58070,English,Bronze Caco,false
+58070,English,Bronze Dainty Frog,false
+58071,English,Mountain Caco,false
+58071,English,Small Dainty Frog,false
+58072,English,Flat Caco,false
+58072,English,Flat Dainty Frog,false
+58072,English,Smooth Dainty Frog,false
+58073,English,Striped Caco,false
+58073,English,Striped Metal Frog,false
+58076,English,Boneberg's Frog,false
+58076,English,Gloomy Kloof Frog,false
+58076,English,Kloofpadda,false
+58076,English,Natal Diving Frog,false
+58076,English,Natal Frog ,false
+58076,English,Kloof Frog,true
+58128,English,Natal Dwarf Puddle Frog,false
+58153,English,Montane Marsh Frog,true
+58174,English,African Clawed Toad,false
+58174,English,Clawed Frog,false
+58174,English,Clawed Toad,false
+58174,English,Common Clawed Frog,false
+58174,English,Common Clawed Toad,false
+58174,English,Common Platanna,false
+58174,English,Platanna,false
+58174,English,Smooth Clawed Frog,false
+58174,English,Upland Clawed Frog,false
+58174,English,African Clawed Frog,true
+58177,English,Muller's Platanna,false
+58184,English,Angola Frog,false
+58184,English,Angola River Frog,false
+58184,English,Chapin's Frog,false
+58184,English,Common Rana,false
+58184,English,Dusky-throated Frog,false
+58184,English,Dusky-throated River Frog,false
+58184,English,Northern Rana,false
+58184,English,Nutt's Frog,false
+58184,English,Common River Frog,true
+58296,English,African Ornate Frog,false
+58296,English,Common Ornate Frog,false
+58296,English,Ornate Frog,false
+58296,English,Southern Ornate Frog,false
+58490,English,Anchieta's Ridged Frog,false
+58490,English,Plain Grass Frog,true
+58511,English,Mozambique Ridged Frog,false
+58516,English,Sharp-nosed Frog,true
+58529,English,Lukula Grassland Frog,false
+58529,English,Small Ridged Frog,false
+58529,English,Spotted Throated Ridged Frog,false
+58529,English,Dwarf Grass Frog,true
+58535,English,African Bullfrog,false
+58764,English,Banded Stream Frog,false
+58765,English,Striped Stream Frog,false
+58767,English,Gray's Stream Frog,false
+58768,English,Berg Stream Frog,false
+58768,English,Natal Drakensberg Frog,false
+58768,English,Phofung River Frog,false
+58768,English,Drakensberg River Frog,true
+58772,English,Namaqua Stream Frog,true
+58773,English,Wager's Stream Frog,true
+58776,English,Delalande's Sand Frog,false
+58777,English,Knocking Sand Frog,false
+58778,English,Marbled Sand Frog,false
+58779,English,Natal Sand Frog,false
+58780,English,Tandy's Sand Frog,false
+58801,English,Grey Foam-nest Treefrog,false
+61860,English,Northern Moss Frog,true
+174664,English,Rough Moss Frog,true
+21136111,English,Catequero Bullfrog,true
+45331497,English,Cape Rana,false
+45331497,English,Cape River Frog,false
+45331497,English,Dark-throated Frog,false
+45331497,English,Dusky-throated River Frog,false
+45331497,English,Dark-throated River Frog,true
+45550871,English,Common Squeaker,false
+45550871,English,Narrow-footed Humus Frog ,false
+45550871,English,Savanna Squeaking Frog,false
+45550871,English,Shovel-footed Squeaker,false
+45550871,English,Dune Squeaker,true
+76317557,English,Small-throated Dainty Frog,true
+76317565,English,Mascarene Grass Frog,true
+76317591,English,African Bullfrog,false
+76317591,English,Edible Bullfrog,false
+76317591,English,Edible Frog,false
+76317591,English,Peter's Bullfrog,false
+76317591,English,Lesser Bull-frog,true

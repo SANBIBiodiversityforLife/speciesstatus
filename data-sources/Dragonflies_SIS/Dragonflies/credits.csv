@@ -1,0 +1,322 @@
+Order,affiliation,credit_type,email,firstName,initials,internal_taxon_id,lastName,nickname,user_id
+2,Odonata Specialist Group,Assessor,falseemail@john.simaika.com,John,J.,15543,Simaika,"",1125
+1,University of Stellenbosch,Assessor,samways@sun.ac.za,Michael,M.J.,15543,Samways,"",2946
+1,IUCN SSC Dragonfly Specialist Group,Assessor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,59813,Boudot,"",13439452
+6,"University of Annaba, Algeria",Assessor,falseemail@b.samraoui.com,B.,B.,59813,Samraoui,"",2948
+5,"Senckenberg Research Institute, Germany",Assessor,fri.wol@t-online.de,Wolfgang,W.,59813,Schneider,"",3133
+3,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,59813,Clausnitzer,"",1099
+4,IUCN SSC Dragonfly Specialist Group,Assessor,f.suhling@tu-bs.de,Frank,F.,59813,Suhling,"",1119
+1,IUCN SSC Dragonfly Specialist Group,Assessor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,59902,Boudot,"",13439452
+6,"University of Annaba, Algeria",Assessor,falseemail@b.samraoui.com,B.,B.,59902,Samraoui,"",2948
+5,"Senckenberg Research Institute, Germany",Assessor,fri.wol@t-online.de,Wolfgang,W.,59902,Schneider,"",3133
+2,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,59902,Clausnitzer,"",1099
+3,IUCN SSC Dragonfly Specialist Group,Assessor,f.suhling@tu-bs.de,Frank,F.,59902,Suhling,"",1119
+1,IUCN SSC Dragonfly Specialist Group,Assessor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,59860,Boudot,"",13439452
+6,"University of Annaba, Algeria",Assessor,falseemail@b.samraoui.com,B.,B.,59860,Samraoui,"",2948
+3,"Senckenberg Research Institute, Germany",Assessor,fri.wol@t-online.de,Wolfgang,W.,59860,Schneider,"",3133
+2,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,59860,Clausnitzer,"",1099
+4,IUCN SSC Dragonfly Specialist Group,Assessor,f.suhling@tu-bs.de,Frank,F.,59860,Suhling,"",1119
+1,IUCN SSC Dragonfly Specialist Group,Assessor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,59952,Boudot,"",13439452
+5,"University of Annaba, Algeria",Assessor,falseemail@b.samraoui.com,B.,B.,59952,Samraoui,"",2948
+6,"Senckenberg Research Institute, Germany",Assessor,fri.wol@t-online.de,Wolfgang,W.,59952,Schneider,"",3133
+2,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,59952,Clausnitzer,"",1099
+4,IUCN SSC Dragonfly Specialist Group,Assessor,f.suhling@tu-bs.de,Frank,F.,59952,Suhling,"",1119
+1,IUCN SSC Dragonfly Specialist Group,Assessor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,59965,Boudot,"",13439452
+3,"University of Annaba, Algeria",Assessor,falseemail@b.samraoui.com,B.,B.,59965,Samraoui,"",2948
+2,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,59965,Clausnitzer,"",1099
+4,IUCN SSC Dragonfly Specialist Group,Assessor,f.suhling@tu-bs.de,Frank,F.,59965,Suhling,"",1119
+1,IUCN SSC Dragonfly Specialist Group,Assessor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,59967,Boudot,"",13439452
+6,"University of Annaba, Algeria",Assessor,falseemail@b.samraoui.com,B.,B.,59967,Samraoui,"",2948
+5,"Senckenberg Research Institute, Germany",Assessor,fri.wol@t-online.de,Wolfgang,W.,59967,Schneider,"",3133
+2,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,59967,Clausnitzer,"",1099
+4,IUCN SSC Dragonfly Specialist Group,Assessor,f.suhling@tu-bs.de,Frank,F.,59967,Suhling,"",1119
+1,IUCN SSC Dragonfly Specialist Group,Assessor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,60052,Boudot,"",13439452
+7,"University of Annaba, Algeria",Assessor,falseemail@b.samraoui.com,B.,B.,60052,Samraoui,"",2948
+6,"Senckenberg Research Institute, Germany",Assessor,fri.wol@t-online.de,Wolfgang,W.,60052,Schneider,"",3133
+2,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,60052,Clausnitzer,"",1099
+3,"",Assessor,hiporame@gmail.com,Sónia,S.,60052,Ferreira,"",1882
+4,IUCN SSC Dragonfly Specialist Group,Assessor,f.suhling@tu-bs.de,Frank,F.,60052,Suhling,"",1119
+1,IUCN SSC Dragonfly Specialist Group,Assessor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,60053,Boudot,"",13439452
+3,"University of Annaba, Algeria",Assessor,falseemail@b.samraoui.com,B.,B.,60053,Samraoui,"",2948
+6,"Senckenberg Research Institute, Germany",Assessor,fri.wol@t-online.de,Wolfgang,W.,60053,Schneider,"",3133
+2,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,60053,Clausnitzer,"",1099
+4,IUCN SSC Dragonfly Specialist Group,Assessor,f.suhling@tu-bs.de,Frank,F.,60053,Suhling,"",1119
+1,IUCN SSC Dragonfly Specialist Group,Assessor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,60062,Boudot,"",13439452
+3,"University of Annaba, Algeria",Assessor,falseemail@b.samraoui.com,B.,B.,60062,Samraoui,"",2948
+6,"Senckenberg Research Institute, Germany",Assessor,fri.wol@t-online.de,Wolfgang,W.,60062,Schneider,"",3133
+2,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,60062,Clausnitzer,"",1099
+4,IUCN SSC Dragonfly Specialist Group,Assessor,f.suhling@tu-bs.de,Frank,F.,60062,Suhling,"",1119
+2,IUCN SSC Dragonfly Specialist Group,Assessor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,60078,Boudot,"",13439452
+8,"University of Annaba, Algeria",Assessor,falseemail@b.samraoui.com,B.,B.,60078,Samraoui,"",2948
+7,"Senckenberg Research Institute, Germany",Assessor,fri.wol@t-online.de,Wolfgang,W.,60078,Schneider,"",3133
+1,Naturalis (Eastern Himalayas),Assessor,rory.dow230@yahoo.co.uk,Rory,R.A.,60078,Dow,"",401
+3,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,60078,Clausnitzer,"",1099
+5,"",Assessor,hiporame@gmail.com,Sónia,S.,60078,Ferreira,"",1882
+4,IUCN SSC Dragonfly Specialist Group,Assessor,f.suhling@tu-bs.de,Frank,F.,60078,Suhling,"",1119
+5,IUCN SSC Dragonfly Specialist Group,Assessor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,60049,Boudot,"",13439452
+7,"University of Annaba, Algeria",Assessor,falseemail@b.samraoui.com,B.,B.,60049,Samraoui,"",2948
+6,"Senckenberg Research Institute, Germany",Assessor,fri.wol@t-online.de,Wolfgang,W.,60049,Schneider,"",3133
+4,Naturalis (Eastern Himalayas),Assessor,rory.dow230@yahoo.co.uk,Rory,R.A.,60049,Dow,"",401
+1,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,60049,Clausnitzer,"",1099
+2,IUCN SSC Dragonfly Specialist Group,Assessor,f.suhling@tu-bs.de,Frank,F.,60049,Suhling,"",1119
+1,IUCN SSC Dragonfly Specialist Group,Assessor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,60037,Boudot,"",13439452
+3,"University of Annaba, Algeria",Assessor,falseemail@b.samraoui.com,B.,B.,60037,Samraoui,"",2948
+6,"Senckenberg Research Institute, Germany",Assessor,fri.wol@t-online.de,Wolfgang,W.,60037,Schneider,"",3133
+2,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,60037,Clausnitzer,"",1099
+4,IUCN SSC Dragonfly Specialist Group,Assessor,f.suhling@tu-bs.de,Frank,F.,60037,Suhling,"",1119
+1,ZSI (Eastern Himalayas),Assessor,subbuka.zsi@gmail.com,K.A.,K.A.,59811,Subramanian,"",429
+1,Sherubtse College (Eastern Himalayas),Assessor,amitodonata@yahoo.com,Amit,A.,59812,Mitra,"",395
+1,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,59819,Clausnitzer,"",1099
+2,IUCN SSC Dragonfly Specialist Group,Assessor,f.suhling@tu-bs.de,Frank,F.,59819,Suhling,"",1119
+1,IUCN SSC Dragonfly Specialist Group,Assessor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,59828,Boudot,"",13439452
+6,"University of Annaba, Algeria",Assessor,falseemail@b.samraoui.com,B.,B.,59828,Samraoui,"",2948
+5,"Senckenberg Research Institute, Germany",Assessor,fri.wol@t-online.de,Wolfgang,W.,59828,Schneider,"",3133
+2,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,59828,Clausnitzer,"",1099
+4,IUCN SSC Dragonfly Specialist Group,Assessor,f.suhling@tu-bs.de,Frank,F.,59828,Suhling,"",1119
+1,Naturalis (Eastern Himalayas),Assessor,rory.dow230@yahoo.co.uk,Rory,R.A.,59864,Dow,"",401
+1,ZSI (Eastern Himalayas),Assessor,drgaurav.zsi.india@gmail.com,Gaurav,"",59897,Sharma,G.,397
+1,ZSI (Eastern Himalayas),Assessor,drgaurav.zsi.india@gmail.com,Gaurav,"",167478,Sharma,G.,397
+1,IUCN SSC Dragonfly Specialist Group,Assessor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,59921,Boudot,"",13439452
+5,"University of Annaba, Algeria",Assessor,falseemail@b.samraoui.com,B.,B.,59921,Samraoui,"",2948
+6,"Senckenberg Research Institute, Germany",Assessor,fri.wol@t-online.de,Wolfgang,W.,59921,Schneider,"",3133
+2,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,59921,Clausnitzer,"",1099
+3,IUCN SSC Dragonfly Specialist Group,Assessor,f.suhling@tu-bs.de,Frank,F.,59921,Suhling,"",1119
+1,IUCN SSC Dragonfly Specialist Group,Assessor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,59948,Boudot,"",13439452
+6,"University of Annaba, Algeria",Assessor,falseemail@b.samraoui.com,B.,B.,59948,Samraoui,"",2948
+5,"Senckenberg Research Institute, Germany",Assessor,fri.wol@t-online.de,Wolfgang,W.,59948,Schneider,"",3133
+2,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,59948,Clausnitzer,"",1099
+3,IUCN SSC Dragonfly Specialist Group,Assessor,f.suhling@tu-bs.de,Frank,F.,59948,Suhling,"",1119
+1,IUCN SSC Dragonfly Specialist Group,Assessor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,59954,Boudot,"",13439452
+3,"University of Annaba, Algeria",Assessor,falseemail@b.samraoui.com,B.,B.,59954,Samraoui,"",2948
+6,"Senckenberg Research Institute, Germany",Assessor,fri.wol@t-online.de,Wolfgang,W.,59954,Schneider,"",3133
+2,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,59954,Clausnitzer,"",1099
+4,IUCN SSC Dragonfly Specialist Group,Assessor,f.suhling@tu-bs.de,Frank,F.,59954,Suhling,"",1119
+1,IUCN SSC Dragonfly Specialist Group,Assessor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,59971,Boudot,"",13439452
+3,"University of Annaba, Algeria",Assessor,falseemail@b.samraoui.com,B.,B.,59971,Samraoui,"",2948
+6,"Senckenberg Research Institute, Germany",Assessor,fri.wol@t-online.de,Wolfgang,W.,59971,Schneider,"",3133
+2,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,59971,Clausnitzer,"",1099
+4,IUCN SSC Dragonfly Specialist Group,Assessor,f.suhling@tu-bs.de,Frank,F.,59971,Suhling,"",1119
+1,IUCN SSC Dragonfly Specialist Group,Assessor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,59976,Boudot,"",13439452
+3,"University of Annaba, Algeria",Assessor,falseemail@b.samraoui.com,B.,B.,59976,Samraoui,"",2948
+6,"Senckenberg Research Institute, Germany",Assessor,fri.wol@t-online.de,Wolfgang,W.,59976,Schneider,"",3133
+2,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,59976,Clausnitzer,"",1099
+4,IUCN SSC Dragonfly Specialist Group,Assessor,f.suhling@tu-bs.de,Frank,F.,59976,Suhling,"",1119
+1,IUCN SSC Dragonfly Specialist Group,Assessor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,60019,Boudot,"",13439452
+6,"University of Annaba, Algeria",Assessor,falseemail@b.samraoui.com,B.,B.,60019,Samraoui,"",2948
+5,"Senckenberg Research Institute, Germany",Assessor,fri.wol@t-online.de,Wolfgang,W.,60019,Schneider,"",3133
+2,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,60019,Clausnitzer,"",1099
+3,IUCN SSC Dragonfly Specialist Group,Assessor,f.suhling@tu-bs.de,Frank,F.,60019,Suhling,"",1119
+1,IUCN SSC Dragonfly Specialist Group,Assessor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,60022,Boudot,"",13439452
+6,"University of Annaba, Algeria",Assessor,falseemail@b.samraoui.com,B.,B.,60022,Samraoui,"",2948
+5,"Senckenberg Research Institute, Germany",Assessor,fri.wol@t-online.de,Wolfgang,W.,60022,Schneider,"",3133
+2,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,60022,Clausnitzer,"",1099
+3,IUCN SSC Dragonfly Specialist Group,Assessor,f.suhling@tu-bs.de,Frank,F.,60022,Suhling,"",1119
+1,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,60038,Clausnitzer,"",1099
+1,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,60048,Clausnitzer,"",1099
+1,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,60050,Clausnitzer,"",1099
+1,IUCN SSC Dragonfly Specialist Group,Assessor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,60058,Boudot,"",13439452
+5,"University of Annaba, Algeria",Assessor,falseemail@b.samraoui.com,B.,B.,60058,Samraoui,"",2948
+6,"Senckenberg Research Institute, Germany",Assessor,fri.wol@t-online.de,Wolfgang,W.,60058,Schneider,"",3133
+2,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,60058,Clausnitzer,"",1099
+3,IUCN SSC Dragonfly Specialist Group,Assessor,f.suhling@tu-bs.de,Frank,F.,60058,Suhling,"",1119
+1,IUCN SSC Dragonfly Specialist Group,Assessor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,60073,Boudot,"",13439452
+5,"University of Annaba, Algeria",Assessor,falseemail@b.samraoui.com,B.,B.,60073,Samraoui,"",2948
+6,"Senckenberg Research Institute, Germany",Assessor,fri.wol@t-online.de,Wolfgang,W.,60073,Schneider,"",3133
+2,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,60073,Clausnitzer,"",1099
+4,IUCN SSC Dragonfly Specialist Group,Assessor,f.suhling@tu-bs.de,Frank,F.,60073,Suhling,"",1119
+1,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,59859,Clausnitzer,"",1099
+1,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,59814,Clausnitzer,"",1099
+2,IUCN SSC Dragonfly Specialist Group,Assessor,f.suhling@tu-bs.de,Frank,F.,59814,Suhling,"",1119
+1,IUCN SSC Dragonfly Red List Authority,Assessor,violacl@t-online.de,Viola,V.,59958,Clausnitzer,"",1099
+3,IUCN SSC Dragonfly Specialist Group,Assessor,f.suhling@tu-bs.de,Frank,F.,59958,Suhling,"",1119
+1,IUCN SSC Dragonfly Red List Authority,Reviewer,violacl@t-online.de,Viola,V.,15543,Clausnitzer,"",1099
+2,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,15543,Suhling,"",1119
+2,Odonata Specialist Group,Reviewer,falseemail@john.simaika.com,John,J.,63219,Simaika,"",1125
+5,Red List Unit,Reviewer,caroline.pollock@iucn.org,Caroline,C.M.,63219,Pollock,"",182
+3,University of Stellenbosch,Reviewer,samways@sun.ac.za,Michael,M.J.,63219,Samways,"",2946
+4,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,63219,Suhling,"",1119
+1,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,59813,García,"",1107
+2,IUCN,Reviewer,marcelo.tognelli@iucn.org,Marcelo,M.,59813,Tognelli,"",1549
+3,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,59813,Suhling,"",1119
+2,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,59902,García,"",1107
+1,IUCN,Reviewer,marcelo.tognelli@iucn.org,Marcelo,M.,59902,Tognelli,"",1549
+3,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,59902,Suhling,"",1119
+1,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,59860,García,"",1107
+2,IUCN,Reviewer,marcelo.tognelli@iucn.org,Marcelo,M.,59860,Tognelli,"",1549
+3,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,59860,Suhling,"",1119
+1,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,59952,García,"",1107
+2,IUCN,Reviewer,marcelo.tognelli@iucn.org,Marcelo,M.,59952,Tognelli,"",1549
+3,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,59952,Suhling,"",1119
+1,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,59965,García,"",1107
+2,IUCN,Reviewer,marcelo.tognelli@iucn.org,Marcelo,M.,59965,Tognelli,"",1549
+3,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,59965,Suhling,"",1119
+1,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,59967,García,"",1107
+2,IUCN,Reviewer,marcelo.tognelli@iucn.org,Marcelo,M.,59967,Tognelli,"",1549
+3,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,59967,Suhling,"",1119
+1,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,60052,García,"",1107
+2,IUCN,Reviewer,marcelo.tognelli@iucn.org,Marcelo,M.,60052,Tognelli,"",1549
+3,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,60052,Suhling,"",1119
+1,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,60053,García,"",1107
+2,IUCN,Reviewer,marcelo.tognelli@iucn.org,Marcelo,M.,60053,Tognelli,"",1549
+3,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,60053,Suhling,"",1119
+1,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,60062,García,"",1107
+2,IUCN,Reviewer,marcelo.tognelli@iucn.org,Marcelo,M.,60062,Tognelli,"",1549
+3,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,60062,Suhling,"",1119
+1,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,60078,García,"",1107
+2,IUCN,Reviewer,marcelo.tognelli@iucn.org,Marcelo,M.,60078,Tognelli,"",1549
+3,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,60078,Suhling,"",1119
+1,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,60049,García,"",1107
+2,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,60049,Suhling,"",1119
+1,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,60037,García,"",1107
+2,IUCN,Reviewer,marcelo.tognelli@iucn.org,Marcelo,M.,60037,Tognelli,"",1549
+3,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,60037,Suhling,"",1119
+1,Sherubtse College (Eastern Himalayas),Reviewer,amitodonata@yahoo.com,Amit,A.,59811,Mitra,"",395
+2,Zoological Survey of India,Reviewer,rbabu2000@rediffmail.com,Rajappa,R.,59811,Babu,"",2171
+3,Freshwater Biodiversity Unit,Reviewer,emma.brooks@iucn.org,Emma,E.,59811,Brooks,"",427
+6,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,59811,García,"",1107
+5,Naturalis (Eastern Himalayas),Reviewer,rory.dow230@yahoo.co.uk,Rory,R.A.,59811,Dow,"",401
+4,IUCN SSC Dragonfly Red List Authority,Reviewer,violacl@t-online.de,Viola,V.,59811,Clausnitzer,"",1099
+2,Zoological Survey of India,Reviewer,rbabu2000@rediffmail.com,Rajappa,R.,59812,Babu,"",2171
+3,IESWM,Reviewer,sharmi.mondal@gmail.com,Sharmistha,S.,59812,Mondal,"",2173
+4,Freshwater Biodiversity Unit,Reviewer,emma.brooks@iucn.org,Emma,E.,59812,Brooks,"",427
+1,Western Ghats Freshwater Species Assessment,Reviewer,kakkassery@yahoo.com,Francy,F.,59812,Kakkasery,"",2001
+7,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,59812,García,"",1107
+6,Naturalis (Eastern Himalayas),Reviewer,rory.dow230@yahoo.co.uk,Rory,R.A.,59812,Dow,"",401
+5,IUCN SSC Dragonfly Red List Authority,Reviewer,violacl@t-online.de,Viola,V.,59812,Clausnitzer,"",1099
+3,IUCN SSC Dragonfly Specialist Group,Reviewer,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,59819,Boudot,"",13439452
+6,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,59819,García,"",1107
+1,University of Stellenbosch,Reviewer,samways@sun.ac.za,Michael,M.J.,59819,Samways,"",2946
+2,"University of Annaba, Algeria",Reviewer,falseemail@b.samraoui.com,B.,B.,59819,Samraoui,"",2948
+5,IUCN,Reviewer,david.allen@iucn.org,David,D.J.,59819,Allen,"",305
+1,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,59828,García,"",1107
+2,IUCN,Reviewer,marcelo.tognelli@iucn.org,Marcelo,M.,59828,Tognelli,"",1549
+3,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,59828,Suhling,"",1119
+3,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,59864,García,"",1107
+1,IUCN SSC Dragonfly Red List Authority,Reviewer,violacl@t-online.de,Viola,V.,59864,Clausnitzer,"",1099
+2,IUCN,Reviewer,david.allen@iucn.org,David,D.J.,59864,Allen,"",305
+4,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,59897,García,"",1107
+2,Naturalis (Eastern Himalayas),Reviewer,rory.dow230@yahoo.co.uk,Rory,R.A.,59897,Dow,"",401
+3,IUCN SSC Dragonfly Red List Authority,Reviewer,violacl@t-online.de,Viola,V.,59897,Clausnitzer,"",1099
+1,IUCN,Reviewer,david.allen@iucn.org,David,D.J.,59897,Allen,"",305
+4,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,167478,García,"",1107
+2,Naturalis (Eastern Himalayas),Reviewer,rory.dow230@yahoo.co.uk,Rory,R.A.,167478,Dow,"",401
+1,IUCN SSC Dragonfly Red List Authority,Reviewer,violacl@t-online.de,Viola,V.,167478,Clausnitzer,"",1099
+3,IUCN,Reviewer,david.allen@iucn.org,David,D.J.,167478,Allen,"",305
+1,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,59921,García,"",1107
+2,IUCN,Reviewer,marcelo.tognelli@iucn.org,Marcelo,M.,59921,Tognelli,"",1549
+3,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,59921,Suhling,"",1119
+1,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,59948,García,"",1107
+2,IUCN,Reviewer,marcelo.tognelli@iucn.org,Marcelo,M.,59948,Tognelli,"",1549
+3,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,59948,Suhling,"",1119
+1,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,59954,García,"",1107
+2,IUCN,Reviewer,marcelo.tognelli@iucn.org,Marcelo,M.,59954,Tognelli,"",1549
+3,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,59954,Suhling,"",1119
+1,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,59971,García,"",1107
+2,IUCN,Reviewer,marcelo.tognelli@iucn.org,Marcelo,M.,59971,Tognelli,"",1549
+3,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,59971,Suhling,"",1119
+2,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,59976,García,"",1107
+1,IUCN,Reviewer,marcelo.tognelli@iucn.org,Marcelo,M.,59976,Tognelli,"",1549
+3,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,59976,Suhling,"",1119
+1,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,60019,García,"",1107
+2,IUCN,Reviewer,marcelo.tognelli@iucn.org,Marcelo,M.,60019,Tognelli,"",1549
+3,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,60019,Suhling,"",1119
+1,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,60022,García,"",1107
+2,IUCN,Reviewer,marcelo.tognelli@iucn.org,Marcelo,M.,60022,Tognelli,"",1549
+3,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,60022,Suhling,"",1119
+3,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,60038,García,"",1107
+1,Naturalis (Eastern Himalayas),Reviewer,rory.dow230@yahoo.co.uk,Rory,R.A.,60038,Dow,"",401
+2,IUCN,Reviewer,david.allen@iucn.org,David,D.J.,60038,Allen,"",305
+4,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,60048,García,"",1107
+2,Naturalis (Eastern Himalayas),Reviewer,rory.dow230@yahoo.co.uk,Rory,R.A.,60048,Dow,"",401
+3,IUCN,Reviewer,david.allen@iucn.org,David,D.J.,60048,Allen,"",305
+3,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,60050,García,"",1107
+2,Naturalis (Eastern Himalayas),Reviewer,rory.dow230@yahoo.co.uk,Rory,R.A.,60050,Dow,"",401
+1,IUCN,Reviewer,david.allen@iucn.org,David,D.J.,60050,Allen,"",305
+1,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,60058,García,"",1107
+2,IUCN,Reviewer,marcelo.tognelli@iucn.org,Marcelo,M.,60058,Tognelli,"",1549
+3,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,60058,Suhling,"",1119
+1,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,60073,García,"",1107
+2,IUCN,Reviewer,marcelo.tognelli@iucn.org,Marcelo,M.,60073,Tognelli,"",1549
+3,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,60073,Suhling,"",1119
+4,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,59859,García,"",1107
+1,Naturalis (Eastern Himalayas),Reviewer,rory.dow230@yahoo.co.uk,Rory,R.A.,59859,Dow,"",401
+3,IUCN,Reviewer,david.allen@iucn.org,David,D.J.,59859,Allen,"",305
+5,IUCN SSC Dragonfly Specialist Group,Reviewer,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,59814,Boudot,"",13439452
+8,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,59814,García,"",1107
+3,University of Stellenbosch,Reviewer,samways@sun.ac.za,Michael,M.J.,59814,Samways,"",2946
+2,"University of Annaba, Algeria",Reviewer,falseemail@b.samraoui.com,B.,B.,59814,Samraoui,"",2948
+4,"Senckenberg Research Institute, Germany",Reviewer,fri.wol@t-online.de,Wolfgang,W.,59814,Schneider,"",3133
+7,IUCN,Reviewer,david.allen@iucn.org,David,D.J.,59814,Allen,"",305
+7,IUCN SSC Dragonfly Specialist Group,Reviewer,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,59958,Boudot,"",13439452
+9,IUCN,Reviewer,nieves.garcia@iucn.org,Nieves,N.,59958,García,"",1107
+4,University of Stellenbosch,Reviewer,samways@sun.ac.za,Michael,M.J.,59958,Samways,"",2946
+5,"University of Annaba, Algeria",Reviewer,falseemail@b.samraoui.com,B.,B.,59958,Samraoui,"",2948
+2,IUCN SSC Dragonfly Red List Authority,Reviewer,violacl@t-online.de,Viola,V.,59958,Clausnitzer,"",1099
+3,IUCN SSC Dragonfly Specialist Group,Reviewer,f.suhling@tu-bs.de,Frank,F.,59958,Suhling,"",1119
+8,IUCN,Reviewer,david.allen@iucn.org,David,D.J.,59958,Allen,"",305
+1,IUCN SSC Dragonfly Specialist Group,Contributor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,59811,Boudot,"",13439452
+2,"University of Annaba, Algeria",Contributor,falseemail@b.samraoui.com,B.,B.,59811,Samraoui,"",2948
+3,"Senckenberg Research Institute, Germany",Contributor,fri.wol@t-online.de,Wolfgang,W.,59811,Schneider,"",3133
+1,IUCN SSC Dragonfly Specialist Group,Contributor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,59812,Boudot,"",13439452
+2,"University of Annaba, Algeria",Contributor,falseemail@b.samraoui.com,B.,B.,59812,Samraoui,"",2948
+3,"Senckenberg Research Institute, Germany",Contributor,fri.wol@t-online.de,Wolfgang,W.,59812,Schneider,"",3133
+1,IUCN SSC Dragonfly Specialist Group,Contributor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,59819,Boudot,"",13439452
+3,"University of Annaba, Algeria",Contributor,falseemail@b.samraoui.com,B.,B.,59819,Samraoui,"",2948
+2,"Senckenberg Research Institute, Germany",Contributor,fri.wol@t-online.de,Wolfgang,W.,59819,Schneider,"",3133
+1,IUCN SSC Dragonfly Specialist Group,Contributor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,59864,Boudot,"",13439452
+3,"University of Annaba, Algeria",Contributor,falseemail@b.samraoui.com,B.,B.,59864,Samraoui,"",2948
+2,"Senckenberg Research Institute, Germany",Contributor,fri.wol@t-online.de,Wolfgang,W.,59864,Schneider,"",3133
+1,IUCN SSC Dragonfly Specialist Group,Contributor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,59897,Boudot,"",13439452
+3,"University of Annaba, Algeria",Contributor,falseemail@b.samraoui.com,B.,B.,59897,Samraoui,"",2948
+2,"Senckenberg Research Institute, Germany",Contributor,fri.wol@t-online.de,Wolfgang,W.,59897,Schneider,"",3133
+1,IUCN SSC Dragonfly Specialist Group,Contributor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,167478,Boudot,"",13439452
+3,"University of Annaba, Algeria",Contributor,falseemail@b.samraoui.com,B.,B.,167478,Samraoui,"",2948
+2,"Senckenberg Research Institute, Germany",Contributor,fri.wol@t-online.de,Wolfgang,W.,167478,Schneider,"",3133
+1,IUCN SSC Dragonfly Specialist Group,Contributor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,60038,Boudot,"",13439452
+3,"University of Annaba, Algeria",Contributor,falseemail@b.samraoui.com,B.,B.,60038,Samraoui,"",2948
+2,"Senckenberg Research Institute, Germany",Contributor,fri.wol@t-online.de,Wolfgang,W.,60038,Schneider,"",3133
+2,IUCN SSC Dragonfly Specialist Group,Contributor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,60048,Boudot,"",13439452
+3,"University of Annaba, Algeria",Contributor,falseemail@b.samraoui.com,B.,B.,60048,Samraoui,"",2948
+4,"Senckenberg Research Institute, Germany",Contributor,fri.wol@t-online.de,Wolfgang,W.,60048,Schneider,"",3133
+1,IUCN SSC Dragonfly Specialist Group,Contributor,f.suhling@tu-bs.de,Frank,F.,60048,Suhling,"",1119
+1,IUCN SSC Dragonfly Specialist Group,Contributor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,60050,Boudot,"",13439452
+3,"University of Annaba, Algeria",Contributor,falseemail@b.samraoui.com,B.,B.,60050,Samraoui,"",2948
+2,"Senckenberg Research Institute, Germany",Contributor,fri.wol@t-online.de,Wolfgang,W.,60050,Schneider,"",3133
+5,IUCN SSC Dragonfly Specialist Group,Contributor,jean-pierre.boudot@univ-lorraine.fr,Jean-Pierre,J.-P.,59859,Boudot,"",13439452
+3,Sherubtse College (Eastern Himalayas),Contributor,amitodonata@yahoo.com,Amit,A.,59859,Mitra,"",395
+4,ZSI (Eastern Himalayas),Contributor,subbuka.zsi@gmail.com,K.A.,K.A.,59859,Subramanian,"",429
+7,"University of Annaba, Algeria",Contributor,falseemail@b.samraoui.com,B.,B.,59859,Samraoui,"",2948
+6,"Senckenberg Research Institute, Germany",Contributor,fri.wol@t-online.de,Wolfgang,W.,59859,Schneider,"",3133
+2,"",Contributor,hiporame@gmail.com,Sónia,S.,59859,Ferreira,"",1882
+1,IUCN SSC Dragonfly Specialist Group,Contributor,f.suhling@tu-bs.de,Frank,F.,59859,Suhling,"",1119
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,59813,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,59902,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,59860,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,59952,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,59965,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,59967,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,60052,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,60053,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,60062,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,60078,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,60049,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,60037,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,59811,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,59812,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,59819,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,59828,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,59897,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,167478,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,59921,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,59948,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,59954,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,59971,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,59976,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,60019,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,60022,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,60038,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,60048,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,60050,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,60058,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,60073,Alomari,"",15279059
+1,IUCN Regional Office for West Asia (ROWA),Facilitator,khaldoun.alomari@iucn.org,Khaldoun,K.,59814,Alomari,"",15279059

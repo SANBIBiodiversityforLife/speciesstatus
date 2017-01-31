@@ -54,11 +54,14 @@ class Taxon(MPTTModel):
     # The references where species are described, for botany they record all of them and for zoology just the first one
     references = models.ManyToManyField(Reference, through='Description')
 
-    # The current taxa of a species
+    # This is populated if it's a taxon is a synonym (merged, split
     current_name = models.ForeignKey('Taxon', on_delete=models.SET_NULL, null=True, blank=True)
 
     # Used to make friendly URLs
     slug = models.SlugField(max_length=200  )
+
+    # If a taxon is merged or split taxonomists often want to record why it happened, this can be entered here
+    notes = models.TextField(null=True)
 
     # Overrides the default save so that we can get a nice URL
     def save(self, *args, **kwargs):
@@ -353,7 +356,7 @@ class GeneralDistribution(models.Model):
         (EXTINCT, 'Extinct'),
         (UNKNOWN, 'Unknown'),
     )
-    residency_status = models.CharField(max_length=3, choices=RESIDENCY_CHOICES)
+    residency_status = models.CharField(max_length=3, choices=RESIDENCY_CHOICES, null=True, blank=True)
 
     # Reference(s?) for the residency status & distribution
     reference = models.ForeignKey(Reference)

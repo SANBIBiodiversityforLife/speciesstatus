@@ -16,6 +16,7 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from website import views as website_views
+from imports import views as imports_views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -27,6 +28,7 @@ urlpatterns = [
 
     # Import of content
     # url(r'^taxa/import-seakeys$', taxa_views.import_seakeys, name='import_seakeys'),
+    url(r'^import/', include('imports.urls')),
 
     url(r'^taxa/', include('taxa.urls')),
     url(r'^biblio/', include('biblio.urls')),

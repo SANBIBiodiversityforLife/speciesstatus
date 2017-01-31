@@ -1,7 +1,7 @@
 from django.contrib.gis.db import models
 from taxa.models import Taxon
 from people.models import Person
-from django.contrib.postgres.fields import IntegerRangeField, ArrayField, DateRangeField
+from django.contrib.postgres.fields import IntegerRangeField, ArrayField, DateRangeField, HStoreField
 
 
 class Threat(models.Model):
@@ -32,7 +32,7 @@ class Action(models.Model):
 
 
 class Assessment(models.Model):
-    taxa = models.ForeignKey(Taxon)
+    taxon = models.ForeignKey(Taxon)
     NATIONAL = 'N'
     REGIONAL = 'R'
     GLOBAL = 'G'
@@ -73,10 +73,10 @@ class Assessment(models.Model):
     redlist_criteria = models.CharField(max_length=100)
 
     # Population stuff
-    population_size = IntegerRangeField(null=True, blank=True) # Current size
+    population_current = IntegerRangeField(null=True, blank=True)
     subpopulation_number = IntegerRangeField(null=True, blank=True)
-    population_trend_past = IntegerRangeField(null=True, blank=True)
-    population_trend_future = IntegerRangeField(null=True, blank=True)
+    population_past = IntegerRangeField(null=True, blank=True)
+    population_future = IntegerRangeField(null=True, blank=True)
     UNDERSTOOD = 'U'
     REVERSIBLE = 'R'
     CEASED = 'C'
@@ -91,10 +91,15 @@ class Assessment(models.Model):
     # Conservation and research actions
     conservation_actions = models.ManyToManyField(Action)
 
+    # Range size - should come from distribution but saved here temporarily
+    area_occupancy = IntegerRangeField(null=True, blank=True) # AOO
+    extent_occurrence = IntegerRangeField(null=True, blank=True) # EOO
+    temp_field = HStoreField(null=True, blank=True)
+
 
 class ActionNature(models.Model):
     assessment = models.ForeignKey(Assessment)
-    verbose = models.TextField()
+    verbose = models.TextField(blank=True)
     UNDERWAY = 'U'
     PROPOSED = 'P'
     COMPLETE = 'C'

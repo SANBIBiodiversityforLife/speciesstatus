@@ -1,0 +1,242 @@
+internal_taxon_id,language,name,primary
+4730,English,Drakensberg Malachite,false
+4731,English,Amatola Malachite,false
+4731,English,Basking Malachite,false
+6973,English,Queen Malachite,false
+6975,English,Marbled Malachite,false
+13257,English,Ceres Featherlegs,false
+13257,English,Ceres Stream-damsel,false
+13257,English,Mauve Bluet,true
+15543,English,Elusive Skimmer,true
+22816,English,St Lucia Basker,false
+42840,English,Kubusi Featherlegs,false
+42840,English,Kubusi Stream-damsel,false
+42843,English,Harlequin Sprite,false
+42845,English,Cape Thorntail,false
+59755,English,Banded Duskdarter,true
+59781,English,Graceful Slim,true
+59793,English,Pygmy Basker,true
+59797,English,Sprite Bluet,false
+59797,English,Peak Bluet,true
+59800,English,Little Wisp,true
+59801,English,Gracious Wisp,true
+59805,English,Highland Whisp,false
+59805,English,Pinhey’s Wisp,true
+59809,English,Evening Hawker,true
+59811,French,Anax Porte-Selle,false
+59811,German,Schabrackenlibelle,false
+59811,English,Vagrant Emperor,true
+59812,English,Emperor Dragonfly,false
+59812,French,Anax Empereur,false
+59812,German,Große Königslibelle,false
+59812,English,Blue Emperor,true
+59813,French,Anax du Cap,false
+59813,English,Orange Emperor,true
+59814,English,Magnificent Emperor,false
+59814,French,Anax Noir,false
+59814,English,Black Emperor,true
+59819,English,Sailing Azuret,true
+59821,English,Red Groundling,true
+59822,German,Treuer Kurzpfeil,false
+59822,English,Banded Groundling,true
+59824,English,Flecked Wall-skimmer,false
+59824,English,Horned Rock-dweller,true
+59828,English,Common Pond Damsel,false
+59828,English,Orange Waxtail,false
+59828,English,Common Waxtail,true
+59833,English,Plain Waxtail,false
+59833,English,Suave Citril,false
+59835,English,Inspector,false
+59835,English,Yellowface,false
+59845,English,Ruby Jewel,false
+59845,English,Southern Red-jewel,false
+59845,English,Southern Red Jewel,true
+59856,English,Clubbed Talontail,true
+59858,English,Slender Scarlet,false
+59858,English,Slender Scarlet-darter,false
+59858,English,Divisa Scarlet,true
+59859,English,Common Scarlet-darter,false
+59859,English,Scarlet Darter,false
+59859,English,Scarlet Dragonfly,false
+59859,German,Feuerlibelle,false
+59859,French,Libellule Écarlate,false
+59859,English,Broad Scarlet,true
+59860,English,Slim Scarlet-darter,false
+59860,English,Small Scarlet,false
+59860,English,Little Scarlet,true
+59864,French,Diplacodes de Lefebvre,false
+59864,German,Glänzender Schwarzpfeil,false
+59864,English,Black Percher,true
+59866,English,Grey Threadtail,false
+59866,English,Common Threadtail,true
+59871,English,Southern Fingertail,true
+59876,English,Little Dusk-hawker,false
+59876,English,Little Duskhawker,true
+59879,English,Eastern Duskhawker,false
+59879,English,Zulu Dusk-hawker,false
+59879,English,Usambara Duskhawker,true
+59881,English,Brown Duskhawker,true
+59893,English,African Pied-spot,true
+59894,English,Common Tiger,false
+59894,English,Common Tigertail,false
+59897,English,Tropical Bluetail,true
+59899,English,Cryptic Spreadwing,true
+59900,English,Tawny Spreadwing,true
+59902,English,Pallid Spreadwing,false
+59904,English,Highland Spreadwing,true
+59905,English,Spotted Spreadwing,true
+59906,English,Sickle Spreadwing,true
+59907,English,Smoky Spreadwing,true
+59908,English,Spined Fairytail,true
+59912,English,Savanna Brook-damsel,false
+59912,English,Savanna Stream-damsel,false
+59912,English,Common Riverjack,true
+59921,English,Eastern Blacktail,true
+59926,English,Eastern Elf,false
+59926,English,Eastern Forestwatcher,true
+59937,English,Yellowjack Longlegs,false
+59937,English,Southern Yellowjack,true
+59941,English,Southern Riverking,true
+59942,English,Bottletail,true
+59948,English,Little Skimmer,false
+59948,English,Abbott's Skimmer,true
+59951,English,Strong Skimmer,false
+59951,English,Banded Skimmer,true
+59952,English,White-lined Skimmer,false
+59952,English,Two-striped Skimmer,true
+59954,French,L'orthétrum de Barbarie,false
+59954,French,Orthétrum à Ptérostigmas Jaunes,false
+59954,German,Rahmstreif-Blaupfeil,false
+59954,English,Epaulet Skimmer,true
+59955,English,Guinea Skimmer,true
+59956,English,Dark-shouldered Skimmer,true
+59957,English,Spectacled Skimmer,true
+59958,English,Julia Skimmer,true
+59959,English,Highland Skimmer,true
+59962,English,Woodland Skimmer,true
+59964,English,Bold Skimmer,true
+59965,German,Langer Blaupfeil,false
+59965,French,Orthétrum de Sicile,false
+59965,English,Long Skimmer,true
+59967,English,Deceptive Widow,true
+59968,English,Yellow-veined Widow,true
+59969,English,Lucia Widow,true
+59970,English,Portia Widow,true
+59971,English,Globe Skimmer,false
+59971,English,Globe Wanderer,false
+59971,French,Libellule Globe Trotter,false
+59971,French,Pantale Flavescente,false
+59971,German,Wanderlibelle,false
+59971,English,Wandering Glider,true
+59974,English,Boulder Hooktail,false
+59974,English,Riffle Hooktail,false
+59974,English,Rock Hocktail,true
+59975,English,Corkscrew Hooktail,true
+59976,German,Afrikanische Sandjungfer,false
+59976,French,Gomphe de Géné,false
+59976,French,Le Gomphe De Géné,false
+59976,English,Common Hooktail,true
+59978,English,Great Hooktail,true
+59981,English,Flapper Hooktail,true
+59983,English,Glistening Demoiselle,true
+59986,English,Bold Leaftail,true
+59995,English,Black Cruiser,false
+59995,English,Unicorn Cruiser,false
+59997,English,Darting Cruiser,true
+60005,English,Dancing Jewel,true
+60010,English,Acacia Sprite,true
+60011,English,Spearhead Sprite,false
+60011,English,Spear Sprite,false
+60011,English,Assegaai Sprite,true
+60013,English,Catshead Sprite,true
+60014,English,Black Sprite,true
+60015,English,Great Sprite,true
+60018,English,Painted Sprite (Green Form),false
+60018,English,Painted Sprite,true
+60019,English,Swarthy Sprite,true
+60022,English,Powder-faced Sprite,true
+60025,English,Masai Sprite,true
+60030,English,Slate Sprite,true
+60031,English,Variable Sprite,true
+60032,English,Upland Sprite,true
+60033,English,River Sprite,false
+60033,English,Cherry-eye Sprite,true
+60034,English,Blue-sided Sprite,true
+60037,English,Phantom Flutterer,true
+60038,German,Frühe Heidelibelle,false
+60038,French,Sympétrum de Fonscolombe,false
+60038,English,Red-veined Darter,true
+60044,English,Black-splashed Elf,true
+60048,English,Coral-tailed Cloud Wing,false
+60048,English,Crepuscular Darter,false
+60048,English,Evening Skimmer,false
+60048,English,Foggy-winged Twister,false
+60048,English,Old World Twister,true
+60049,English,Red Marsh Trotter,false
+60049,English,Wheeling Glider,false
+60049,English,Keyhole Glider,true
+60050,English,Voyaging Glider,false
+60050,English,Ferruginous Glider,true
+60051,English,Halfshade Dropwing,true
+60052,English,Violet-marked Darter,false
+60052,French,Trithémis Annelé,false
+60052,German,Violetter Sonnenzeiger,false
+60052,English,Violet Dropwing,true
+60053,German,Rotader-Sonnenzeiger,false
+60053,French,Trithémis Écarlate,false
+60053,English,Red-veined Dropwing,true
+60056,English,Donaldson's Dropwing,false
+60056,English,Twig Dropwing,false
+60056,English,Denim Dropwing,true
+60057,English,Lake Dropwing,false
+60057,English,Highland Dropwing,true
+60058,English,Dark Dropwing,false
+60058,English,Navy Dropwing,true
+60060,English,Silhouette Dropwing,false
+60062,English,Kirby's Dropwing,false
+60062,German,Gefleckter Sonnenzeig,false
+60062,French,Trithémis de Kirby,false
+60062,English,Orange-winged Dropwing,true
+60065,English,Russet Dropwing,true
+60068,English,Jaunty Dropwing,true
+60069,English,Elegant Dropwing,true
+60072,English,Red Basker,true
+60073,English,Blue Basker,true
+60076,English,Powdered Cascader,false
+60076,English,Blue Cascader,true
+60078,German,Wasserfall-Kreuzer,false
+60078,French,Zygonyx du Désert,false
+60078,English,Ringed Cascader,true
+60079,English,Clear-winged Dusk-darter,false
+60079,English,Smoky Duskdarter,true
+63171,English,Mountain Malachite,false
+63175,English,Balinsky’s Sprite,false
+63175,English,Badplaas Sprite,true
+63176,English,Vaal Sprite,false
+63178,English,Orange Wisp,true
+63179,English,Forest Malachite,false
+63180,English,Yellow-faced Sprite,false
+63182,English,White-masked Wisp,false
+63184,English,Springwater Sprite,false
+63185,English,Palmiet Sprite,false
+63191,English,White Malachite,false
+63193,English,Friendly Hawker,true
+63194,English,Stream Hawker,true
+63195,English,Round-winged Bluet,false
+63201,English,Goldtail,true
+63202,English,Yellow Presba,false
+63203,English,Conspicuous Malachite,false
+63204,English,Robust Skimmer,false
+63208,English,Boulder Jewel,false
+63214,English,Green-striped Sprite,false
+63216,English,Sooty Threadtail,false
+63218,English,Sapphire Bluet,false
+63219,English,Mauve Bluet,false
+158578,English,Two-banded Cruiser,true
+167478,English,Coastal Glider,false
+167478,English,Wandering Pennant,false
+167478,English,Cora’s Pennant,true
+168007,English,African Emerald,true
+168013,English,Dwarf Percher,true
+168022,English,Mountain Sprite,true
+184261,English,Barbet Percher,true

@@ -33,18 +33,16 @@
       <!-- Common names -->
       <h2>Common names: {{ taxon.data.common_names|join:" // " }}{% if user.is_authenticated %}
       <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-backdrop="static" data-target="#commonNamesModal">Add</button>{% endif %}</h2>
+      <ul class="nav nav-tabs nav-inverse">
+        <li role="presentation" class="active"><a href="#">General</a></li>
+        <li role="presentation"><a href="#">Images</a></li>
+        <li role="presentation"><a href="#">Distribution</a></li>
+      </ul>
     </div>
 	</section>
 {% endblock %}
 
 {% block content %}
-<!-- Images -->
-<div id="species-images">
-  {% for img_url in taxon.data.images %}
-  <img src="{{ img_url }}">
-  {% endfor %}
-</div>
-
 <!-- Main content of species page -->
 <div class="row">
   <div class="col-md-9"><section id="species-info">
@@ -66,9 +64,6 @@
     </ul>
   </div>
 </div>
-
-
-
 
 <!-- Common names modal -->
 <div class="modal fade" id="commonNamesModal" tabindex="-1" role="dialog" aria-labelledby="commonNamesModalLabel">
@@ -93,7 +88,6 @@
     </div>
   </div>
 </div>
-
 
 <!-- Info modal -->
 <div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel">
@@ -165,16 +159,8 @@ $(document).ready(function() {
   $('#infoModal').on('shown.bs.modal', function (event) {
     console.log($('#ckeditor').attr('name'));
     CKEDITOR.replace($('#ckeditor').attr('name'));
-
-
-
   });
-
-
-;
-
 });
-
 </script>
 {% endblock js %}
 

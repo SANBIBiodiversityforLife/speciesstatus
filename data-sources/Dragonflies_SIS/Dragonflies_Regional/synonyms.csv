@@ -1,0 +1,156 @@
+infraType,infrarankAuthor,infrarankName,internal_taxon_id,name,speciesAuthor,speciesName
+,,,4730,"Chlorolestes draconica Balinsky, 1956 [orth. error]","Balinsky, 1956 [orth. error]",draconica
+,,,13257,"Metacnemis angusta Selys, 1863","Selys, 1863",angusta
+,,,59755,"Brachythemis liberiensis Fraser, 1949","Fraser, 1949",liberiensis
+,,,59781,"Mombagrion gracile Sjöstedt, 1909","Sjöstedt, 1909",gracile
+,,,59781,"Aciagrion hamoni Fraser, 1955","Fraser, 1955",hamoni
+,,,59781,"Aciagrion pinheyi Samways, 2001","Samways, 2001",pinheyi
+,,,59797,"Enallagma sinuatum Ris, 1921","Ris, 1921",sinuatum
+,,,59811,"Anax senegalensis Rambur, 1842","Rambur, 1842",senegalensis
+,,,59811,"Aeshna mediterranea Selys, 1839","Selys, 1839",mediterranea
+,,,59811,"Aeschna ephippigera Burmeister, 1839","Burmeister, 1839",ephippigera
+,,,59811,"Anax marginope Baijal & Agarwal, 1955","Baijal & Agarwal, 1955",marginope
+,,,59811,"Hemianax ephippiger (Burmeister, 1839)","(Burmeister, 1839)",ephippiger
+,,,59812,"Anax formosa Vander Linden, 1823","Vander Linden, 1823",formosa
+,"Rambur, 1842",,59812,"Anax mauricianus Rambur, 1842","Rambur, 1842",mauricianus
+,,,59812,"Aeschna azurea Charpentier, 1825","Charpentier, 1825",azurea
+,,,59812,"Aeschna lunata Kolenati, 1856","Kolenati, 1856",lunata
+,,,59813,"Anax rutherfordi McLachlan, 1883","McLachlan, 1883",rutherfordi
+,,,59814,"Anax goliath Selys, 1872","Selys, 1872",goliath
+,,,59819,"Enallagma nigridorsum Selys, 1876","Selys, 1876",nigridorsum
+,,,59822,"Libellula leucosticta Burmeister, 1839","Burmeister, 1839",leucosticta
+,,,59822,"Libellula unifasciata Rambur, 1842","Rambur, 1842",unifasciata
+,,,59828,"Agrion rhomboidalis Palisot de Beauvois, 1805","Palisot de Beauvois, 1805",rhomboidalis
+,,,59828,"Agrion ferrugineum Rambur, 1842","Rambur, 1842",ferrugineum
+,,,59828,"Agrion glabrum Burmeister, 1839","Burmeister, 1839",glabrum
+subspecies,"Pinhey, 1963",longispinum,59828,"Ceriagrion glabrum ssp. longispinum Pinhey, 1963",,glabrum
+,,,59833,"Ceriagrion moorei Longfield, 1952","Longfield, 1952",moorei
+,,,59833,"Ceriagrion hamoni Fraser, 1955","Fraser, 1955",hamoni
+,,,59859,"Libellula erythraea Brullé, 1832","Brullé, 1832",erythraea
+subspecies,"Schneider, 1982",arabcia,59860,"Crocothemis sanguinolenta ssp. arabcia Schneider, 1982",,sanguinolenta
+,,,59864,"Diplacodes lefebvrei (Rambur, 1842)","(Rambur, 1842)",lefebvrei
+,,,59864,"Diplacodes okavangoensis Pinhey, 1976","Pinhey, 1976",okavangoensis
+,,,59864,"Libellula lefebvrii Rambur, 1842","Rambur, 1842",lefebvrii
+,,,59871,"Gomphidia balii Fraser, 1949","Fraser, 1949",balii
+,,,59879,"Gynacantha zuluensis Balinsky, 1961","Balinsky, 1961",zuluensis
+,,,59893,"Hemistigma albipuncta (Rambur, 1842)","(Rambur, 1842)",albipuncta
+,,,59894,"Cinitogomphus dundoensis Pinhey, 1961","Pinhey, 1961",dundoensis
+,,,59897,"Agrion senegalense Rambur, 1842","Rambur, 1842",senegalense
+,,,59897,"Enallagma brevispina Selys, 1876","Selys, 1876",brevispina
+,,,59902,"Lestes (Xerolestes) pallidus Rambur, 1842","Rambur, 1842",pallidus
+,,,59902,"Lestes sellatus Hagen, 1862","Hagen, 1862",sellatus
+,,,59902,"Xerolestes pallidus (Rambur, 1842)","(Rambur, 1842)",pallidus
+,,,59921,"Orthetrum farinosum Förster, 1898","Förster, 1898",farinosum
+,,,59921,"Orthetrum pollinosum Karsch, 1899","Karsch, 1899",pollinosum
+,,,59941,"Olpogastra fuelleborni Grunberg, 1902","Grunberg, 1902",fuelleborni
+,,,59948,"Chlorocnemis inepta  Grünberg, 1902"," Grünberg, 1902",inepta
+,,,59948,"Orthetrum phillipsi Kirby, 1896","Kirby, 1896",phillipsi
+,,,59948,"Orthetrum flavidulum Kirby, 1898","Kirby, 1898",flavidulum
+,,,59948,"Orthetrum mundulum Morton, 1928","Morton, 1928",mundulum
+,,,59948,"Oxythemis villiersi Fraser, 1949","Fraser, 1949",villiersi
+,,,59951,"Libellula brachiale Palisot de Beauvois, 1805","Palisot de Beauvois, 1805",brachiale
+,,,59952,"Libellula caffra Burmeister, 1839","Burmeister, 1839",caffra
+,,,59954,"Libellula barbara Selys, 1849","Selys, 1849",barbara
+,,,59964,"Libellula stemmalis Burmeister, 1839","Burmeister, 1839",stemmalis
+,,,59964,"Orthetrum kalai Longfield, 1936","Longfield, 1936",kalai
+subspecies,"Longfield, 1936",kalai,59964,"Orthetrum stemmale ssp. kalai Longfield, 1936",,stemmale
+,,,59969,"Libellula lucia Drury, 1773","Drury, 1773",lucia
+subspecies,"Drury, 1773",lucia,59969,"Palpopleura lucia ssp. lucia Drury, 1773",,lucia
+,,,59970,"Libellula portia Drury, 1773","Drury, 1773",portia
+subspecies,"Drury, 1773",portia,59970,"Palpopleura lucia ssp. portia Drury, 1773",,lucia
+,,,59971,"Libellula flavescens Fabricius, 1798","Fabricius, 1798",flavescens
+,,,59971,"Libellula analis Burmeister, 1839","Burmeister, 1839",analis
+,,,59971,"Libellula terminalis Burmeister, 1839","Burmeister, 1839",terminalis
+,,,59971,"Libellula viridula Palisot de Beauvois, 1807","Palisot de Beauvois, 1807",viridula
+,,,59971,"Orthetrum mathewi Singh & Baijal, 1955","Singh & Baijal, 1955",mathewi
+,,,59971,"Sympetrum tandicola Singh, 1955","Singh, 1955",tandicola
+,,,59974,"Gomphus cognatus Rambur, 1842","Rambur, 1842",cognatus
+,,,59974,"Paragomphus dicksoni Pinhey, 1969","Pinhey, 1969",dicksoni
+,,,59975,"Mesogomphus elpidius Ris, 1921","Ris, 1921",elpidius
+,,,59976,"Gomphus genei Selys, 1841","Selys, 1841",genei
+,,,59976,"Mesogomphus genei Selys, 1841","Selys, 1841",genei
+,,,59976,"Gomphus excelsus Costa, 1884","Costa, 1884",excelsus
+subspecies,"Levasseur, 2007",ndzuaniensis,59976,"Paragomphus genei ssp. ndzuaniensis Levasseur, 2007",,genei
+subspecies,"Pinhey, 1950",sabicus,59981,"Paragomphus fritillarius ssp. sabicus Pinhey, 1950",,fritillarius
+,,,59983,"Calopteryx iridipennis Burmeister, 1839","Burmeister, 1839",iridipennis
+,,,59986,"Phyllogomphus edentatus St Quentin, 1958","St Quentin, 1958",edentatus
+,,,59986,"Phyllogomphus leopoldi Fraser, in lit.","Fraser, in lit.",leopoldi
+,,,59986,"Phyllogomphus brunneus Pinhey, 1976","Pinhey, 1976",brunneus
+,,,59986,"Phyllogomphus orientalis Fraser, 1957","Fraser, 1957",orientalis
+,,,59986,"Phyllogomphus latifasciae Pinhey, 1961","Pinhey, 1961",latifasciae
+,,,59986,"Phyllogomphus aethiops sensu Corbet, 1956 Selys, 1854","Selys, 1854","aethiops sensu Corbet, 1956"
+,,,59986,"Phyllogomphus corbetae Vick, 1999","Vick, 1999",corbetae
+,,,59986,"Phyllogomphus symoensi Lieftinck, 1969","Lieftinck, 1969",symoensi
+,,,59995,"Macromia onerata Martin, 1907","Martin, 1907",onerata
+,,,59995,Macromia clymene Ris 1921,Ris 1921,clymene
+,,,59995,"Macromia thetis Ris, 1921","Ris, 1921",thetis
+,,,59995,"Phyllomacromia onerata Martin, 1907","Martin, 1907",onerata
+,,,59995,"Macromia monoceros Förster, 1906","Förster, 1906",monoceros
+,,,59997,"Macromia africana Hagen in Selys, 1871","Hagen in Selys, 1871",africana
+,,,59997,"Phyllomacromia africana (Hagen in Selys, 1871)","(Hagen in Selys, 1871)",africana
+,,,60005,"Libellago caligata Selys, 1853","Selys, 1853",caligata
+,,,60013,"Pseudagrion coeleste Longfield, 1947 [orth. error]","Longfield, 1947 [orth. error]",coeleste
+,,,60019,"Pseudagrion whellani Pinhey, 1956","Pinhey, 1956",whellani
+subspecies,"Fraser, 1955",hamoni,60019,"Pseudagrion acaciae ssp. hamoni Fraser, 1955",,acaciae
+,,,60022,"Pseudagrion williamsi Pinhey, 1964","Pinhey, 1964",williamsi
+,,,60033,"Coenagrion sublacteum Karsch, 1893","Karsch, 1893",sublacteum
+,,,60033,"Enallagma caputavis Terzani & Carletti, 1998","Terzani & Carletti, 1998",caputavis
+,,,60033,"Pseudagrion pseudomassaicum Pinhey, 1951","Pinhey, 1951",pseudomassaicum
+,,,60037,"Libellula semihyalina Desjardins, 1832","Desjardins, 1832",semihyalina
+,,,60038,"Sympetrum fonscolombei Selys, 1840","Selys, 1840",fonscolombei
+,,,60044,"Neophlebia polleni Selys, 1877","Selys, 1877",polleni
+,,,60048,"Libellula tillarga Fabricius, 1798","Fabricius, 1798",tillarga
+,,,60048,"Libellula pallida Palisot de Beauvois, 1805","Palisot de Beauvois, 1805",pallida
+,,,60048,"Libellula bimaculata Desjardins, 1835","Desjardins, 1835",bimaculata
+,,,60048,"Tholymis paratillarga Singh & Prasad, 1980","Singh & Prasad, 1980",paratillarga
+,,,60049,"Tramea burmeisteri Kirby, 1889","Kirby, 1889",burmeisteri
+,,,60049,"Trapezostigma basilare Palisot de Beauvois, 1817","Palisot de Beauvois, 1817",basilare
+,,,60050,"Libellula limbata Desjardins, 1832","Desjardins, 1832",limbata
+,,,60050,"Libellula mauriciana Rambur, 1842","Rambur, 1842",mauriciana
+,,,60050,"Libellula incerta Rambur, 1842","Rambur, 1842",incerta
+,,,60050,"Libellula similata Rambur, 1842","Rambur, 1842",similata
+,,,60050,"Libellula stylata Rambur, 1842","Rambur, 1842",stylata
+,,,60050,"Tramea continentalis Selys, 1878","Selys, 1878",continentalis
+,,,60050,"Tramea translucida Kirby, 1889","Kirby, 1889",translucida
+,,,60050,"Tramea madagascariensis Kirby, 1889","Kirby, 1889",madagascariensis
+,,,60050,"Trapezostigma limbatum (Desjardins, 1832)","(Desjardins, 1832)",limbatum
+,,,60050,"Trapezostigma continentale Selys, 1878","Selys, 1878",continentale
+subspecies,"(Rambur, 1842)",haematina,60052,"Trithemis annulata ssp. haematina (Rambur, 1842)",,annulata
+,,,60052,"Libellula haematina Rambur, 1842","Rambur, 1842",haematina
+,,,60053,"Libellula conjuncta Selys, 1849","Selys, 1849",conjuncta
+,,,60053,"Libellula distincta Rambur, 1842","Rambur, 1842",distincta
+,,,60053,"Trithemis jacksoni Pinhey, 1970","Pinhey, 1970",jacksoni
+,,,60053,"Trithemis stuhlmanni Gerstacker, 1891","Gerstacker, 1891",stuhlmanni
+,,,60053,"Libellula rubella Brullé, 1844","Brullé, 1844",rubella
+,,,60053,"Trithemis stuhlmanni Gerstäcker, 1891","Gerstäcker, 1891",stuhlmanni
+,,,60056,"Pseudomacromia donaldsoni Calvert, 1899","Calvert, 1899",donaldsoni
+subspecies,"(Gerstäcker, 1891)",ardens,60062,"Trithemis kirbyi Selys, 1891 ssp. ardens (Gerstäcker, 1891)","Selys, 1891",kirbyi
+,,,60072,"Libellula assignata Selys, 1872","Selys, 1872",assignata
+,,,60073,"Libellula edwardsii Selys, 1849","Selys, 1849",edwardsii
+subspecies,"Dumont, 1975",hulae,60073,"Urothemis edwardsi ssp. hulae Dumont, 1975",,edwardsi
+,,,60076,"Zygonyx ikomae Pinhey, 1961","Pinhey, 1961",ikomae
+,,,60078,"Pseudomacromia atlantica Martin, 1900","Martin, 1900",atlantica
+,,,60078,"Zygonyx torrida (Kirby, 1889) [orth. error]","(Kirby, 1889) [orth. error]",torrida
+,,,60078,"Pseudomacromia torrida Kirby, 1889","Kirby, 1889",torrida
+subspecies,"Pinhey, 1981",insulanus,60078,"Zygonyx torridus (Kirby, 1899) ssp. insulanus Pinhey, 1981","(Kirby, 1899)",torridus
+subspecies,"Fraser, 1924",isis,60078,"Zygonyx torridus (Kirbyi, 1899) ssp. isis Fraser, 1924","(Kirbyi, 1899)",torridus
+,,,63193,"Aeshna minuscula MacLachlan, 1896","MacLachlan, 1896",minuscula
+,,,63193,"Aeshna dolobrata Karsch, 1899","Karsch, 1899",dolobrata
+,,,63194,"Aeshna subpupillata McLachlan, 1896","McLachlan, 1896",subpupillata
+,,,63219,"Proischnura polychromaticum (Barnard, 1937)","(Barnard, 1937)",polychromaticum
+,,,63219,"Enallagma polychromaticum Barnard, 1937","Barnard, 1937",polychromaticum
+,,,158578,"Phyllomacromia reginae Le Roi, 1915","Le Roi, 1915",reginae
+,,,158578,"Phyllomacromia leoni Fraser, 1928","Fraser, 1928",leoni
+,,,158578,"Macromia halei Fraser, 1928","Fraser, 1928",halei
+,,,158578,"Macromia melania nec Selys, 1871","nec Selys, 1871",melania
+,,,158578,"Trithemis monardi Gambles, 1970","Gambles, 1970",monardi
+,,,158578,"Phyllomacromia nyanzana (Grünberg, 1911)","(Grünberg, 1911)",nyanzana
+,,,158578,"Phyllomacromia bifasciata Martin, 1912","Martin, 1912",bifasciata
+,,,158578,"Phyllomacromia biflava Martin, 1907","Martin, 1907",biflava
+,,,167478,"Diplax cora Kaup in Brauer, 1867","Kaup in Brauer, 1867",cora
+,,,167478,"Libellula lycoris Selys, 1872","Selys, 1872",lycoris
+,,,167478,"Urothemis nigrilabris Selys, 1878","Selys, 1878",nigrilabris
+,,,167478,"Urothemis vittata Kirby, 1893","Kirby, 1893",vittata
+,,,168013,Diplacodes deminuta sensu Pinhey 1976,Pinhey 1976,deminuta sensu
+subspecies,"Barnard, 1937",draconis,168022,"Pseudagrion kersteni ssp. draconis Barnard, 1937",,kersteni
+,,,184261,"Philonomon luminans (Karsch, 1893)","(Karsch, 1893)",luminans

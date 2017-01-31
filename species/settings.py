@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'taxa',
     'people',
     'biblio',
+    'imports',
     'redlist'
 ]
 

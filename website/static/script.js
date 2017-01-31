@@ -160,7 +160,7 @@ $(document).ready(function() {
         if(d.parent != null) {
           return "translate(" + d.parent.x + "," + d.parent.y + ")";
         }
-        return "translate(" + d.x + "," + d.y + ")"; 
+        return "translate(" + d.x + "," + d.y + ")";
       });
     
     // Add text + bg + circles to the nodes
