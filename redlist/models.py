@@ -108,6 +108,7 @@ class ActionNature(models.Model):
         (PROPOSED, 'Proposed'),
         (COMPLETE, 'Complete')
     )
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, null=True, blank=True)
     action = models.ForeignKey(Action)
 
 
@@ -159,8 +160,12 @@ class Contribution(models.Model):
     weight = models.PositiveSmallIntegerField()
     ASSESSOR = 'A'
     REVIEWER = 'R'
+    CONTRIBUTOR = 'C'
+    FACILITATOR = 'F'
     TYPE_CHOICES = (
         (ASSESSOR, 'Assessor'),
         (REVIEWER, 'Reviewer'),
+        (CONTRIBUTOR, 'Contributor'),
+        (FACILITATOR, 'Facilitator'),
     )
     type = models.CharField(max_length=1, choices=TYPE_CHOICES)

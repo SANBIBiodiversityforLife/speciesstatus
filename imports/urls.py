@@ -5,7 +5,7 @@ from rest_framework.renderers import TemplateHTMLRenderer, BrowsableAPIRenderer,
 
 
 urlpatterns = [
-    url(r'^sis/$', views.import_sis, name='import_sis'),
+    url(r'^sis/$', views.sis, name='import_sis'),
     # url(r'^seakeys/$', views.LineageView.as_view(renderer_classes=(TemplateHTMLRenderer,)), name='lineage_pk'),
 
 ]
