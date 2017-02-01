@@ -15,8 +15,6 @@ from psycopg2.extras import NumericRange
 from imports import views as imports_views
 
 def import_sis():
-    print('hello')
-    return
     dir = 'C:\\Users\\JohaadienR\\Documents\\Projects\\python-sites\\species\\data-sources\\'
     af = pd.read_csv(dir + 'Amphibians_SIS\\Amphibians\\allfields.csv', encoding='iso-8859-1')
     t = pd.read_csv(dir + 'Amphibians_SIS\\Amphibians\\taxonomy.csv', encoding='iso-8859-1')
@@ -27,6 +25,7 @@ def import_sis():
     cons_actions_lookup = pd.read_csv(dir + 'cons_actions_lookup.csv', encoding='iso-8859-1')
     habitats = pd.read_csv(dir + 'Amphibians_SIS\\Amphibians\\habitats.csv', encoding='iso-8859-1')
 
+    # These lists we use below as we iterate over all the assessments
     exclude_from_assessment = [
         'AvgAnnualFecundity.fecundity',
         'BirthSize.size',
@@ -40,24 +39,12 @@ def import_sis():
         'ElevationUpper.limit',
         'internal_taxon_id'
     ]
-
     contribution_type_lookup = {
         'Assessor': redlist_models.Contribution.ASSESSOR,
         'Reviewer': redlist_models.Contribution.REVIEWER,
         'Contributor': redlist_models.Contribution.CONTRIBUTOR,
         'Facilitator': redlist_models.Contribution.FACILITATOR
     }
-
-    # Any duplicates?
-    # if len(t.loc[t.duplicated('Redlist_id'), :]) != 0 or len(af.loc[af.duplicated('internal_taxon_id'), :]) != 0:
-    #    print('Error, duplicates')
-    #    import pdb; pdb.set_trace()
-
-    # Merged
-    # df = pd.merge(af, t, left_on='internal_taxon_id', right_on='internal_taxon_id', how='left')
-
-    # Create all taxon objects
-    # df.apply(create_taxon_from_sis, axis=1)
 
     # Iterate through the allfields table, 1 row represents 1 assessment for a taxon
     for index, row in af.iterrows():

@@ -14,6 +14,7 @@ import pandas as pd
 from psycopg2.extras import NumericRange
 from imports import sis_import
 
+
 def get_or_create_author(surname, first=''):
     """
     Take in a surname and optional first name and try to retrieve an author from the database
