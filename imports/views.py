@@ -13,6 +13,44 @@ from django.http import HttpResponse
 import pandas as pd
 from psycopg2.extras import NumericRange
 from imports import sis_import
+import pdb
+import re
+import requests
+import json
+
+
+def create_authors(author_string):
+    """
+    Splits up an author string formatted as e.g. Braack, H.H., Bishop, P.J. and Knoepfer, D.
+    Creates Person objects for each, and returns them in a list
+    :param author_string:
+    :return:
+    """
+    # Remove the 'and' so that we can apply a simple regex to split up the authors
+    author_string = author_string.replace(' and ', ', ')
+    regex = r'([A-Z][a-z]+),\s+(([A-Z]\.?)+)(,|$)'
+    matches = re.findall(regex, author_string)
+    people = []
+    for m in matches:
+        surname = m[0]
+        initials = m[1]
+
+        # Try and get all possible people in the database first
+        p = people_models.Person.objects.filter(surname=surname, initials=initials).first()
+
+        # If there's nobody there then try get same surname and no initials, it's probably the same person
+        # Someone can split it out later manually if it's not
+        if p is None:
+            p = people_models.Person.objects.filter(surname=surname, initials__isnull=True, initials__exact='').first()
+            if p is None:
+                # Otherwise if we can't find anyone with the same surname make a new person
+                p = people_models.Person(surname=surname, initials=initials)
+            else:
+                p.initials = initials
+            p.save()
+
+        people.append(p)
+    return people
 
 
 def get_or_create_author(surname, first=''):
@@ -24,7 +62,7 @@ def get_or_create_author(surname, first=''):
     :return:
     """
     initials = ''
-    if first != '':
+    if first != '' and first is not None:
         # If there's a dot it's definitely initials
         if '.' in first:
             initials = first.split('.')
@@ -68,7 +106,7 @@ def get_or_create_author(surname, first=''):
         return p
 
 
-def create_taxon_description(authority, taxon):
+def create_taxon_description(authority, taxon, mendeley_session):
     """
     Takes in a authority string like (Barnard, 1980), splits it into year and author
     Attempts to find the author and year in mendeley and in the database, otherwise it create a new reference
@@ -76,13 +114,6 @@ def create_taxon_description(authority, taxon):
     :param authority:
     :return:
     """
-
-    # Start the REST client for mendeley to try and automatically find publications
-    mendeley_id = '3513'
-    mendeley_secret = 'gOVvM5RmKseDgcmH'
-    mendeley_redirect = 'http://species.sanbi.org'
-    mendeley = Mendeley(mendeley_id, client_secret=mendeley_secret, redirect_uri=mendeley_redirect)
-    mendeley_session = mendeley.start_client_credentials_flow().authenticate()
 
     # Splits up an authority string formatted in the standard way e.g. (Barnard, 1937) into year and author
     bracketed = '(' in authority

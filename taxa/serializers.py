@@ -65,17 +65,39 @@ class AncestorSerializer(serializers.ModelSerializer):
 
 
 class TaxonInfoSerializer(serializers.ModelSerializer):
+    habitats = serializers.StringRelatedField(read_only=True, many=True)
+
     class Meta:
         model = Info
         fields = ('morphology',
                   'diagnostics',
-                  'movement',
-                  'reproduction',
                   'trophic',
                   'uses',
+                  'movement',
+                  'migration_patterns',
+                  'congregatory',
+                  'reproduction',
+                  'reproductive_type',
                   'distribution',
-                  #'habitat',
-                  'altitude_or_depth_range')
+                  'habitat_narrative',
+                  'habitats',
+                  'altitude_or_depth_range',
+                  'maturity_size_female',
+                  'maturity_size_male',
+                  'max_size',
+                  'birth_size',
+                  'size_units',
+                  'generational_length',
+                  'generational_length_narrative',
+                  'maturity_age_female',
+                  'maturity_age_male',
+                  'longevity',
+                  'reproductive_age',
+                  'gestation_time',
+                  'reproductive_periodicity',
+                  'average_fecundity',
+                  'natural_mortality',
+                  'age_units')
 
 
 class TaxonSerializer(serializers.ModelSerializer):
@@ -99,4 +121,21 @@ class TaxonSerializer(serializers.ModelSerializer):
                   'general_distributions',
                   'get_full_name',
                   'common_names',
-                  'synonyms')
+                  'synonyms',
+                  'get_latest_assessment_id')
+
+
+class TaxonSuperBasicSerializer(serializers.ModelSerializer):
+    children = ChildrenInfoField(required=False, many=True, read_only=True)
+    rank = serializers.StringRelatedField(read_only=True)
+    common_names = serializers.StringRelatedField(many=True)
+
+    class Meta:
+        model = Taxon
+        fields = ('id',
+                  'name',
+                  'rank',
+                  'children',
+                  'get_full_name',
+                  'common_names',
+                  'get_latest_assessment_id')

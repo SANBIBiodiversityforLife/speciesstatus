@@ -32,6 +32,7 @@ urlpatterns = [
 
     url(r'^taxa/', include('taxa.urls')),
     url(r'^biblio/', include('biblio.urls')),
+    url(r'^assessment/', include('redlist.urls')),
 
     # Index
     url(r'^$', website_views.IndexView.as_view(), name='index'),

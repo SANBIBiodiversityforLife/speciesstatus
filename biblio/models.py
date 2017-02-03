@@ -6,14 +6,14 @@ from polymorphic.models import PolymorphicModel
 
 class Reference(PolymorphicModel):
     """A generic reference type which links to journal articles, books, etc."""
-    title = models.CharField(max_length=200, null=True, blank=True)
+    title = models.CharField(max_length=500, null=True, blank=True)
     authors = models.ManyToManyField(Person, blank=True, through='Authorship')
     year = models.PositiveSmallIntegerField(null=True, blank=True)
     doi = models.CharField(max_length=500, blank=True, null=True)
 
     # Ok let's try something different, things must have a bibtex entry in json
     # Can't be bothered trying to set up my own references management system, let's try just use mendeley's
-    bibtex = HStoreField()
+    bibtex = HStoreField(null=True)
 
     def __str__(self):
         if self.title:
@@ -29,7 +29,6 @@ class Reference(PolymorphicModel):
         return self.get_citation_for_taxon()
 
     def save(self):
-
         super(Reference, self).save()
 
 

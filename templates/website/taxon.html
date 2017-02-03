@@ -34,9 +34,20 @@
       <h2>Common names: {{ taxon.data.common_names|join:" // " }}{% if user.is_authenticated %}
       <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-backdrop="static" data-target="#commonNamesModal">Add</button>{% endif %}</h2>
       <ul class="nav nav-tabs nav-inverse">
-        <li role="presentation" class="active"><a href="#">General</a></li>
-        <li role="presentation"><a href="#">Images</a></li>
-        <li role="presentation"><a href="#">Distribution</a></li>
+        <li role="presentation"{% if request.resolver_match.url_name == 'taxa_detail' %} class="active"{% endif %}>
+          <a href="{% url 'taxa_detail' taxon.data.id %}">General</a>
+        </li>
+        <li role="presentation"{% if request.resolver_match.url_name == 'taxa_images' %} class="active"{% endif %}>
+          <a href="{% url 'taxa_detail' taxon.data.id %}">Images</a>
+        </li>
+        <li role="presentation"{% if request.resolver_match.url_name == 'taxa_distribution' %} class="active"{% endif %}>
+          <a href="{% url 'taxa_detail' taxon.data.id %}">Distribution</a>
+        </li>
+        {% if taxon.data.get_latest_assessment_id %}
+        <li role="presentation"{% if request.resolver_match.url_name == 'assessment_detail' %} class="active"{% endif %}>
+          <a href="{% url 'assessment_detail' taxon.data.get_latest_assessment_id %}">Assessment</a>
+        </li>
+        {% endif %}
       </ul>
     </div>
 	</section>
@@ -44,6 +55,7 @@
 
 {% block content %}
 <!-- Main content of species page -->
+{% block content_main %}
 <div class="row">
   <div class="col-md-9"><section id="species-info">
   {% for key, item in taxon.data.info.items %}
@@ -64,6 +76,7 @@
     </ul>
   </div>
 </div>
+{% endblock content_main %}
 
 <!-- Common names modal -->
 <div class="modal fade" id="commonNamesModal" tabindex="-1" role="dialog" aria-labelledby="commonNamesModalLabel">

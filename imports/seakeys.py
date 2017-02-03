@@ -15,7 +15,7 @@ from psycopg2.extras import NumericRange
 from imports import views as imports_views
 
 
-def import_helper(item, rank_name, parent):
+def import_helper(item, rank_name, parent, mendeley_session):
     name = item['valid_name']
     if 'valid_authority' in item:
         authority = item['valid_authority']
@@ -32,11 +32,19 @@ def import_helper(item, rank_name, parent):
         print('\n\n')
 
     if created and authority is not None:
-        imports_views.create_taxon_description(authority, taxon)
+        imports_views.create_taxon_description(authority, taxon, mendeley_session)
     return taxon
 
 
 def import_seakeys(request):
+    # Start the REST client for mendeley, best to maintain the session throughout the data import
+    # Mendeley API doesn't like us instantiating many sessions
+    mendeley_id = '3513'
+    mendeley_secret = 'gOVvM5RmKseDgcmH'
+    mendeley_redirect = 'http://species.sanbi.org'
+    mendeley = Mendeley(mendeley_id, client_secret=mendeley_secret, redirect_uri=mendeley_redirect)
+    mendeley_session = mendeley.start_client_credentials_flow().authenticate()
+
     # Load the images csv into a dict for reference later
     file_loc = 'C:\\Users\\JohaadienR\\Documents\\Projects\\python-sites\\species\\images.csv'
     reader = csv.DictReader(open(file_loc))
@@ -96,12 +104,12 @@ def import_seakeys(request):
                 search_results = client.service.getAphiaRecords(name, like='false', marine_only='true')
                 for item in search_results:
                     if item['rank'].lower() == rank_name.lower():
-                        parent = import_helper(item=item, rank_name=rank_name, parent=parent)
+                        parent = import_helper(item=item, rank_name=rank_name, parent=parent, mendeley_session=mendeley_session)
                         break
 
             # Finally the species can get added, provided of course that it is a species
             if rank != 'Genus' and rank != 'Family':
-                parent = import_helper(item=worms_taxon, rank_name='Species', parent=parent)
+                parent = import_helper(item=worms_taxon, rank_name='Species', parent=parent, mendeley_session=mendeley_session)
 
             # Now we can add our taxa info to it!
             try:

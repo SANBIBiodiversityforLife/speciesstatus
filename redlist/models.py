@@ -1,6 +1,7 @@
 from django.contrib.gis.db import models
 from taxa.models import Taxon
 from people.models import Person
+from biblio.models import Reference
 from django.contrib.postgres.fields import IntegerRangeField, ArrayField, DateRangeField, HStoreField
 
 
@@ -96,6 +97,10 @@ class Assessment(models.Model):
     extent_occurrence = IntegerRangeField(null=True, blank=True) # EOO
     temp_field = HStoreField(null=True, blank=True)
 
+    # I would like users to add references inline in textfields and have some js display a ref list on the page
+    # So I hope this field will be temporary
+    references = models.ManyToManyField(Reference, blank=True)
+
 
 class ActionNature(models.Model):
     assessment = models.ForeignKey(Assessment)
@@ -113,21 +118,23 @@ class ActionNature(models.Model):
 
 
 class ThreatNature(models.Model):
+    # Unknown is common to all
+    UNKNOWN = 'UN'
+
     EXTREME = 'EX'
     SEVERE = 'SE'
     MODERATE = 'MO'
     SLIGHT = 'SL'
     NONE = 'NO'
-    UNKNOWN = 'UN'
-    IMPACT_CHOICES = (
-        (EXTREME, 'Extreme'),
+    SEVERITY_CHOICES = (
+        (EXTREME, 'Extremely severe'),
         (SEVERE, 'Severe'),
         (MODERATE, 'Moderate'),
         (SLIGHT, 'Slight'),
-        (NONE, 'None'),
+        (NONE, 'No decline'),
         (UNKNOWN, 'Unknown'),
     )
-    impact = models.CharField(max_length=2, choices=IMPACT_CHOICES, default=UNKNOWN)
+    severity = models.CharField(max_length=2, choices=SEVERITY_CHOICES, default=UNKNOWN, null=True, blank=True)
 
     PAST = 'PA'
     UNLIKELY_TO_RETURN = 'UR'
@@ -135,21 +142,18 @@ class ThreatNature(models.Model):
     ONGOING = 'ON'
     FUTURE = 'FU'
     POTENTIAL = 'PO'
-    UNKNOWN = 'UN'
     TIMING_CHOICES = (
         (PAST, 'Past'),
-        (UNLIKELY_TO_RETURN, 'Unlikely to return'),
-        (LIKELY_TO_RETURN, 'Likely to return'),
+        (UNLIKELY_TO_RETURN, 'Past, Unlikely to return'),
+        (LIKELY_TO_RETURN, 'Past, Likely to return'),
         (ONGOING, 'Ongoing'),
         (FUTURE, 'Future'),
         (POTENTIAL, 'Potential'),
         (UNKNOWN, 'Unknown'),
     )
-    timing = models.CharField(max_length=2, choices=TIMING_CHOICES, default=UNKNOWN)
+    timing = models.CharField(max_length=2, choices=TIMING_CHOICES, default=UNKNOWN, null=True, blank=True)
 
     rationale = models.TextField(blank=True)
-
-    # Foreign keys
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
     threat = models.ForeignKey(Threat, on_delete=models.CASCADE)
 

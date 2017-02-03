@@ -1,43 +1,15 @@
-from django.shortcuts import render
 from taxa import models
-from biblio import models as biblio_models
-from people import models as people_models
-import csv
-from suds.client import Client
-import requests
-from mendeley import Mendeley
-import re
-from django.db.models import Count
-from django.shortcuts import render
-from rest_framework.renderers import TemplateHTMLRenderer, BrowsableAPIRenderer, JSONRenderer
-from rest_framework.response import Response
+from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
 from rest_framework.views import APIView
-from rest_framework.decorators import api_view, permission_classes
-from mptt.templatetags.mptt_tags import cache_tree_children
-from taxa import models as taxa_models
 from taxa import serializers
-import json
-from mptt.utils import drilldown_tree_for_node
-
 from rest_framework.decorators import api_view
-from rest_framework.response import Response
 from rest_framework.reverse import reverse
-from django.http import Http404
 from rest_framework import status
 from rest_framework import generics
-
-from rest_framework import viewsets
-from django.contrib.auth.models import User
-from rest_framework import renderers
-from rest_framework import viewsets
-from rest_framework.decorators import detail_route
 from rest_framework.response import Response
-from rest_framework import filters, permissions
+from rest_framework import filters
 from rest_framework import mixins
-from django.shortcuts import get_object_or_404
 from mptt.utils import drilldown_tree_for_node
-from itertools import chain
-
 
 
 @api_view(['GET'])

@@ -22,6 +22,9 @@ class Habitat(models.Model):
     def __str__(self):
         return self.name
 
+    def __unicode__(self):
+        return self.name
+
     class Meta:
         ordering = ['name']
 
@@ -58,7 +61,7 @@ class Taxon(MPTTModel):
     current_name = models.ForeignKey('Taxon', on_delete=models.SET_NULL, null=True, blank=True)
 
     # Used to make friendly URLs
-    slug = models.SlugField(max_length=200  )
+    slug = models.SlugField(max_length=200)
 
     # If a taxon is merged or split taxonomists often want to record why it happened, this can be entered here
     notes = models.TextField(null=True)
@@ -67,7 +70,7 @@ class Taxon(MPTTModel):
     def save(self, *args, **kwargs):
         if not self.id:
             if self.rank == Rank.objects.get(name='Species'):
-                self.slug = slugify(self.parent + ' ' + self.name)
+                self.slug = slugify(str(self.parent) + ' ' + self.name)
             else:
                 self.slug = slugify(self.name)
 
@@ -160,6 +163,13 @@ class Taxon(MPTTModel):
     def __str__(self):
         return self.name
 
+    def get_latest_assessment_id(self):
+        last_assessment = self.assessment_set.last()
+        if last_assessment is not None:
+            return last_assessment.id
+        else:
+            return False
+
     # Return a correctly formatted (name + author + date) full name
     def get_full_name(self):
         # Get the number of descriptions and the last description
@@ -244,10 +254,10 @@ class Info(models.Model):
     altitude_or_depth_range = IntegerRangeField(null=True, blank=True)
 
     # Size
-    maturity_size_female = models.PositiveSmallIntegerField(null=True, blank=True)
-    maturity_size_male = models.PositiveSmallIntegerField(null=True, blank=True)
-    max_size = models.PositiveSmallIntegerField(null=True, blank=True)
-    birth_size = models.PositiveSmallIntegerField(null=True, blank=True)
+    maturity_size_female = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    maturity_size_male = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    max_size = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    birth_size = models.DecimalField(max_digits=5, decimal_places=2,null=True, blank=True)
     MM = "MM"
     CM = "CM"
     M = "M"
@@ -267,8 +277,8 @@ class Info(models.Model):
     reproductive_age = models.PositiveSmallIntegerField(null=True, blank=True)
     gestation_time = models.DecimalField(null=True, blank=True, max_digits=5, decimal_places=2)
     reproductive_periodicity = models.DecimalField(null=True, blank=True, max_digits=5, decimal_places=2)
-    average_fecundity = models.DecimalField(null=True, blank=True, max_digits=5, decimal_places=2)
-    natural_mortality = models.DecimalField(null=True, blank=True, max_digits=5, decimal_places=2)
+    average_fecundity = models.DecimalField(null=True, blank=True, max_digits=10, decimal_places=2)
+    natural_mortality = models.DecimalField(null=True, blank=True, max_digits=10, decimal_places=2)
     YEARS = 'Y'
     MONTHS = 'M'
     DAYS = 'D'
@@ -322,7 +332,9 @@ class Info(models.Model):
         (DISPERSIVE, 'Dispersive'),
         (CONGREGATORY_YEAR_ROUND, 'Congregatory year round'),
     )
-    congregatory = models.CharField(choices=CONGREGATORY_CHOICES, max_length=2, null=True, blank=True)
+    congregatory = ArrayField(
+        models.CharField(choices=CONGREGATORY_CHOICES, max_length=2, null=True, blank=True), null=True, blank=True
+    )
 
 
 class GeneralDistribution(models.Model):
