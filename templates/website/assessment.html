@@ -4,6 +4,11 @@
 {% load rest_framework %}
 
 {% block content_main %}
+{% for item in contributions %}
+{% ifchanged item.type %}<br>{{ item.get_type_display }}s: {% endifchanged %}
+
+{{ item.person.first }} {{ item.person.surname }}{% if forloop.last %},{% endif %}
+{% endfor %}
 {% for key, item in assessment.items %}
 {% if item%}
 <div class="row">

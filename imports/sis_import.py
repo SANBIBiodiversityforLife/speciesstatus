@@ -28,20 +28,27 @@ def import_sis():
 
     # All of the IUCN SIS data are presented in CSV form
     dir = 'C:\\Users\\JohaadienR\\Documents\\Projects\\python-sites\\species\\data-sources\\'
-    af = pd.read_csv(dir + 'Amphibians_SIS\\Amphibians\\allfields.csv', encoding='iso-8859-1')
-    t = pd.read_csv(dir + 'Amphibians_SIS\\Amphibians\\taxonomy.csv', encoding='iso-8859-1')
-    cn = pd.read_csv(dir + 'Amphibians_SIS\\Amphibians\\commonnames.csv', encoding='iso-8859-1')
-    ppl = pd.read_csv(dir + 'Amphibians_SIS\\Amphibians\\credits.csv', encoding='iso-8859-1')
-    assess = pd.read_csv(dir + 'Amphibians_SIS\\Amphibians\\assessments.csv', encoding='iso-8859-1')
-    cons_actions = pd.read_csv(dir + 'Amphibians_SIS\\Amphibians\\conservationneeded.csv', encoding='iso-8859-1')
-    cons_actions_lookup = pd.read_csv(dir + 'cons_actions_lookup.csv', encoding='iso-8859-1')
-    habitats = pd.read_csv(dir + 'Amphibians_SIS\\Amphibians\\habitats.csv', encoding='iso-8859-1')
-    habitats_lookup = pd.read_csv(dir + 'habitat_lookup.csv', encoding='iso-8859-1')
-    threats = pd.read_csv(dir + 'Amphibians_SIS\\Amphibians\\threats.csv', encoding='iso-8859-1')
-    threats_lookup = pd.read_csv(dir + 'threat_lookup.csv', encoding='iso-8859-1')
-    biblio = pd.read_csv(dir + 'Amphibians_SIS\\Amphibians\\references.csv', encoding='iso-8859-1')
-    research = pd.read_csv(dir + 'Amphibians_SIS\\Amphibians\\researchneeded.csv', encoding='iso-8859-1')
+
+    # Amphibians
+    animal_dir = dir + 'Amphibians_SIS\\Amphibians\\'
+    animal_dir = dir + 'Dragonflies_SIS\\Dragonflies_Regional\\'
+    animal_dir = dir + 'Dragonflies_SIS\\Dragonflies\\'
+    af = pd.read_csv(animal_dir + 'allfields.csv', encoding='iso-8859-1')
+    t = pd.read_csv(animal_dir + 'taxonomy.csv', encoding='iso-8859-1')
+    cn = pd.read_csv(animal_dir + 'commonnames.csv', encoding='iso-8859-1')
+    ppl = pd.read_csv(animal_dir + 'credits.csv', encoding='iso-8859-1')
+    assess = pd.read_csv(animal_dir + 'assessments.csv', encoding='iso-8859-1')
+    cons_actions = pd.read_csv(animal_dir + 'conservationneeded.csv', encoding='iso-8859-1')
+    habitats = pd.read_csv(animal_dir + 'habitats.csv', encoding='iso-8859-1')
+    threats = pd.read_csv(animal_dir + 'threats.csv', encoding='iso-8859-1')
+    biblio = pd.read_csv(animal_dir + 'references.csv', encoding='iso-8859-1')
+    research = pd.read_csv(animal_dir + 'researchneeded.csv', encoding='iso-8859-1')
+
+    # Lookups
     research_lookup = pd.read_csv(dir + 'research_lookup.csv', encoding='iso-8859-1')
+    threats_lookup = pd.read_csv(dir + 'threat_lookup.csv', encoding='iso-8859-1')
+    habitats_lookup = pd.read_csv(dir + 'habitat_lookup.csv', encoding='iso-8859-1')
+    cons_actions_lookup = pd.read_csv(dir + 'cons_actions_lookup.csv', encoding='iso-8859-1')
 
     # These lists we use below as we iterate over all the assessments
     exclude_from_assessment = [
@@ -88,62 +95,66 @@ def import_sis():
         # Retrieve the taxon info for the assessment we're on
         taxon_row = t.loc[t['internal_taxon_id'] == row['internal_taxon_id']]
         taxon_row = taxon_row.iloc[0]
-        species = create_taxon_from_sis(taxon_row, mendeley_session)
+        species, species_was_created = create_taxon_from_sis(taxon_row, mendeley_session)
 
-        # Add common names and languages for the taxon
-        common_names = cn.loc[cn['internal_taxon_id'] == row['internal_taxon_id']]
-        for i, c_row in common_names.iterrows():
-            language, created = models.Language.objects.get_or_create(name=c_row['language'].strip())
-            models.CommonName.objects.get_or_create(language=language, name=c_row['name'].strip(), taxon=species)
+        if not species_was_created:
+                            # Add common names and languages for the taxon
+                common_names = cn.loc[cn['internal_taxon_id'] == row['internal_taxon_id']]
+                for i, c_row in common_names.iterrows():
+                    language, created = models.Language.objects.get_or_create(name=c_row['language'].strip())
+                    models.CommonName.objects.get_or_create(language=language, name=c_row['name'].strip(),
+                                                            taxon=species)
 
-        # Remove all row columns which do not contain info
-        row = {k: v for k, v in row.items() if pd.notnull(v)}
+                # Remove all row columns which do not contain info
+                row = {k: v for k, v in row.items() if pd.notnull(v)}
 
-        # All species objects should have a corresponding info object, so let's create one
-        info = models.Info(taxon=species)
+                # All species objects should have a corresponding info object, so let's create one
+                info = models.Info(taxon=species)
 
-        # Add any info we can find to the info object, note that a lot of these are missing
-        if 'AvgAnnualFecundity.fecundity' in row:
-            info.average_fecundity = Decimal(row['AvgAnnualFecundity.fecundity'])
-        if 'BirthSize.size' in row:
-            info.birth_size = Decimal(row['BirthSize.size'])
-            info.size_units = models.Info.CM
-        if 'MaxSize.size' in row:
-            info.max_size = Decimal(row['MaxSize.size'])
-            info.size_units = models.Info.CM
-        if 'Congregatory.value' in row:
-            info.congregatory = [models.Info.CONGREGATORY, models.Info.DISPERSIVE]  # These all seem to be the same
-        if 'EggLaying.layEggs' in row:
-            if row['EggLaying.layEggs'] == 'Yes':
-                info.reproductive_type = [models.Info.EGG_LAYING]
-            elif row['EggLaying.layEggs'] == 'No':
-                info.reproductive_type = [models.Info.LIVE_BIRTH]
-        if 'FreeLivingLarvae.hasStage' in row:
-            if row['FreeLivingLarvae.hasStage'] == 'Yes':
-                info.reproductive_type = [models.Info.FREE_LIVING_LARVAE]
-        if 'ElevationLower.limit' in row and 'ElevationUpper.limit' in row:
-            info.altitude_or_depth_range = (int(row['ElevationLower.limit']), int(row['ElevationUpper.limit']))
+                # Add any info we can find to the info object, note that a lot of these are missing
+                if 'AvgAnnualFecundity.fecundity' in row:
+                    info.average_fecundity = Decimal(row['AvgAnnualFecundity.fecundity'])
+                if 'BirthSize.size' in row:
+                    info.birth_size = Decimal(row['BirthSize.size'])
+                    info.size_units = models.Info.CM
+                if 'MaxSize.size' in row:
+                    info.max_size = Decimal(row['MaxSize.size'])
+                    info.size_units = models.Info.CM
+                if 'Congregatory.value' in row:
+                    info.congregatory = [models.Info.CONGREGATORY,
+                                         models.Info.DISPERSIVE]  # These all seem to be the same
+                if 'EggLaying.layEggs' in row:
+                    if row['EggLaying.layEggs'] == 'Yes':
+                        info.reproductive_type = [models.Info.EGG_LAYING]
+                    elif row['EggLaying.layEggs'] == 'No':
+                        info.reproductive_type = [models.Info.LIVE_BIRTH]
+                if 'FreeLivingLarvae.hasStage' in row:
+                    if row['FreeLivingLarvae.hasStage'] == 'Yes':
+                        info.reproductive_type = [models.Info.FREE_LIVING_LARVAE]
+                if 'ElevationLower.limit' in row and 'ElevationUpper.limit' in row:
+                    info.altitude_or_depth_range = (int(row['ElevationLower.limit']), int(row['ElevationUpper.limit']))
 
-        # Get the taxon info stuff from the assessment csv and remove all empty values
-        # The iloc is used because you have to refer to the items via the index e.g. v[0] for row 1, v[1] for row 2, etc
-        assess_row = assess.loc[assess['internal_taxon_id'] == row['internal_taxon_id']]
-        assess_row = {k: v.iloc[0] for k, v in assess_row.items() if pd.notnull(v.iloc[0])}
+                # Get the taxon info stuff from the assessment csv and remove all empty values
+                # The iloc is used because you have to refer to the items via the index e.g. v[0] for row 1, v[1] for row 2, etc
+                assess_row = assess.loc[assess['internal_taxon_id'] == row['internal_taxon_id']]
+                assess_row = {k: v.iloc[0] for k, v in assess_row.items() if pd.notnull(v.iloc[0])}
 
-        if 'HabitatDocumentation.narrative' in assess_row:
-            info.habitat_narrative = assess_row['HabitatDocumentation.narrative']
-        if 'PopulationDocumentation.narrative' in assess_row:
-            info.population_trend_narrative = assess_row['PopulationDocumentation.narrative']
-        if 'RangeDocumentation.narrative' in assess_row:
-            info.distribution = assess_row['RangeDocumentation.narrative']
+                if 'HabitatDocumentation.narrative' in assess_row:
+                    info.habitat_narrative = assess_row['HabitatDocumentation.narrative']
+                if 'PopulationDocumentation.narrative' in assess_row:
+                    info.population_trend_narrative = assess_row['PopulationDocumentation.narrative']
+                if 'RangeDocumentation.narrative' in assess_row:
+                    info.distribution = assess_row['RangeDocumentation.narrative']
 
-        info.save()
+                info.save()
 
-        # Add habitats, just importing as-is from IUCN, not trying to map to SA habitats - this must be done manually
-        habitats_rows = habitats.loc[habitats['internal_taxon_id'] == row['internal_taxon_id']]
-        for i, h in habitats_rows.iterrows():
-            name = habitats_lookup.loc[habitats_lookup['code'] == h['GeneralHabitats.GeneralHabitatsSubfield.GeneralHabitatsLookup'], 'value']
-            habitat, created = models.Habitat.objects.get_or_create(name=name)
-            info.habitats.add(habitat)
+                # Add habitats, just importing as-is from IUCN, not trying to map to SA habitats - this must be done manually
+                habitats_rows = habitats.loc[habitats['internal_taxon_id'] == row['internal_taxon_id']]
+                for i, h in habitats_rows.iterrows():
+                    name = habitats_lookup.loc[habitats_lookup['code'] == h[
+                        'GeneralHabitats.GeneralHabitatsSubfield.GeneralHabitatsLookup'], 'value']
+                    habitat, created = models.Habitat.objects.get_or_create(name=name)
+                    info.habitats.add(habitat)
 
         # Create an assessment object and add any necessary info to it
         assess_date = datetime.strptime(assess_row['RedListAssessmentDate.value'], '%d/%m/%Y') # 01/08/1996
@@ -151,9 +162,21 @@ def import_sis():
             taxon=species, date=assess_date
         )
         if 'AOO.range' in row:
-            a.area_occupancy = NumericRange(int(row['AOO.range']), int(row['AOO.range']))
+            a_o_upper = row['AOO.range']
+            a_o_lower = row['AOO.range']
+            if '-' in a_o_upper:
+                a_o = a_o_upper.split('-')
+                a_o_lower = a_o[0]
+                a_o_upper = a_o[1]
+            a.area_occupancy = NumericRange(int(a_o_lower), int(a_o_upper))
         if 'EOO.range' in row:
-            a.extent_occurrence = NumericRange(int(row['EOO.range']), int(row['EOO.range']))
+            e_o_upper = row['EOO.range']
+            e_o_lower = row['EOO.range']
+            if '-' in e_o_upper:
+                e_o = e_o_upper.split('-')
+                e_o_lower = a_o[0]
+                e_o_upper = a_o[1]
+            a.extent_occurrence = NumericRange(int(e_o_lower), int(e_o_upper))
         if 'RedListCriteria.manualCategory' in assess_row:
             a.redlist_category = assess_row['RedListCriteria.manualCategory']
         if 'RedListCriteria.manualCriteria' in assess_row:
@@ -344,13 +367,17 @@ def create_taxon_from_sis(row, mendeley_session):
     species_name = parent.name + ' ' + row['species'].strip()
     species, created = models.Taxon.objects.get_or_create(parent=parent, name=species_name, rank=rank)
 
-    # Add taxon notes if there are any
-    taxon_notes = row['TaxonomicNotes.value']
-    if taxon_notes is not None and taxon_notes != '':
-        species.notes = taxon_notes
-        species.save()
+    if not created:
+        print('species already exists in db')
+        import pdb; pdb.set_trace()
+    else:
+        # Add taxon notes if there are any
+        taxon_notes = row['TaxonomicNotes.value']
+        if taxon_notes is not None and taxon_notes != '':
+            species.notes = taxon_notes
+            species.save()
 
-    # Create a description and set of references
-    imports_views.create_taxon_description(row['taxonomicAuthority'], species, mendeley_session)
+        # Create a description and set of references
+        imports_views.create_taxon_description(row['taxonomicAuthority'], species, mendeley_session)
 
-    return species
+    return species, created

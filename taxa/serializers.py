@@ -64,8 +64,14 @@ class AncestorSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'rank')
 
 
+class ArrayChoiceFieldSerializer(serializers.RelatedField):
+    def to_representation(self, value):
+        return [item[1] for item in Info.REPRODUCTIVE_TYPE_CHOICES if item[0] == 'O'][0]
+
+
 class TaxonInfoSerializer(serializers.ModelSerializer):
     habitats = serializers.StringRelatedField(read_only=True, many=True)
+    reproductive_type = ArrayChoiceFieldSerializer(read_only=True, many=True)
 
     class Meta:
         model = Info

@@ -173,3 +173,9 @@ class Contribution(models.Model):
         (FACILITATOR, 'Facilitator'),
     )
     type = models.CharField(max_length=1, choices=TYPE_CHOICES)
+
+    def __unicode__(self):
+        return str(self.person)
+
+    class Meta:
+        ordering = ['type', 'weight']
