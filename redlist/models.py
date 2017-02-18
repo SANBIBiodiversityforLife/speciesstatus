@@ -43,10 +43,7 @@ class Assessment(models.Model):
         (GLOBAL, 'Global')
     )
     scope = models.CharField(max_length=1, choices=SCOPE_CHOICES, default=NATIONAL)
-    rationale = models.TextField()
-    change_rationale = models.TextField() # Only applicable when the new assessment has different category to previous
     date = models.DateField()
-    notes = models.TextField()
     threats = models.ManyToManyField(Threat, through='ThreatNature')
     contributors = models.ManyToManyField(Person, through='Contribution')
 
@@ -60,15 +57,15 @@ class Assessment(models.Model):
     DATA_DEFICIENT = 'DD'
     NOT_EVALUATED = 'NE'
     REDLIST_CATEGORY_CHOICES = (
-        (EXTINCT, 'EX'),
-        (EXTINCT_IN_WILD, 'EW'),
-        (CRITICALLY_ENDANGERED, 'CR'),
-        (ENDANGERED, 'EN'),
-        (VULNERABLE, 'VU'),
-        (NEAR_THREATENED, 'NT'),
-        (LEAST_CONCERN, 'LC'),
-        (DATA_DEFICIENT, 'DD'),
-        (NOT_EVALUATED, 'NE')
+        (EXTINCT, 'Extinct (EX)'),
+        (EXTINCT_IN_WILD, 'Extinct in the Wild (EW)'),
+        (CRITICALLY_ENDANGERED, 'Critically Endangered (CR)'),
+        (ENDANGERED, 'Endangered (EN)'),
+        (VULNERABLE, 'Vulnerable (VU)'),
+        (NEAR_THREATENED, 'Near Threatened (NT)'),
+        (LEAST_CONCERN, 'Least Concern (LC)'),
+        (DATA_DEFICIENT, 'Data Deficient (DD)'),
+        (NOT_EVALUATED, 'Not Evaluated (NE)')
     )
     redlist_category = models.CharField(max_length=2, choices=REDLIST_CATEGORY_CHOICES)
     redlist_criteria = models.CharField(max_length=100)
@@ -87,7 +84,6 @@ class Assessment(models.Model):
         (CEASED, 'Ceased')
     )
     population_trend_nature = models.CharField(max_length=1, choices=POPULATION_TREND_NATURE_CHOICES, null=True, blank=True)
-    population_trend_narrative = models.TextField(blank=True)
 
     # Conservation and research actions
     conservation_actions = models.ManyToManyField(Action)
@@ -95,12 +91,33 @@ class Assessment(models.Model):
     # Range size - should come from distribution but saved here temporarily
     area_occupancy = IntegerRangeField(null=True, blank=True) # AOO
     extent_occurrence = IntegerRangeField(null=True, blank=True) # EOO
+
+    # Used to store everything that doesn't fit
     temp_field = HStoreField(null=True, blank=True)
+
+    # All the narrative fields which are optional should perhaps go into an hstore?
+    # narrative_fields = HStoreField(null=True, blank=True)
+    # rationale, changerationale, threats, conservation, research, population, decline/increase, use/trade
+    population_trend_narrative = models.TextField(blank=True)
+    notes = models.TextField(blank=True)
+    rationale = models.TextField(blank=True)
+    population_narrative = models.TextField(blank=True)
+    change_rationale = models.TextField(blank=True) # Only applicable when the new assessment has different category to previous
+    threats_narrative = models.TextField(blank=True)
+    conservation_narrative = models.TextField(blank=True)
+    research_narrative = models.TextField(blank=True)
+    use_trade_narrative = models.TextField(blank=True)
+    distribution_narrative = models.TextField(blank=True)
 
     # I would like users to add references inline in textfields and have some js display a ref list on the page
     # So I hope this field will be temporary
     references = models.ManyToManyField(Reference, blank=True)
 
+    def __str__(self):
+        return self.redlist_category
+
+    class Meta:
+        ordering = ['date']
 
 class ActionNature(models.Model):
     assessment = models.ForeignKey(Assessment)
@@ -174,7 +191,7 @@ class Contribution(models.Model):
     )
     type = models.CharField(max_length=1, choices=TYPE_CHOICES)
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.person)
 
     class Meta:

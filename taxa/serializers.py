@@ -18,6 +18,23 @@ class ChildCountField(serializers.RelatedField):
         return child_count
 
 
+class StringAndKeyField(serializers.RelatedField):
+    """Used by jstree to depict rank as well as use rank id in CSS"""
+    def to_representation(self, value):
+        return {'id': value.id, 'name': value.name}
+
+
+class TaxonBasicSerializerWithRank(serializers.ModelSerializer):
+    parent = serializers.PrimaryKeyRelatedField(read_only=True)
+    rank = StringAndKeyField(read_only=True)
+    child_count = ChildCountField(read_only=True, source='id')
+    get_latest_assessment = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = Taxon
+        fields = ('id', 'name', 'parent', 'rank', 'child_count', 'get_top_common_name', 'get_latest_assessment')
+
+
 class TaxonBasicSerializer(serializers.ModelSerializer):
     parent = serializers.PrimaryKeyRelatedField(read_only=True)
     rank = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -66,7 +83,7 @@ class AncestorSerializer(serializers.ModelSerializer):
 
 class ArrayChoiceFieldSerializer(serializers.RelatedField):
     def to_representation(self, value):
-        return [item[1] for item in Info.REPRODUCTIVE_TYPE_CHOICES if item[0] == 'O'][0]
+        return [item[1] for item in Info.REPRODUCTIVE_TYPE_CHOICES][0]
 
 
 class TaxonInfoSerializer(serializers.ModelSerializer):
@@ -109,6 +126,7 @@ class TaxonInfoSerializer(serializers.ModelSerializer):
 class TaxonSerializer(serializers.ModelSerializer):
     children = ChildrenInfoField(required=False, many=True, read_only=True)
     rank = serializers.StringRelatedField(read_only=True)
+    get_latest_assessment = serializers.PrimaryKeyRelatedField(read_only=True)
     descriptions = serializers.StringRelatedField(read_only=True, many=True)
     common_names = serializers.StringRelatedField(many=True)
     synonyms = serializers.StringRelatedField(read_only=True, many=True)
@@ -127,14 +145,16 @@ class TaxonSerializer(serializers.ModelSerializer):
                   'general_distributions',
                   'get_full_name',
                   'common_names',
+                  'get_top_common_name',
                   'synonyms',
-                  'get_latest_assessment_id')
+                  'get_latest_assessment')
 
 
 class TaxonSuperBasicSerializer(serializers.ModelSerializer):
     children = ChildrenInfoField(required=False, many=True, read_only=True)
     rank = serializers.StringRelatedField(read_only=True)
     common_names = serializers.StringRelatedField(many=True)
+    get_latest_assessment = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Taxon
@@ -144,4 +164,4 @@ class TaxonSuperBasicSerializer(serializers.ModelSerializer):
                   'children',
                   'get_full_name',
                   'common_names',
-                  'get_latest_assessment_id')
+                  'get_latest_assessment')

@@ -8,12 +8,20 @@
 }
 #taxon-heading h1 {
   margin-top: 30px;
-	text-shadow:1px 1px 10px rgba(0, 0, 0, 0.8);
+  text-shadow:1px 1px 10px rgba(0, 0, 0, 0.8);
   font-weight: bold;
   font-size: 3.5em;
+  padding-bottom: 10px;
+  border-bottom: 1px solid white;
+}
+#taxon-heading h2 span {
+    padding: 5px;
+    margin-right: 5px;
+    background-color: rgba(49, 112, 143, 0.57);;
 }
 #taxon-heading h2 {
-  font-size: 1.5em;
+  font-size: 1em;
+  line-height: 2em;
 }
 #taxon-heading a {
   color: #fff;
@@ -27,6 +35,9 @@
  .nav-tabs>li>a:hover {
     background-color: none;
     color: #2d2d2d !important;
+}
+#taxon-heading .nav-tabs {
+    margin-top: 20px;
 }
 
 
@@ -74,4 +85,47 @@ label.cke_dialog_ui_labeled_label a {
 }
 .cke_dialog_ui_button {
   margin-bottom: 20px;
+}
+
+/* assessment stuff */
+nav.redlist {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 25px;
+    font-size: 1.5em;
+}
+nav.redlist .nav-pills>li.active>a, nav.redlist .nav-pills>li.active>a:focus, nav.redlist .nav-pills>li.active>a:hover {
+    background-color: #b73f33;
+}
+
+.contribution-type {
+    display: inline-block;
+    padding: 5px 10px;
+    margin: 5px 0;
+    line-height: 2em;
+}
+.contributor {
+    padding: 5px;
+}
+.contribution-assessor .contributor { background-color: #e6ef86; }
+.contribution-reviewer .contributor { background-color: #efc786; }
+.contribution-contributor .contributor { background-color: #efde86; }
+.contribution-facilitator .contributor { background-color: #efa986; }
+.contribution-assessor .contributor:hover { background-color: #e7af86; }
+.contribution-reviewer .contributor:hover { background-color: #efff86; }
+.contribution-contributor .contributor:hover { background-color: #eff786; }
+.contribution-facilitator .contributor:hover { background-color: #efd986; }
+#redlist-summary {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 15px;
+}
+#redlist-summary>div:first-child div {
+    padding: 20px;
+    text-align: center;
+    max-width: 100%;
+    background-color: #ddd;
+    border-radius: 60px;
+}
+#redlist-summary>div:first-child div strong {
+    font-size: 1.5em;
 }

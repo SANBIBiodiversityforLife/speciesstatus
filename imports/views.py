@@ -12,7 +12,7 @@ from django.db.models import Count
 from django.http import HttpResponse
 import pandas as pd
 from psycopg2.extras import NumericRange
-from imports import sis_import
+from imports import sis_import, spstatus_import
 import pdb
 import re
 import requests
@@ -27,6 +27,8 @@ def create_authors(author_string):
     :return:
     """
     # Remove the 'and' so that we can apply a simple regex to split up the authors
+    author_string = author_string.replace(' &amp; ', ', ')
+    author_string = author_string.replace(' & ', ', ')
     author_string = author_string.replace(' and ', ', ')
     regex = r'([A-Z][a-z]+),\s+(([A-Z]\.?)+)(,|$)'
     matches = re.findall(regex, author_string)
@@ -176,6 +178,7 @@ def create_taxon_description(authority, taxon, mendeley_session):
 
         # Get citation reference, use whatever we can find in db
         print('getting citation reference from db...')
+        reference = []
         try:
             reference = biblio_models.Reference.objects.filter(authors__in=author_list, year=year) \
                 .annotate(num_tags=Count('authors')).filter(num_tags=len(author_list))
@@ -188,7 +191,8 @@ def create_taxon_description(authority, taxon, mendeley_session):
             reference = biblio_models.Reference(year=year)
             reference.save()
             biblio_models.assign_multiple_authors(author_list=author_list, reference=reference)
-
+        elif len(reference) == 0:
+            return
         else:
             reference = reference[0]
 
@@ -200,5 +204,9 @@ def create_taxon_description(authority, taxon, mendeley_session):
 
 def sis(request):
     sis_import.import_sis()
+
+
+def spstatus(request):
+    spstatus_import.import_spstatus()
 
 

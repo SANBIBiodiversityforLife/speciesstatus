@@ -9,7 +9,7 @@ urlpatterns = [
     url(r'^api/$', views.api_root),
     url(r'^api/detail/(?P<pk>[0-9]+)/$', views.TaxonDetail.as_view(renderer_classes=(BrowsableAPIRenderer, JSONRenderer))),
     url(r'^api/common-name/(?P<pk>[0-9]+)/$', views.CommonNameDetail.as_view()),
-    url(r'^api/lineage/(?P<pk>\d*)/$', views.LineageView.as_view(renderer_classes=(BrowsableAPIRenderer, JSONRenderer))),
+    url(r'^api/lineage/(?P<pk>\d*)/$', views.LineageView.as_view(renderer_classes=(BrowsableAPIRenderer, JSONRenderer)), name='api_lineage'),
     url(r'^api/children/(?P<pk>\d*)/$',
         views.ChildrenView.as_view(renderer_classes=(BrowsableAPIRenderer, JSONRenderer)),
         name='api_children'),

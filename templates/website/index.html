@@ -11,7 +11,7 @@
 		<div class="container"><div class="row">
 			<div class="col-md-12 text-center">
 				<h1>Search for species</h1>
-				<form action="/Search" class="navbar-form" method="get">                    
+				<form action="/Search" class="navbar-form" method="get">
 					<div class="input-group col-md-8">
 						<input name="searchterm" id="searchterm" type="text" class="search-query form-control input-lg" autocomplete="off" placeholder="Enter common name, ecological traits, scientific names, etc." data-provide="typeahead" data-items="4" data-source="">
 						<div class="input-group-btn">
@@ -68,45 +68,15 @@
 	</article>
 </div>
 <p class="rss-footer">Read more news on <a href="http://www.sanbi.org/news">sanbi.org</a></p>
-</div>{% url 'search_autocomplete' %}
+</div>
 {% endblock content %}
 
 {% block js %}
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 <script>
-$(document).ready(function() {
-	var taxonDetailUrl = "{% url 'taxa_detail' 0 %}";
-
-	$("#searchterm").autocomplete({
-    source: function(request, response) {
-      $.ajax({
-        url: "{% url 'search_autocomplete' %}",
-        dataType: "json",
-        data: {
-          search: request.term
-        },
-        success: function (data) {
-          response($.map(data.results, function (item) {
-            return {
-              label: item.name,
-              value: item.id
-            };
-          }));
-        }
-      });
-    },
-    minLength: 3,
-		select: function(event, ui) {
-		  location.href = taxonDetailUrl.replace('0', ui.item.value);
-      return false;
-		},
-		/*focus: function( event, ui ) {
-			console.log(ui);
-			$("#searchterm").val( ui.item.label );
-			return false;
-		},*/
-  });
-});
+var searchAutoCompleteUrl = "{% url 'search_autocomplete' %}";
+var searchRedirectUrl = "{% url 'taxa_detail' 0 %}";
 </script>
+<script src="{% static 'search.js' %}"></script>
 {% endblock js %}
 

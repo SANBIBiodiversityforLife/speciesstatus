@@ -1,0 +1,70 @@
+
+#jstree-input a {
+    padding: 10px;
+}
+#jstree-input {
+    margin-bottom: 20px;
+    max-width: 400px;
+}
+.jstree-default .jstree-hovered {
+    color: white;
+    background-color: #347fbf;
+}
+.jstree-node .common-names { font-size: 0.8em; font-weight: bold; color: #777; }
+.jstree-default .jstree-hovered .common-names {
+    color: white;
+    background-color: #347fbf;
+}
+.jstree-anchor { padding-right: 10px; }
+.jstree-anchor small { font-weight: bold; }
+/*#jstree li[aria-level="1"] a { color: #484436; }
+#jstree li[aria-level="2"] a { color: #6b6245; }
+#jstree li[aria-level="3"] a { color: #87784b; }
+#jstree li[aria-level="4"] a { color: #988036; }
+#jstree li[aria-level="5"] a { color: #b08f2c; }
+#jstree li[aria-level="6"] a { color: #be961c; }
+#jstree li[aria-level="7"] a { color: #daa914; }
+#jstree li[aria-level="8"] a { color: #ebb510; }
+#jstree li[aria-level="9"] a { color: #ffc001; }*/
+
+#main-carousel-text .form-group { width: 90%; }
+#main-carousel-text #searchterm { width: 50%; }
+#main-carousel-text label {
+    color: rgba(255,255,255,0.95);
+    text-shadow:1px 1px 10px rgba(0, 0, 0, 0.8);
+    font-weight: bold;
+    font-size: 2em;
+}
+#carousel { max-height: 250px; }
+#main-carousel-text  {
+	margin-top: 50px;
+}
+.jstree-default .jstree-node {
+    margin-left: 100px;
+}
+#main-carousel-text form {
+    margin-top: 30px;
+}
+.tree-highlight-node a {
+    font-weight: bold;
+    background-color: #fff175;
+}
+#searchterm, .form-inline .btn-info {
+    margin-top: -7px;
+    margin-left: 10px;
+}
+span.assessment {
+    background-color: #777;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 0.6em;
+    font-weight: bold;
+}
+span.assessment-LC { background-color: #3da72b; }
+span.assessment-NT { background-color: #9da72b; }
+span.assessment-VU { background-color: #c2ad21; }
+span.assessment-EN { background-color: #d7b600; }
+span.assessment-CR { background-color: #d25e00; }
+span.assessment-EW { background-color: #d24000; }
+span.assessment-EX { background-color: #d20000; }

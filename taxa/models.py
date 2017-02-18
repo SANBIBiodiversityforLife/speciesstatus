@@ -22,9 +22,6 @@ class Habitat(models.Model):
     def __str__(self):
         return self.name
 
-    def __unicode__(self):
-        return self.name
-
     class Meta:
         ordering = ['name']
 
@@ -163,12 +160,9 @@ class Taxon(MPTTModel):
     def __str__(self):
         return self.name
 
-    def get_latest_assessment_id(self):
+    def get_latest_assessment(self):
         last_assessment = self.assessment_set.last()
-        if last_assessment is not None:
-            return last_assessment.id
-        else:
-            return False
+        return last_assessment
 
     # Return a correctly formatted (name + author + date) full name
     def get_full_name(self):
@@ -186,6 +180,13 @@ class Taxon(MPTTModel):
         # Otherwise it's an animal and there's more than 1 description
         else:
             return '<em>{}</em>, <span class="species-description">({})</span>'.format(self.name, last_description)
+
+    def get_top_common_name(self):
+        top_common_name = CommonName.objects.filter(taxon=self.id).first()
+        if top_common_name:
+            return top_common_name.name
+        else:
+            return False
 
 
 class Description(models.Model):
@@ -221,7 +222,7 @@ class CommonName(models.Model):
 
     class Meta:
         # Ensure that we don't duplicate common names for a taxon
-        unique_together = ('taxon', 'name')
+        unique_together = ('taxon', 'name', 'language')
 
     def __str__(self):
         if self.reference:
@@ -369,6 +370,18 @@ class GeneralDistribution(models.Model):
         (UNKNOWN, 'Unknown'),
     )
     residency_status = models.CharField(max_length=3, choices=RESIDENCY_CHOICES, null=True, blank=True)
+
+    COUNTRY = 'C'
+    PROVINCE = 'P'
+    DISTRICT = 'D'
+    OTHER = 'O'
+    LEVEL_CHOICES = (
+        (COUNTRY, 'Country'),
+        (PROVINCE, 'Province'),
+        (DISTRICT, 'District'),
+        (OTHER, 'Other'),
+    )
+    level = models.CharField(max_length=1, choices=LEVEL_CHOICES, null=True, blank=True)
 
     # Reference(s?) for the residency status & distribution
     reference = models.ForeignKey(Reference)

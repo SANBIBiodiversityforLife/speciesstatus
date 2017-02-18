@@ -6,6 +6,7 @@
 {% block css %}
 <link href="{% static 'taxon.css' %}" rel="stylesheet">
 <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
+{% block extra-css %}{% endblock extra-css %}
 {% endblock css %}
 
 {% block body_attributes %} data-spy="scroll" data-target="#species-side-nav" style="position: relative"{% endblock %}
@@ -16,23 +17,21 @@
       <!-- Hierarchical path -->
       <div id="breadcrumb">
         {% for item in ancestors %}
-        {% if not forloop.first %}<a href="{% url 'taxa_detail' item.id %}">{% endif %}
+        {% if not forloop.first %}<a href="{% url 'lineage_pk' item.id %}">{% endif %}
         {{ item.name }}
         {% if not forloop.first %}</a>{% endif %}
         {% if not forloop.last %}<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
-        {% else %}<a href="{% url 'lineage_pk' item.id %}" type="button" class="btn btn-warning btn-sm">View tree</a>
+        {% else %}<a href="{% url 'lineage_pk' item.id %}" type="button" class="btn btn-warning btn-sm"  data-toggle="tooltip" data-placement="top" title='Rank: {{ taxon.data.rank }}, {% if taxon.data.synonyms %}Synonyms: {{ taxon.data.synonyms|join:" // " }}{% else %}Name status: Accepted{% endif %}'>View tree</a>
         {% endif %}
         {% endfor %}
       </div>
 
       <!-- Name and rank -->
       <h1>{{ taxon.data.get_full_name|safe }}</h1>
-      <hr>
-      <p>Rank: {{ taxon.data.rank }}, {% if taxon.data.synonyms %}Synonyms: {{ taxon.data.synonyms|join:" // " }}{% else %}Name status: Accepted{% endif %}</p>
 
       <!-- Common names -->
-      <h2>Common names: {{ taxon.data.common_names|join:" // " }}{% if user.is_authenticated %}
-      <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-backdrop="static" data-target="#commonNamesModal">Add</button>{% endif %}</h2>
+      <h2><span>{{ taxon.data.common_names|join:"</span><span>" }}</span>{% if user.is_authenticated %}
+      <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-backdrop="static" data-target="#commonNamesModal">Add Common Names</button>{% endif %}</h2>
       <ul class="nav nav-tabs nav-inverse">
         <li role="presentation"{% if request.resolver_match.url_name == 'taxa_detail' %} class="active"{% endif %}>
           <a href="{% url 'taxa_detail' taxon.data.id %}">General</a>
@@ -41,11 +40,11 @@
           <a href="{% url 'taxa_detail' taxon.data.id %}">Images</a>
         </li>
         <li role="presentation"{% if request.resolver_match.url_name == 'taxa_distribution' %} class="active"{% endif %}>
-          <a href="{% url 'taxa_detail' taxon.data.id %}">Distribution</a>
+          <a href="{% url 'taxa_detail' taxon.data.id %}">Distribution map</a>
         </li>
-        {% if taxon.data.get_latest_assessment_id %}
+        {% if taxon.data.get_latest_assessment %}
         <li role="presentation"{% if request.resolver_match.url_name == 'assessment_detail' %} class="active"{% endif %}>
-          <a href="{% url 'assessment_detail' taxon.data.get_latest_assessment_id %}">Assessment</a>
+          <a href="{% url 'assessment_detail' taxon.data.get_latest_assessment %}">RedList assessments</a>
         </li>
         {% endif %}
       </ul>
@@ -133,8 +132,10 @@
 <script src="{% static 'bibtex-js-master/src/bibtex_js.js' %}"></script>
 <script src="{% static 'ckeditor/ckeditor.js' %}"></script>
 <script>
-
 $(document).ready(function() {
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
   // Fix for ckeditor in a bootstrap modal
   // See http://stackoverflow.com/questions/22637455/how-to-use-ckeditor-in-a-bootstrap-modal
   jQuery.fn.modal.Constructor.prototype.enforceFocus = function () {
@@ -175,5 +176,6 @@ $(document).ready(function() {
   });
 });
 </script>
+{% block extra-js %}{% endblock extra-js %}
 {% endblock js %}
 

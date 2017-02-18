@@ -22,24 +22,6 @@ def api_root(request, format=None):
     })
 
 
-class CommonNameDetailFF(APIView):
-    """
-    List all snippets, or create a new snippet.
-    """
-    def get(self, request, format=None):
-        snippets = models.CommonName.objects.all()
-        serializer = serializers.CommonNameSerializer(snippets, many=True)
-        return Response(serializer.data)
-
-    def post(self, request, format=None):
-        serializer = serializers.CommonNameSerializer(data=request.data)
-        if serializer.is_valid():
-            import pdb; pdb.set_trace()
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 class CommonNameDetail(mixins.CreateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
     queryset = models.CommonName.objects.all()
     serializer_class = serializers.CommonNameSerializer
@@ -64,11 +46,7 @@ class TaxonDetail(generics.RetrieveUpdateDestroyAPIView):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         ancestors = instance.get_ancestors(include_self=True)
-        #ancestor_serializer = serializers.AncestorSerializer(ancestors, many=True)
-        #return Response({'data': serializer.data, 'ancestors': ancestor_serializer.tree_path()})
         ancestors_serializer = serializers.AncestorSerializer(ancestors, many=True)
-
-        #cn = serializers.CommonNameSerializer(), 'cn': cn
         return Response({'taxon': serializer, 'ancestors': ancestors_serializer.data})
 
 
@@ -84,47 +62,62 @@ class TaxonListView(generics.ListAPIView):
                      'info__trophic',
                      'info__uses',
                      'info__distribution',
-                     #'info__habitat',
                      'common_names__name')
 
 
 class ChildrenView(generics.RetrieveAPIView):
     queryset = models.Taxon.objects.all()
-    serializer_class = serializers.TaxonBasicSerializer
+    serializer_class = serializers.TaxonChildrenSerializer
 
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        children = instance.get_children()
-        serializer = self.get_serializer(children, many=True)
-        instance_serializer = self.get_serializer(instance)
-        return Response({'children': serializer.data, 'parent': instance_serializer.data})
 
+def unflatten_tree(flat_tree_data, parent_id = 0):
+    children = [x for x in flat_tree_data if x['parent'] == parent_id]
+    for child in children:
+        child['children'] = unflatten_tree(flat_tree_data, child['id'])
+    return children
+    # test = [{'id': 1, 'parent_id': 0},{'id': 2, 'parent_id': 0},{'id': 3, 'parent_id': 0},{'id': 4, 'parent_id': 2},{'id': 5, 'parent_id': 4},]
+
+
+def get_ancestors(ancestors, node):
+    if node.parent:
+        print(node.parent)
+        ancestors.append(node.parent)
+        get_ancestors(ancestors, node.parent)
+    else:
+        return ancestors
 
 class LineageView(generics.RetrieveAPIView):
     queryset = models.Taxon.objects.all()
-    serializer_class = serializers.TaxonBasicSerializer
+    serializer_class = serializers.TaxonBasicSerializerWithRank
     template_name = 'website/tree.html'
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        ancestors = drilldown_tree_for_node(instance)
-
+        ancestors = list(drilldown_tree_for_node(instance))
+        #al = []
+        #for a in ancestors_old:
+        #    al.append(a)
+        #ancestors = get_ancestors([instance], instance)
         nodes = []
         for node in ancestors:
+            print(node)
             nodes.append(node)
             siblings = node.get_siblings()
             if len(siblings) > 0:
-                nodes += siblings
+                nodes.extend(siblings)
+        nodes_set = list(set(nodes))
 
-        serializer = self.get_serializer(nodes, many=True)
+        serializer = self.get_serializer(nodes_set, many=True)
+        # root = serializer.data[0]
+        root = [x for x in serializer.data if x['id'] == ancestors[0].id][0]
+        root['children'] = unflatten_tree(serializer.data, ancestors[0].id)
 
         # How the heck do you access the entire thing in template? no idea, have to make it a param
         if TemplateHTMLRenderer in self.renderer_classes:
-            params = {"lineage": JSONRenderer().render(serializer.data)}
+            params = {"lineage": JSONRenderer().render(serializer.data), 'pk': instance.id}
             return Response(params)
         else:
-            return Response(serializer.data)
-
+            return Response(root)
 
 
 @api_view(['GET'])

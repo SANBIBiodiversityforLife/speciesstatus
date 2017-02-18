@@ -37,6 +37,9 @@ class AssessmentDetail(generics.RetrieveUpdateDestroyAPIView):
         serializer = self.get_serializer(instance)
         taxon_serializer = taxon_serializers.TaxonSuperBasicSerializer(instance.taxon)
 
+        ancestors = instance.taxon.get_ancestors(include_self=True)
+        ancestors_serializer = taxon_serializers.AncestorSerializer(ancestors, many=True)
+
         contributions = instance.contribution_set.all()
         serialized_contributions = serializers.ContributionSerializer(instance=contributions)
-        return Response({'assessment': serializer.data, 'taxon': taxon_serializer, 'contributions': contributions})
+        return Response({'ancestors': ancestors_serializer.data, 'assessment': serializer.data, 'taxon': taxon_serializer, 'contributions': contributions})

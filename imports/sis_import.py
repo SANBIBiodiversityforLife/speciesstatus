@@ -30,83 +30,97 @@ def import_sis():
     dir = 'C:\\Users\\JohaadienR\\Documents\\Projects\\python-sites\\species\\data-sources\\'
 
     # Amphibians
-    animal_dir = dir + 'Amphibians_SIS\\Amphibians\\'
-    animal_dir = dir + 'Dragonflies_SIS\\Dragonflies_Regional\\'
-    animal_dir = dir + 'Dragonflies_SIS\\Dragonflies\\'
-    af = pd.read_csv(animal_dir + 'allfields.csv', encoding='iso-8859-1')
-    t = pd.read_csv(animal_dir + 'taxonomy.csv', encoding='iso-8859-1')
-    cn = pd.read_csv(animal_dir + 'commonnames.csv', encoding='iso-8859-1')
-    ppl = pd.read_csv(animal_dir + 'credits.csv', encoding='iso-8859-1')
-    assess = pd.read_csv(animal_dir + 'assessments.csv', encoding='iso-8859-1')
-    cons_actions = pd.read_csv(animal_dir + 'conservationneeded.csv', encoding='iso-8859-1')
-    habitats = pd.read_csv(animal_dir + 'habitats.csv', encoding='iso-8859-1')
-    threats = pd.read_csv(animal_dir + 'threats.csv', encoding='iso-8859-1')
-    biblio = pd.read_csv(animal_dir + 'references.csv', encoding='iso-8859-1')
-    research = pd.read_csv(animal_dir + 'researchneeded.csv', encoding='iso-8859-1')
+    animal_dirs = ['Amphibians_SIS\\Amphibians\\', 'Dragonflies_SIS\\Dragonflies_Regional\\']
+    # animal_dir = dir + 'Amphibians_SIS\\Amphibians\\'
+    # animal_dir = dir + 'Dragonflies_SIS\\Dragonflies_Regional\\'
+    # animal_dir = dir + 'Dragonflies_SIS\\Dragonflies\\'
+    for animal_dir in animal_dirs:
+        animal_dir = dir + animal_dir
+        af = pd.read_csv(animal_dir + 'allfields.csv', encoding='iso-8859-1')
+        t = pd.read_csv(animal_dir + 'taxonomy.csv', encoding='iso-8859-1')
+        cn = pd.read_csv(animal_dir + 'commonnames.csv', encoding='iso-8859-1')
+        assess = pd.read_csv(animal_dir + 'assessments.csv', encoding='iso-8859-1')
+        cons_actions = pd.read_csv(animal_dir + 'conservationneeded.csv', encoding='iso-8859-1')
+        habitats = pd.read_csv(animal_dir + 'habitats.csv', encoding='iso-8859-1')
+        threats = pd.read_csv(animal_dir + 'threats.csv', encoding='iso-8859-1')
+        biblio = pd.read_csv(animal_dir + 'references.csv')
+        research = pd.read_csv(animal_dir + 'researchneeded.csv', encoding='iso-8859-1')
 
-    # Lookups
-    research_lookup = pd.read_csv(dir + 'research_lookup.csv', encoding='iso-8859-1')
-    threats_lookup = pd.read_csv(dir + 'threat_lookup.csv', encoding='iso-8859-1')
-    habitats_lookup = pd.read_csv(dir + 'habitat_lookup.csv', encoding='iso-8859-1')
-    cons_actions_lookup = pd.read_csv(dir + 'cons_actions_lookup.csv', encoding='iso-8859-1')
+        # I bet they did this just to annoy all future developers
+        ppl = pd.read_csv(animal_dir + 'credits.csv')
+        ppl_old = pd.read_csv(animal_dir + 'credits_old.csv')
 
-    # These lists we use below as we iterate over all the assessments
-    exclude_from_assessment = [
-        'AvgAnnualFecundity.fecundity',
-        'BirthSize.size',
-        'MaxSize.size',
-        'Congregatory.value',
-        'EggLaying.layEggs',
-        'FreeLivingLarvae.hasStage',
-        'AOO.range',
-        'EOO.range',
-        'ElevationLower.limit',
-        'ElevationUpper.limit',
-        'internal_taxon_id'
-    ]
-    contribution_type_lookup = {
-        'Assessor': redlist_models.Contribution.ASSESSOR,
-        'Reviewer': redlist_models.Contribution.REVIEWER,
-        'Contributor': redlist_models.Contribution.CONTRIBUTOR,
-        'Facilitator': redlist_models.Contribution.FACILITATOR
-    }
-    threat_timing_lookup = {
-        'Ongoing': redlist_models.ThreatNature.PAST,
-        'Future': redlist_models.ThreatNature.FUTURE,
-        'Unknown': redlist_models.ThreatNature.UNKNOWN,
-        'Past, Likely to Return': redlist_models.ThreatNature.LIKELY_TO_RETURN,
-        'Past, Unlikely to Return': redlist_models.ThreatNature.UNLIKELY_TO_RETURN
-    }
-    threat_severity_lookup = {
-        'Very Rapid Declines': redlist_models.ThreatNature.EXTREME,
-        'Rapid Declines': redlist_models.ThreatNature.SEVERE,
-        'Slow, Significant Declines': redlist_models.ThreatNature.SEVERE,
-        'Causing/Could cause fluctuations': redlist_models.ThreatNature.MODERATE,
-        'Negligible declines': redlist_models.ThreatNature.SLIGHT,
-        'No decline': redlist_models.ThreatNature.NONE,
-        'Unknown': redlist_models.ThreatNature.UNKNOWN
-    }
+        # Lookups
+        research_lookup = pd.read_csv(dir + 'research_lookup.csv', encoding='iso-8859-1')
+        threats_lookup = pd.read_csv(dir + 'threat_lookup.csv', encoding='iso-8859-1')
+        habitats_lookup = pd.read_csv(dir + 'habitat_lookup.csv', encoding='iso-8859-1')
+        cons_actions_lookup = pd.read_csv(dir + 'cons_actions_lookup.csv', encoding='iso-8859-1')
 
-    # Iterate through the allfields table, 1 row represents 1 assessment for a taxon
-    for index, row in af.iterrows():
-        print('----------------------------------------------------------')
-        print('row: ' + str(index))
+        # These lists we use below as we iterate over all the assessments
+        exclude_from_assessment = [
+            'AvgAnnualFecundity.fecundity',
+            'BirthSize.size',
+            'MaxSize.size',
+            'Congregatory.value',
+            'EggLaying.layEggs',
+            'FreeLivingLarvae.hasStage',
+            'AOO.range',
+            'EOO.range',
+            'ElevationLower.limit',
+            'ElevationUpper.limit',
+            'internal_taxon_id',
+            'NoThreats.noThreats',
+            'SevereFragmentation.justification'
+        ]
+        contribution_type_lookup = {
+            'Assessor': redlist_models.Contribution.ASSESSOR,
+            'Reviewer': redlist_models.Contribution.REVIEWER,
+            'Contributor': redlist_models.Contribution.CONTRIBUTOR,
+            'Facilitator': redlist_models.Contribution.FACILITATOR
+        }
+        threat_timing_lookup = {
+            'Ongoing': redlist_models.ThreatNature.PAST,
+            'Future': redlist_models.ThreatNature.FUTURE,
+            'Unknown': redlist_models.ThreatNature.UNKNOWN,
+            'Past, Likely to Return': redlist_models.ThreatNature.LIKELY_TO_RETURN,
+            'Past, Unlikely to Return': redlist_models.ThreatNature.UNLIKELY_TO_RETURN
+        }
+        threat_severity_lookup = {
+            'Very Rapid Declines': redlist_models.ThreatNature.EXTREME,
+            'Rapid Declines': redlist_models.ThreatNature.SEVERE,
+            'Slow, Significant Declines': redlist_models.ThreatNature.SEVERE,
+            'Causing/Could cause fluctuations': redlist_models.ThreatNature.MODERATE,
+            'Negligible declines': redlist_models.ThreatNature.SLIGHT,
+            'No decline': redlist_models.ThreatNature.NONE,
+            'Unknown': redlist_models.ThreatNature.UNKNOWN
+        }
 
-        # Retrieve the taxon info for the assessment we're on
-        taxon_row = t.loc[t['internal_taxon_id'] == row['internal_taxon_id']]
-        taxon_row = taxon_row.iloc[0]
-        species, species_was_created = create_taxon_from_sis(taxon_row, mendeley_session)
+        # Iterate through the allfields table, 1 row represents 1 assessment for a taxon
+        for index, row in af.iterrows():
+            print('----------------------------------------------------------')
+            print('row: ' + str(index))
+            #if index != 95:
+            #    continue
 
-        if not species_was_created:
-                            # Add common names and languages for the taxon
+            # Remove all row columns which do not contain info
+            row = {k: v for k, v in row.items() if pd.notnull(v)}
+
+            # Retrieve the taxon info and the assessment we're on
+            taxon_row = t.loc[t['internal_taxon_id'] == row['internal_taxon_id']]
+            taxon_row = taxon_row.iloc[0]
+            species, species_was_created = create_taxon_from_sis(taxon_row, mendeley_session)
+
+            # The iloc is used because you have to refer to the items via the index e.g. v[0] for row 1, v[1] for row 2, etc
+            assess_row = assess.loc[assess['internal_taxon_id'] == row['internal_taxon_id']]
+            assess_row = {k: v.iloc[0] for k, v in assess_row.items() if pd.notnull(v.iloc[0])}
+
+            if species_was_created:
+                # Add common names and languages for the taxon
                 common_names = cn.loc[cn['internal_taxon_id'] == row['internal_taxon_id']]
                 for i, c_row in common_names.iterrows():
                     language, created = models.Language.objects.get_or_create(name=c_row['language'].strip())
                     models.CommonName.objects.get_or_create(language=language, name=c_row['name'].strip(),
                                                             taxon=species)
-
-                # Remove all row columns which do not contain info
-                row = {k: v for k, v in row.items() if pd.notnull(v)}
 
                 # All species objects should have a corresponding info object, so let's create one
                 info = models.Info(taxon=species)
@@ -134,15 +148,9 @@ def import_sis():
                 if 'ElevationLower.limit' in row and 'ElevationUpper.limit' in row:
                     info.altitude_or_depth_range = (int(row['ElevationLower.limit']), int(row['ElevationUpper.limit']))
 
-                # Get the taxon info stuff from the assessment csv and remove all empty values
-                # The iloc is used because you have to refer to the items via the index e.g. v[0] for row 1, v[1] for row 2, etc
-                assess_row = assess.loc[assess['internal_taxon_id'] == row['internal_taxon_id']]
-                assess_row = {k: v.iloc[0] for k, v in assess_row.items() if pd.notnull(v.iloc[0])}
-
+                # Get the taxon info stuff from the assessment csv
                 if 'HabitatDocumentation.narrative' in assess_row:
                     info.habitat_narrative = assess_row['HabitatDocumentation.narrative']
-                if 'PopulationDocumentation.narrative' in assess_row:
-                    info.population_trend_narrative = assess_row['PopulationDocumentation.narrative']
                 if 'RangeDocumentation.narrative' in assess_row:
                     info.distribution = assess_row['RangeDocumentation.narrative']
 
@@ -151,189 +159,225 @@ def import_sis():
                 # Add habitats, just importing as-is from IUCN, not trying to map to SA habitats - this must be done manually
                 habitats_rows = habitats.loc[habitats['internal_taxon_id'] == row['internal_taxon_id']]
                 for i, h in habitats_rows.iterrows():
-                    name = habitats_lookup.loc[habitats_lookup['code'] == h[
-                        'GeneralHabitats.GeneralHabitatsSubfield.GeneralHabitatsLookup'], 'value']
-                    habitat, created = models.Habitat.objects.get_or_create(name=name)
-                    info.habitats.add(habitat)
+                    lkup = str(h['GeneralHabitats.GeneralHabitatsSubfield.GeneralHabitatsLookup'])
+                    if lkup:
+                        try:
+                            name = habitats_lookup.loc[habitats_lookup['code'] == lkup, 'value']
+                            habitat, created = models.Habitat.objects.get_or_create(name=name.iloc[0])
+                            info.habitats.add(habitat)
+                        except:
+                            print('Skipping habitat ' + lkup)
+                            pass
 
-        # Create an assessment object and add any necessary info to it
-        assess_date = datetime.strptime(assess_row['RedListAssessmentDate.value'], '%d/%m/%Y') # 01/08/1996
-        a = redlist_models.Assessment(
-            taxon=species, date=assess_date
-        )
-        if 'AOO.range' in row:
-            a_o_upper = row['AOO.range']
-            a_o_lower = row['AOO.range']
-            if '-' in a_o_upper:
-                a_o = a_o_upper.split('-')
-                a_o_lower = a_o[0]
-                a_o_upper = a_o[1]
-            a.area_occupancy = NumericRange(int(a_o_lower), int(a_o_upper))
-        if 'EOO.range' in row:
-            e_o_upper = row['EOO.range']
-            e_o_lower = row['EOO.range']
-            if '-' in e_o_upper:
-                e_o = e_o_upper.split('-')
-                e_o_lower = a_o[0]
-                e_o_upper = a_o[1]
-            a.extent_occurrence = NumericRange(int(e_o_lower), int(e_o_upper))
-        if 'RedListCriteria.manualCategory' in assess_row:
-            a.redlist_category = assess_row['RedListCriteria.manualCategory']
-        if 'RedListCriteria.manualCriteria' in assess_row:
-            a.redlist_criteria = assess_row['RedListCriteria.manualCriteria']
-        if 'RedListRationale.value' in assess_row:
-            a.rationale = assess_row['RedListRationale.value']
+                info.save()
 
-        # Convert all of the other columns data into json and stick it in the temp hstore field
-        # There is SO much info and no way to structure it, best if someone goes and pulls it out manually
-        # as and when they need it
-        hstore_values = {k: v for k, v in row.items() if k not in exclude_from_assessment}
-        a.temp_field = hstore_values
-        try:
-            a.save()
-        except:
-            import pdb; pdb.set_trace()
+            # Create an assessment object and add any necessary info to it
+            assess_date = datetime.strptime(assess_row['RedListAssessmentDate.value'], '%d/%m/%Y') # 01/08/1996
+            a = redlist_models.Assessment(
+                taxon=species, date=assess_date
+            )
+            if 'PopulationDocumentation.narrative' in assess_row:
+                a.population_trend_narrative = assess_row['PopulationDocumentation.narrative']
+            if 'AOO.range' in row:
+                a_o_upper = row['AOO.range']
+                a_o_lower = row['AOO.range']
+                if '-' in str(a_o_upper):
+                    a_o = a_o_upper.split('-')
+                    a_o_lower = a_o[0]
+                    a_o_upper = a_o[1]
+                a.area_occupancy = NumericRange(int(a_o_lower), int(a_o_upper))
+            if 'EOO.range' in row:
+                e_o_upper = row['EOO.range']
+                e_o_lower = row['EOO.range']
+                if '-' in str(e_o_upper):
+                    e_o = e_o_upper.split('-')
+                    e_o_lower = a_o[0]
+                    e_o_upper = a_o[1]
+                a.extent_occurrence = NumericRange(int(e_o_lower), int(e_o_upper))
+            if 'RedListCriteria.manualCategory' in assess_row:
+                a.redlist_category = assess_row['RedListCriteria.manualCategory']
+            if 'RedListCriteria.manualCriteria' in assess_row:
+                a.redlist_criteria = assess_row['RedListCriteria.manualCriteria']
+            if 'RedListRationale.value' in assess_row:
+                a.rationale = assess_row['RedListRationale.value']
+            if 'SevereFragmentation.justification' in row:
+                a.distribution_narrative = row['SevereFragmentation.justification']
 
-        # References for the redlist assessment - nightmarish
-        ref_rows = biblio.loc[biblio['internal_taxon_id'] == row['internal_taxon_id']]
-        for i, r in ref_rows.iterrows():
-            authors = imports_views.create_authors(r['author'])
-            author_string = [x.surname + " " + x.initials for x in authors]
-            author_string = ' and '.join(author_string)
+            # Convert all of the other columns data into json and stick it in the temp hstore field
+            # There is SO much info and no way to structure it, best if someone goes and pulls it out manually
+            # as and when they need it
+            hstore_values = {k: v for k, v in row.items() if k not in exclude_from_assessment}
+            a.temp_field = hstore_values
+            try:
+                a.save()
+            except:
+                import pdb; pdb.set_trace()
 
-            # Sometimes these idiots didn't enter a year, in which case I am throwing the whole reference out
-            if pd.isnull(r['year']):
-                print(r['year'])
-                continue
+            # References for the redlist assessment - nightmarish
+            ref_rows = biblio.loc[biblio['internal_taxon_id'] == row['internal_taxon_id']]
+            for i, r in ref_rows.iterrows():
+                authors = imports_views.create_authors(r['author'])
+                author_string = [x.surname + " " + x.initials for x in authors]
+                author_string = ' and '.join(author_string)
 
-            # For the year you sometimes have 1981b for example, so just get first 4 chars
-            bibtex_dict = {'year': str(r['year'])[:4],
-                           'title': r['title'],
-                           'author': author_string}
+                # Sometimes these idiots didn't enter a year, in which case I am throwing the whole reference out
+                if pd.isnull(r['year']):
+                    print(r['year'])
+                    continue
 
-            # Fuck I don't understand why people try to make bibliographic data relational, it's a headache
-            # When there's a perfectly good language designed to hold and express it - bibtex
-            # I am sticking it all in a dictionary apart from title, year and authors, and use bibtexparser to convert
-            # Now I have to add this and that depending on type. FML. Going to get rid of all empty stuff first
-            # See http://www.openoffice.org/bibliographic/bibtex-defs.html for list of relevant bibtex fields
-            r = {k: v for k, v in r.items() if pd.notnull(v)}
-            r['type'] = r['type'].lower()
-            if r['type'] == 'journal article':
-                bibtex_dict['ENTRYTYPE'] = 'article'
-                if 'volume' in r:
-                    bibtex_dict['volume'] = r['volume']
-                if 'secondary_title' in r:
-                    bibtex_dict['journal'] = r['secondary_title']
-                if 'pages' in r:
-                    bibtex_dict['pages'] = r['pages'].replace('-', '--') # Apparently this is what bibtex wants
-                if 'number' in r:
-                    bibtex_dict['number'] = r['number']
-            elif r['type'] == 'book' or r['type'] == 'book section' or r['type'] == 'edited book':
-                bibtex_dict['ENTRYTYPE'] = 'book'
-                if 'place_published' in r:
-                    bibtex_dict['address'] = r['place_published']
-                if 'publisher' in r:
-                    bibtex_dict['publisher'] = r['publisher']
+                # For the year you sometimes have 1981b for example, so just get first 4 chars
+                bibtex_dict = {'year': str(r['year'])[:4],
+                               'title': r['title'],
+                               'author': author_string}
 
-                # We have to do some extra things for book chapters
-                if r['type'] == 'book section':
-                    bibtex_dict['ENTRYTYPE'] = 'inbook'
-                    if 'pages' in r:
-                        bibtex_dict['pages'] = r['pages'].replace('-', '--')
+                # Fuck I don't understand why people try to make bibliographic data relational, it's a headache
+                # When there's a perfectly good language designed to hold and express it - bibtex
+                # I am sticking it all in a dictionary apart from title, year and authors, and use bibtexparser to convert
+                # Now I have to add this and that depending on type. FML. Going to get rid of all empty stuff first
+                # See http://www.openoffice.org/bibliographic/bibtex-defs.html for list of relevant bibtex fields
+                r = {k: v for k, v in r.items() if pd.notnull(v)}
+                r['type'] = r['type'].lower()
+                if r['type'] == 'journal article':
+                    bibtex_dict['ENTRYTYPE'] = 'article'
+                    if 'volume' in r:
+                        bibtex_dict['volume'] = r['volume']
                     if 'secondary_title' in r:
-                        bibtex_dict['title'] = r['secondary_title'] # This is the chapter's title. ARGH.
-                    bibtex_dict['booktitle'] = r['title']
-                    if 'secondary_author' in r:
-                        chapter_authors = imports_views.create_authors(r['secondary_author'])
-                        chapter_author_string = ' and '.join([x.surname + " " + x.initials for x in chapter_authors])
-                        authors = chapter_authors
-                        bibtex_dict['editor'] = author_string
-                        bibtex_dict['author'] = chapter_author_string
-            elif r['type'] == 'thesis':
-                bibtex_dict['ENTRYTYPE'] = 'phdthesis'
-                if 'publisher' in r:
-                    bibtex_dict['school'] = r['publisher']
-            elif r['type'] == 'conference proceedings' or r['type'] == 'conference paper':
-                bibtex_dict['ENTRYTYPE'] = 'proceedings'
-                bibtex_dict['editor'] = author_string
-                del bibtex_dict['author']
-                if 'secondary_title' in r:
-                    bibtex_dict['series'] = r['secondary_title']
-                if 'publisher' in r:
-                    bibtex_dict['publisher'] = r['publisher']
-                if 'place_published' in r:
-                    bibtex_dict['address'] = r['place_published']
-            elif r['type'] == 'electronic source':
-                bibtex_dict['ENTRYTYPE'] = 'electronic'
-                if 'url' in r:
-                    bibtex_dict['address'] = r['url']
-                if 'publisher' in r:
-                    bibtex_dict['publisher'] = r['publisher']
-            else:
-                print(r)
-                import pdb; pdb.set_trace() # It's some type we haven't thought of yet
+                        bibtex_dict['journal'] = r['secondary_title']
+                    if 'pages' in r:
+                        bibtex_dict['pages'] = r['pages'].replace('-', '--') # Apparently this is what bibtex wants
+                    if 'number' in r:
+                        bibtex_dict['number'] = r['number']
+                elif r['type'] == 'book' or r['type'] == 'book section' or r['type'] == 'edited book':
+                    bibtex_dict['ENTRYTYPE'] = 'book'
+                    if 'place_published' in r:
+                        bibtex_dict['address'] = r['place_published']
+                    if 'publisher' in r:
+                        bibtex_dict['publisher'] = r['publisher']
 
-            # from bibtexparser.bwriter import BibTexWriter; from bibtexparser.bibdatabase import BibDatabase
-            # db = BibDatabase(); db.entries = [bibtex_dict]; writer = BibTexWriter(); writer.write(db)
-            # Required for bibtexparser, just putting in a random number for now
-            bibtex_dict['ID'] = row['internal_taxon_id']
+                    # We have to do some extra things for book chapters
+                    if r['type'] == 'book section':
+                        bibtex_dict['ENTRYTYPE'] = 'inbook'
+                        if 'pages' in r:
+                            bibtex_dict['pages'] = r['pages'].replace('-', '--')
+                        if 'secondary_title' in r:
+                            bibtex_dict['title'] = r['secondary_title'] # This is the chapter's title. ARGH.
+                        bibtex_dict['booktitle'] = r['title']
+                        if 'secondary_author' in r:
+                            chapter_authors = imports_views.create_authors(r['secondary_author'])
+                            chapter_author_string = ' and '.join([x.surname + " " + x.initials for x in chapter_authors])
+                            authors = chapter_authors
+                            bibtex_dict['editor'] = author_string
+                            bibtex_dict['author'] = chapter_author_string
+                elif r['type'] == 'thesis':
+                    bibtex_dict['ENTRYTYPE'] = 'phdthesis'
+                    if 'publisher' in r:
+                        bibtex_dict['school'] = r['publisher']
+                elif r['type'] == 'conference proceedings' or r['type'] == 'conference paper':
+                    bibtex_dict['ENTRYTYPE'] = 'proceedings'
+                    bibtex_dict['editor'] = author_string
+                    del bibtex_dict['author']
+                    if 'secondary_title' in r:
+                        bibtex_dict['series'] = r['secondary_title']
+                    if 'publisher' in r:
+                        bibtex_dict['publisher'] = r['publisher']
+                    if 'place_published' in r:
+                        bibtex_dict['address'] = r['place_published']
+                elif r['type'] == 'electronic source':
+                    bibtex_dict['ENTRYTYPE'] = 'electronic'
+                    if 'url' in r:
+                        bibtex_dict['address'] = r['url']
+                    if 'publisher' in r:
+                        bibtex_dict['publisher'] = r['publisher']
+                else:
+                    print(r)
+                    import pdb; pdb.set_trace() # It's some type we haven't thought of yet
 
-            # Create and save the reference object
-            ref = biblio_models.Reference(year=int(bibtex_dict['year']),
-                                          title=bibtex_dict['title'],
-                                          bibtex=bibtex_dict)
-            ref.save()
+                # from bibtexparser.bwriter import BibTexWriter; from bibtexparser.bibdatabase import BibDatabase
+                # db = BibDatabase(); db.entries = [bibtex_dict]; writer = BibTexWriter(); writer.write(db)
+                # Required for bibtexparser, just putting in a random number for now
+                bibtex_dict['ID'] = row['internal_taxon_id']
 
-            # Assign authors to the reference
-            biblio_models.assign_multiple_authors(authors, ref)
+                # Create and save the reference object
+                ref = biblio_models.Reference(year=int(bibtex_dict['year']),
+                                              title=bibtex_dict['title'],
+                                              bibtex=bibtex_dict)
+                ref.save()
 
-            # Associate with the assessment
-            a.references.add(ref)
+                # Assign authors to the reference
+                biblio_models.assign_multiple_authors(authors, ref)
 
-        # Add threats for the assessment by finding all relevant threats and then adding one by one
-        threats_rows = threats.loc[threats['internal_taxon_id'] == row['internal_taxon_id']]
-        for i, th in threats_rows.iterrows():
-            name = threats_lookup.loc[threats_lookup['code'] == th['Threats.ThreatsSubfield.ThreatsLookup'], 'value']
-            threat, created = redlist_models.Threat.objects.get_or_create(name=name)
-            tn = redlist_models.ThreatNature(assessment=a, threat=threat)
-            if not pd.isnull(th['Threats.ThreatsSubfield.severity']):
-                tn.severity = threat_severity_lookup[th['Threats.ThreatsSubfield.severity']]
-            if not pd.isnull(th['Threats.ThreatsSubfield.timing']):
-                tn.timing = threat_timing_lookup[th['Threats.ThreatsSubfield.timing']]
-            if not pd.isnull(th['Threats.ThreatsSubfield.StressesSubfield.stress']):
-                tn.rationale = th['Threats.ThreatsSubfield.StressesSubfield.stress']
-            tn.save()
+                # Associate with the assessment
+                a.references.add(ref)
 
-        # Add Conservation actions
-        cons_rows = cons_actions.loc[cons_actions['internal_taxon_id'] == row['internal_taxon_id']]
-        for i, c in cons_rows.iterrows():
-            # The conservation actions csv contains lots of codes like 3.1.1, we need to look them up
-            action_name = cons_actions_lookup.loc[cons_actions_lookup['code'] == c['ConservationActions.ConservationActionsSubfield.ConservationActionsLookup'], 'value']
-            action, created = redlist_models.Action.objects.get_or_create(name=action_name,
-                                                                 action_type=redlist_models.Action.CONSERVATION)
-            an = redlist_models.ActionNature(assessment=a, action=action)
-            an.save()
+            # Add threats for the assessment by finding all relevant threats and then adding one by one
+            threats_rows = threats.loc[threats['internal_taxon_id'] == row['internal_taxon_id']]
+            for i, th in threats_rows.iterrows():
+                lkup = str(th['Threats.ThreatsSubfield.ThreatsLookup'])
+                if lkup:
+                    try:
+                        name = threats_lookup.loc[threats_lookup['code'] == lkup, 'value']
+                        threat, created = redlist_models.Threat.objects.get_or_create(name=name.iloc[0])
+                        tn = redlist_models.ThreatNature(assessment=a, threat=threat)
+                        if not pd.isnull(th['Threats.ThreatsSubfield.severity']):
+                            tn.severity = threat_severity_lookup[th['Threats.ThreatsSubfield.severity']]
+                        if not pd.isnull(th['Threats.ThreatsSubfield.timing']):
+                            tn.timing = threat_timing_lookup[th['Threats.ThreatsSubfield.timing']]
+                        if not pd.isnull(th['Threats.ThreatsSubfield.StressesSubfield.stress']):
+                            tn.rationale = th['Threats.ThreatsSubfield.StressesSubfield.stress']
+                        tn.save()
+                    except:
+                        print('Skipping threat ' + lkup)
+                        pass
 
-        # Research needed
-        research_rows =  research.loc[research['internal_taxon_id'] == row['internal_taxon_id']]
-        for i, r in research_rows.iterrows():
-            research_name = research_lookup.loc[research_lookup['code'] == r['Research.ResearchSubfield.ResearchLookup'], 'value']
-            action, created = redlist_models.Action.objects.get_or_create(name=research_name,
-                                                                 action_type=redlist_models.Action.RESEARCH)
-            an = redlist_models.ActionNature(assessment=a, action=action)
-            an.save()
+            # Add Conservation actions
+            cons_rows = cons_actions.loc[cons_actions['internal_taxon_id'] == row['internal_taxon_id']]
+            for i, c in cons_rows.iterrows():
+                lkup = str(c['ConservationActions.ConservationActionsSubfield.ConservationActionsLookup'])
+                if lkup:
+                    try:
+                        # The conservation actions csv contains lots of codes like 3.1.1, we need to look them up
+                        name = cons_actions_lookup.loc[cons_actions_lookup['code'] == lkup, 'value']
+                        action, created = redlist_models.Action.objects.get_or_create(name=name.iloc[0],
+                                                                             action_type=redlist_models.Action.CONSERVATION)
+                        an = redlist_models.ActionNature(assessment=a, action=action)
+                        an.save()
+                    except:
+                        print('Skipping conservationaction ' + lkup)
+                        pass
 
-        # Get a list of all contributors/assessors/whatevers for the assessment
-        people_rows = ppl.loc[ppl['internal_taxon_id'] == row['internal_taxon_id']]
-        for i, p in people_rows.iterrows():
-            person, created = people_models.Person.objects.get_or_create(first=p['firstName'], surname=p['lastName'])
-            if created:
-                person.email = [p['email']]
-                person.initials = p['initials']
-                person.save()
-            c = redlist_models.Contribution(person=person, assessment=a, weight=p['Order'],
-                                            type=contribution_type_lookup[p['credit_type']])
-            c.save()
+            # Research needed
+            research_rows =  research.loc[research['internal_taxon_id'] == row['internal_taxon_id']]
+            for i, r in research_rows.iterrows():
+                name = research_lookup.loc[research_lookup['code'] == r['Research.ResearchSubfield.ResearchLookup'], 'value']
+                try:
+                    action, created = redlist_models.Action.objects.get_or_create(name=name.iloc[0],
+                                                                         action_type=redlist_models.Action.RESEARCH)
+                    an = redlist_models.ActionNature(assessment=a, action=action)
+                    an.save()
+                except:
+                    print('Skipping researchneeded  ' + r['Research.ResearchSubfield.ResearchLookup'])
+                    pass
+
+            # Get a list of all contributors/assessors/whatevers for the assessment
+            people_rows = ppl.loc[ppl['internal_taxon_id'] == row['internal_taxon_id']]
+            for i, p in people_rows.iterrows():
+                person, created = people_models.Person.objects.get_or_create(first=p['firstName'], surname=p['lastName'])
+                if created:
+                    person.email = [p['email']]
+                    person.initials = p['initials']
+                    person.save()
+                c = redlist_models.Contribution(person=person, assessment=a, weight=p['Order'],
+                                                type=contribution_type_lookup[p['credit_type']])
+                c.save()
+            people_rows = ppl_old.loc[ppl_old['internal_taxon_id'] == row['internal_taxon_id']]
+            for i, p in people_rows.iterrows():
+                if p['text'] and not pd.isnull(p['text']) and p['text'].strip() != '':
+                    ps = imports_views.create_authors(p['text'])
+                    for i, person in enumerate(ps):
+                        c = redlist_models.Contribution(person=person, assessment=a, weight=i,
+                                                        type=contribution_type_lookup[p['credit_type']])
+
+
     import pdb; pdb.set_trace()
     print('done')
     return HttpResponse('<html><body><p>Done</p></body></html>')

@@ -53,6 +53,8 @@ docs/_build/
 *.pyc
 .idea
 .idea/*
+data-sources
+data-sources/*
 
 tmp
 tmp/*

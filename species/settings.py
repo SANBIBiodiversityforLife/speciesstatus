@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'polymorphic',  # Relies on contenttypes
     'rest_framework',
     'mptt',
+    'django.contrib.gis',
     'website',
     'taxa',
     'people',
@@ -152,7 +153,8 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.TemplateHTMLRenderer',
     ),
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 10,
+    'DATE_FORMAT': '%d %b %Y'
 }
 
 
