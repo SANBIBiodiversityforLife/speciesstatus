@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'mptt',
     'django.contrib.gis',
+    'rest_framework_gis',
     'website',
     'taxa',
     'people',

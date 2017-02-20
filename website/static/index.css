@@ -74,8 +74,8 @@ video#bgvid {
 
 /* News */
 #frontpage-news {
-	font-size: 3em;
-	text-align: center;
+	/*font-size: 2em;
+	text-align: center;*/
 	margin-bottom: 20px;
 }
 #news {
@@ -88,3 +88,23 @@ p.rss-footer {
 	margin-bottom: 15px;
 	margin-top: 15px;
 }
+.ass-image {
+  float: left;
+  width: 100px;
+  height: 120px;
+  background-color: #DDD;
+  margin-right: 15px;
+}
+#assessments article {
+  clear: both;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+}
+.ass-cat {
+  padding: 5px;
+  border-radius: 5px;
+  color: white;
+}
+.ass-EN { background-color: #b7af0c; }
+.ass-LC {  background-color: #499947; }

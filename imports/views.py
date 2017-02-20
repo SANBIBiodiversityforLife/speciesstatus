@@ -164,8 +164,8 @@ def create_taxon_description(authority, taxon, mendeley_session):
             reference.save()
             biblio_models.assign_multiple_authors(author_list=author_list, reference=reference)
 
-            if cit.type == 'journal':
-                biblio_models.Journal.objects.get_or_create(name=cit.source)
+            #if cit.type == 'journal':
+            #    biblio_models.Journal.objects.get_or_create(name=cit.source)
         else:
             reference = reference[0]
     # If we didn't get 1 mendeley result we need to add what reference info we can to the db
@@ -200,6 +200,10 @@ def create_taxon_description(authority, taxon, mendeley_session):
     description, created = models.Description.objects.get_or_create(reference=reference,
                                                                     taxon=taxon,
                                                                     weight=int(bracketed))
+
+
+def import_phylums(request):
+    sis_import.import_phylums()
 
 
 def sis(request):

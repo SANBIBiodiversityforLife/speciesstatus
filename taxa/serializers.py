@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from taxa.models import Taxon, Info, CommonName
+from taxa.models import Taxon, Info, CommonName, GeneralDistribution
 from rest_framework_recursive.fields import RecursiveField
 from biblio.serializers import ReferenceDOISerializer
-
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 class ChildrenInfoField(serializers.RelatedField):
     """Used to return count, primary key, name and rank for all child nodes of a taxon, rather than just their pk"""
@@ -32,17 +32,7 @@ class TaxonBasicSerializerWithRank(serializers.ModelSerializer):
 
     class Meta:
         model = Taxon
-        fields = ('id', 'name', 'parent', 'rank', 'child_count', 'get_top_common_name', 'get_latest_assessment')
-
-
-class TaxonBasicSerializer(serializers.ModelSerializer):
-    parent = serializers.PrimaryKeyRelatedField(read_only=True)
-    rank = serializers.PrimaryKeyRelatedField(read_only=True)
-    child_count = ChildCountField(read_only=True, source='id')
-
-    class Meta:
-        model = Taxon
-        fields = ('id', 'name', 'parent', 'rank', 'child_count')
+        fields = ('id', 'name', 'get_full_name', 'parent', 'rank', 'child_count', 'get_top_common_name', 'get_latest_assessment')
 
 
 class TaxonChildrenSerializer(serializers.ModelSerializer):
@@ -67,6 +57,7 @@ class TaxonLineageSerializer(serializers.ModelSerializer):
 
 class CommonNameSerializer(serializers.ModelSerializer):
     reference = ReferenceDOISerializer()
+    language = serializers.StringRelatedField()
 
     class Meta:
         model = CommonName
@@ -81,14 +72,19 @@ class AncestorSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'rank')
 
 
-class ArrayChoiceFieldSerializer(serializers.RelatedField):
+class ArrayChoiceFieldSerializer(serializers.ListSerializer):
     def to_representation(self, value):
-        return [item[1] for item in Info.REPRODUCTIVE_TYPE_CHOICES][0]
+        return self.child.choices[value]
 
 
-class TaxonInfoSerializer(serializers.ModelSerializer):
+class InfoSerializer(serializers.ModelSerializer):
     habitats = serializers.StringRelatedField(read_only=True, many=True)
-    reproductive_type = ArrayChoiceFieldSerializer(read_only=True, many=True)
+    reproductive_type = ArrayChoiceFieldSerializer(read_only=True, many=True,
+                        child=serializers.ChoiceField(allow_blank=True, allow_null=True,
+                        choices=Info.REPRODUCTIVE_TYPE_CHOICES, label='Congregatory', required=False))
+    congregatory = ArrayChoiceFieldSerializer(read_only=True, many=True,
+                        child=serializers.ChoiceField(allow_blank=True, allow_null=True,
+                        choices=Info.CONGREGATORY_CHOICES, label='Congregatory', required=False))
 
     class Meta:
         model = Info
@@ -101,7 +97,6 @@ class TaxonInfoSerializer(serializers.ModelSerializer):
                   'congregatory',
                   'reproduction',
                   'reproductive_type',
-                  'distribution',
                   'habitat_narrative',
                   'habitats',
                   'altitude_or_depth_range',
@@ -123,6 +118,13 @@ class TaxonInfoSerializer(serializers.ModelSerializer):
                   'age_units')
 
 
+class TaxonInfoSerializer(serializers.ModelSerializer):
+    info = InfoSerializer()
+
+    class Meta:
+        model = Taxon
+        fields = ('id', 'info')
+
 class TaxonSerializer(serializers.ModelSerializer):
     children = ChildrenInfoField(required=False, many=True, read_only=True)
     rank = serializers.StringRelatedField(read_only=True)
@@ -131,7 +133,6 @@ class TaxonSerializer(serializers.ModelSerializer):
     common_names = serializers.StringRelatedField(many=True)
     synonyms = serializers.StringRelatedField(read_only=True, many=True)
     images = serializers.StringRelatedField(many=True)
-    info = TaxonInfoSerializer()
 
     class Meta:
         model = Taxon
@@ -140,7 +141,6 @@ class TaxonSerializer(serializers.ModelSerializer):
                   'rank',
                   'children',
                   'descriptions',
-                  'info',
                   'images',
                   'general_distributions',
                   'get_full_name',
@@ -165,3 +165,14 @@ class TaxonSuperBasicSerializer(serializers.ModelSerializer):
                   'get_full_name',
                   'common_names',
                   'get_latest_assessment')
+
+
+class DistributionSerializer(GeoFeatureModelSerializer):
+    residency_status = serializers.CharField(source='get_residency_status_display')
+    level = serializers.CharField(source='get_level_display')
+    reference = serializers.StringRelatedField()
+
+    class Meta:
+        model = GeneralDistribution
+        geo_field = "distribution_polygon"
+        fields = ('date', 'residency_status', 'level', 'reference', 'description')

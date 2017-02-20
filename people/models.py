@@ -13,4 +13,7 @@ class Person(models.Model):
     )
 
     def __str__(self):
-        return self.surname
+        if self.first:
+            return self.first + ' ' + self.surname
+        else:
+            return self.surname

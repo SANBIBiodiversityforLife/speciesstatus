@@ -4,94 +4,46 @@
 {% load rest_framework %}
 
 {% block extra-css %}
-<link rel="stylesheet" href="{% static 'bib-list/bib-publication-list.css' %}" type="text/css" />
-<link rel="stylesheet" href="{% static 'bib-list/bib-list-custom.css' %}" type="text/css" />
-{% endblock %}
-
-{% block extra-js %}
-<script src="{% static 'bib-list/bib-list.js' %}"></script>
-<script type="text/javascript">
-  $(document).ready(function() {
-    bibtexify("#bibtex", "pubTable");
-  });
-</script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.9/leaflet.draw.css" />
+<link rel="stylesheet" href="{% static 'leaflet/leaflet-measure.css' %}">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css">
 {% endblock %}
 
 {% block content_main %}
-<nav class="redlist">
-  <ul class="nav nav-pills">
-    <li role="presentation" class="active"><a href="#"><strong>{{ assessment.date }}:</strong> {{ assessment.scope }}</a></li>
-    <li role="presentation" class="disabled"><a href="#">No other assessments for this species</a></li>
-    <li role="presentation" class="iucn-check"><a href="#">Check IUCN global redlist <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a></li>
-  </ul>
-</nav>
-
-<div class="row" id="redlist-summary">
-  <div class="col-md-3"><div>
-    <strong>{{ assessment.redlist_category }}</strong>
-    <br>{{ assessment.redlist_criteria }}
-  </div></div>
-  <div class="col-md-9">
-  {% for item in contributions %}
-  {% ifchanged item.type %}
-  {% if not forloop.first %}</div>{% endif %}
-  <div class="contribution-type contribution-{{ item.get_type_display|lower }}"><strong>{{ item.get_type_display }}s:</strong>
-  {% endifchanged %}
-  <span class="contributor">{{ item.person.first }} {{ item.person.surname }}</span>
-  {% if forloop.last %}</div>{% endif %}
-  {% endfor %}
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-md-9">
-    <section id="species-info">
-    {% for key, item in assessment.items %}
-    {% if item %}
-      {% if key == 'conservation_actions' or key == 'rationale' or key == 'change_rationale' or key == 'notes' or key == 'population_trend_narrative' or key == 'population_trend_nature' %}
-      <article>
-        <h2 id="{{ key }}Anchor"><span>{{ key }}</span>{% if user.is_authenticated %}
-        <button type="button" class="btn btn-info btn-sm info-modal-trigger" data-toggle="modal" data-target="#infoModal">Edit</button>{% endif %}</h2>
-        <div class="item-info">{{ item|safe }}</div>
-      </article>
-      {% elif key == 'threats' %}
-      <article>
-        <h2 id="{{ key }}Anchor"><span>Threats</span>{% if user.is_authenticated %}
-        <button type="button" class="btn btn-info btn-sm info-modal-trigger" data-toggle="modal" data-target="#infoModal">Edit</button>{% endif %}</h2>
-        <div class="item-info">
-          <table class="table table-striped">
-            <thead>
-              <tr><th>Severity</th><th>Timing</th><th>Threat</th></tr>
-            </thead>
-            <tbody>
-            {% for i in item %}
-              <tr><td>{{ i.severity }}</td><td>{{ i.timing }}</td><td>{{ i.threat }}</td></tr>
-            {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </article>
-      {% endif %}
-    {% endif %}
-    {% endfor %}
-    </section>
-    <section id="species-info">
-      <article>
-        <h2 id="{{ key }}Anchor"><span>References</span>{% if user.is_authenticated %}
-        <button type="button" class="btn btn-info btn-sm info-modal-trigger" data-toggle="modal" data-target="#infoModal">Edit</button>{% endif %}</h2>
-        <div class="item-info">
-          <table id="pubTable" class="display table"></table>
-          <pre id="bibtex">[{% for a in assessment.references %}{{ a }},{% endfor %}]</pre>
-        </div>
-      </article>
-    </section>
-  </div>
-  <div class="col-md-3 assessment-aside">
-    <h2>Additional info</h2>
-    {% for key, value in assessment.temp_field.items %}
-      <strong>{{ key }}</strong>: {{ value }}<br>
-    {% endfor %}
-  </div>
-</div>
-
+<div id="distribution"></div>
+<div id="leaflet" style="height: 600px"></div>
+<hr><h3>Distributions</h3>
+<table id="places" class="table">
+  <thead><tr>
+    <th>Status</th>
+    <th>First observed</th>
+    <th>Area of extent</th>
+    <th>Description</th>
+  </tr></thead>
+  <tbody></tbody>
+</table>
 {% endblock %}
+
+{% block extra-js %}
+<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+<script src="https://unpkg.com/esri-leaflet@2.0.7"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.9/leaflet.draw.js"></script>
+<script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
+
+<script src="{% static 'leaflet/leaflet-measure.min.js' %}"></script>
+<script src="{% static 'maps.js' %}"></script>
+<script>
+var dist_url = ("{% url 'distribution_list' 0 %}" + "?format=json").replace('0', id);
+
+$(document).ready(function() {
+  $.ajax({
+    url: dist_url,
+    success: function(data, textStatus, jqXHR) {
+      init_map(data);
+    }
+  })
+});
+</script>
+{% endblock extra-js %}

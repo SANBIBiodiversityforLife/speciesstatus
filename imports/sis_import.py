@@ -17,6 +17,20 @@ from datetime import datetime
 from decimal import Decimal
 
 
+def import_phylums():
+    """
+    Used to create a basic taxa skeleton when you have flushed the db.
+    Run python manage.py loaddata taxa_rank.json first to get ranks in
+    """
+    life = models.Taxon.objects.create(name='Life', rank_id=9)
+    eukaryota = models.Taxon.objects.create(parent=life, name='Eukaryota', rank_id=1)
+    plantae = models.Taxon.objects.create(parent=eukaryota, name='Plantae', rank_id=2)
+    animalia = models.Taxon.objects.create(parent=eukaryota, name='Animalia', rank_id=2)
+    phylums = ['Cnidaria', 'Chordata', 'Porifera', 'Mollusca', 'Arthropoda', 'Annelida', 'Platyhelminthes', 'Myzozoa', 'Nematoda']
+    for phylum in phylums:
+        p = models.Taxon.objects.create(parent=animalia, name=phylum, rank_id=3)
+
+
 def import_sis():
     # Start the REST client for mendeley, best to maintain the session throughout the data import
     # Mendeley API doesn't like us instantiating many sessions
@@ -38,7 +52,7 @@ def import_sis():
         animal_dir = dir + animal_dir
         af = pd.read_csv(animal_dir + 'allfields.csv', encoding='iso-8859-1')
         t = pd.read_csv(animal_dir + 'taxonomy.csv', encoding='iso-8859-1')
-        cn = pd.read_csv(animal_dir + 'commonnames.csv', encoding='iso-8859-1')
+        cn = pd.read_csv(animal_dir + 'commonnames.csv', encoding='UTF-8')
         assess = pd.read_csv(animal_dir + 'assessments.csv', encoding='iso-8859-1')
         cons_actions = pd.read_csv(animal_dir + 'conservationneeded.csv', encoding='iso-8859-1')
         habitats = pd.read_csv(animal_dir + 'habitats.csv', encoding='iso-8859-1')
@@ -147,12 +161,12 @@ def import_sis():
                         info.reproductive_type = [models.Info.FREE_LIVING_LARVAE]
                 if 'ElevationLower.limit' in row and 'ElevationUpper.limit' in row:
                     info.altitude_or_depth_range = (int(row['ElevationLower.limit']), int(row['ElevationUpper.limit']))
-
                 # Get the taxon info stuff from the assessment csv
+                info.habitat_narrative = ''
+                if 'System.value' in assess_row:
+                    info.habitat_narrative = '<p class="system">' + assess_row['System.value'] + '</p>'
                 if 'HabitatDocumentation.narrative' in assess_row:
-                    info.habitat_narrative = assess_row['HabitatDocumentation.narrative']
-                if 'RangeDocumentation.narrative' in assess_row:
-                    info.distribution = assess_row['RangeDocumentation.narrative']
+                    info.habitat_narrative += assess_row['HabitatDocumentation.narrative']
 
                 info.save()
 
@@ -176,8 +190,55 @@ def import_sis():
             a = redlist_models.Assessment(
                 taxon=species, date=assess_date
             )
-            if 'PopulationDocumentation.narrative' in assess_row:
-                a.population_trend_narrative = assess_row['PopulationDocumentation.narrative']
+            a.change_rationale = ''
+            if 'RedListReasonsForChange.catCritChanges' in assess_row:
+                a.change_rationale = assess_row['RedListReasonsForChange.catCritChanges']
+            if 'RedListReasonsForChange.changeReasons' in assess_row:
+                a.change_rationale += assess_row['RedListReasonsForChange.changeReasons']
+
+            # Distribution stuff
+            a.distribution_narrative = ''
+            if 'RangeDocumentation.narrative' in assess_row:
+                a.distribution_narrative = assess_row['RangeDocumentation.narrative']
+            temp = {'Area of occupancy': 'AOO.justification',
+                    'Extent of occurrence': 'EOO.justification',
+                    'Breeding range': 'AOODetails.breedingRangeJustification',
+                    'Non-breeding Range': 'AOODetails.nonbreedingRangeJustification',
+                    'Locations': 'LocationsNumber.justification',
+                    'Range protection': 'InPlaceLandWaterProtectionInPA.note'}
+            for key, value in temp.items():
+                if value in row:
+                    a.distribution_narrative += '<h3>' + key + '</h3><div>' + row[value] + '</div>'
+
+            # Distribution/population/habitat decline
+            temp = ['AOOContinuingDecline.justification', 'AOOExtremeFluctuation.justification', 'AreaRestricted.justification', 'EOOContinuingDecline.justification', 'EOOExtremeFluctuation.justification', 'HabitatContinuingDecline.justification', 'LocationContinuingDecline.justification', 'LocationExtremeFluctuation.justification', 'SevereFragmentation.justification']
+            texts = [row[t] for t in temp if t in row]
+            if texts:
+                a.distribution_narrative += '<h3>Decline</h3><p>' + '</p><p>'.join(texts) + '</p>'
+
+            if 'ThreatsDocumentation.value' in assess_row:
+                a.threats_narrative = assess_row['ThreatsDocumentation.value']
+            if 'UseTradeDocumentation.value' in assess_row:
+                a.use_trade_narrative = assess_row['UseTradeDocumentation.value']
+
+            p_t = {'Trend': 'PopulationDocumentation.narrative',
+                   'Future decline': 'PopulationContinuingDecline.justification',
+                   'Fluctuation': 'PopulationExtremeFluctuation.justification'}
+            a.population_trend_narrative = ''
+            for key, value in p_t.items():
+                if value in assess_row:
+                    a.population_trend_narrative += '<h3>' + key + '</h3><div>' + assess_row[value] + '</div>'
+
+            temp = ['ExtinctionProbabilityGenerations3.justification', 'ExtinctionProbabilityGenerations5.justification', 'ExtinctionProbabilityYears100.justification', 'GenerationLength.justification', 'PopulationDeclineGenerations1.justification', 'PopulationDeclineGenerations2.justification', 'PopulationDeclineGenerations3.justification', 'PopulationReductionFuture.justification', 'PopulationReductionPast.justification', 'PopulationReductionPastandFuture.justification', 'SubpopulationContinuingDecline.justification', 'SubpopulationExtremeFluctuation.justification', 'SubpopulationNumber.justification']
+            texts = [row[t] for t in temp if t in row]
+            if texts:
+                a.population_trend_narrative += '<h3>Decline</h3><p>' + '</p><p>'.join(texts) + '</p>'
+
+            if 'PopulationTrend.value' in assess_row:
+                a.population_trend = assess_row['PopulationTrend.value']
+
+            if 'ConservationActionsDocumentation.narrative' in assess_row:
+                a.conservation_narrative = assess_row['ConservationActionsDocumentation.narrative']
             if 'AOO.range' in row:
                 a_o_upper = row['AOO.range']
                 a_o_lower = row['AOO.range']
@@ -200,8 +261,6 @@ def import_sis():
                 a.redlist_criteria = assess_row['RedListCriteria.manualCriteria']
             if 'RedListRationale.value' in assess_row:
                 a.rationale = assess_row['RedListRationale.value']
-            if 'SevereFragmentation.justification' in row:
-                a.distribution_narrative = row['SevereFragmentation.justification']
 
             # Convert all of the other columns data into json and stick it in the temp hstore field
             # There is SO much info and no way to structure it, best if someone goes and pulls it out manually
@@ -376,6 +435,7 @@ def import_sis():
                     for i, person in enumerate(ps):
                         c = redlist_models.Contribution(person=person, assessment=a, weight=i,
                                                         type=contribution_type_lookup[p['credit_type']])
+                        c.save()
 
 
     import pdb; pdb.set_trace()

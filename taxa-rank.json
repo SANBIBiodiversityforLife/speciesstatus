@@ -1,0 +1,72 @@
+[
+{
+  "model": "taxa.rank",
+  "pk": 1,
+  "fields": {
+    "name": "Domain"
+  }
+},
+{
+  "model": "taxa.rank",
+  "pk": 2,
+  "fields": {
+    "name": "Kingdom"
+  }
+},
+{
+  "model": "taxa.rank",
+  "pk": 3,
+  "fields": {
+    "name": "Phylum"
+  }
+},
+{
+  "model": "taxa.rank",
+  "pk": 4,
+  "fields": {
+    "name": "Class"
+  }
+},
+{
+  "model": "taxa.rank",
+  "pk": 5,
+  "fields": {
+    "name": "Order"
+  }
+},
+{
+  "model": "taxa.rank",
+  "pk": 6,
+  "fields": {
+    "name": "Family"
+  }
+},
+{
+  "model": "taxa.rank",
+  "pk": 7,
+  "fields": {
+    "name": "Genus"
+  }
+},
+{
+  "model": "taxa.rank",
+  "pk": 8,
+  "fields": {
+    "name": "Species"
+  }
+},
+{
+  "model": "taxa.rank",
+  "pk": 9,
+  "fields": {
+    "name": "Life"
+  }
+},
+{
+  "model": "taxa.rank",
+  "pk": 10,
+  "fields": {
+    "name": "Subspecies"
+  }
+}
+]

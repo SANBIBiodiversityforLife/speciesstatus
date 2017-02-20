@@ -45,29 +45,26 @@
 {% endblock %}
 
 {% block content %}
-<div id="news">
-<h2 id="frontpage-news">Latest news <small>from <a href="http://www.sanbi.org/news">sanbi.org</a></small></h2>
 <div class="row">
-	<article class="col-md-4">
-		<h3><a href="http://www.sanbi.org/news/new-free-state-biodiversity-plan-available-bgis" title="New Free State Biodiversity Plan available on BGIS'">New Free State Biodiversity Plan available on BGIS</a> <small>13 September 2016</small></h3>
-		<p>News article on BGIS updates The following information is now available on the BGIS website: 
-		2015 Free State Biodiversity Plan Interactive Map
-		Veldfire Risk Classification
-		2015 Free State...</p>
-	</article>
-	<article class="col-md-4">
-		<h3><a href="http://www.sanbi.org/news/south-african-nie-approves-first-four-small-grants-0" title="South African NIE approves first four small grants'">South African NIE approves first four small grants</a> <small>15 June 2016</small></h3>
-    <p>The South African National Biodiversity Institute (SANBI) as the National Implementing Entity (NIE) and its partners, Executing Entity (SouthSouthNorth) and locally based Facilitating Agencies (Conservation...</p>
-	</article>
-	<article class="col-md-4">
-		<h3><a href="http://www.sanbi.org/news/new-free-state-biodiversity-plan-available-bgis" title="New Free State Biodiversity Plan available on BGIS'">New Free State Biodiversity Plan available on BGIS</a> <small>13 September 2016</small></h3>
-		<p>News article on BGIS updates The following information is now available on the BGIS website: 
-		2015 Free State Biodiversity Plan Interactive Map
-		Veldfire Risk Classification
-		2015 Free State...</p>
-	</article>
-</div>
-<p class="rss-footer">Read more news on <a href="http://www.sanbi.org/news">sanbi.org</a></p>
+	<div class="col-md-8" id="assessments">
+		<h2>Latest assessments</h2><hr>
+	</div>
+	<div id="news" class="col-md-4">
+		<h2 id="frontpage-news">Latest news <small>from <a href="http://www.sanbi.org/news">sanbi.org</a></small></h2>
+		<hr>
+		<article>
+			<h3><a href="http://www.sanbi.org/news/new-free-state-biodiversity-plan-available-bgis" title="New Free State Biodiversity Plan available on BGIS'">New Free State Biodiversity Plan available on BGIS</a> <small>13 September 2016</small></h3>
+			<p>News article on BGIS updates The following information is now available on the BGIS website:
+			2015 Free State Biodiversity Plan Interactive Map
+			Veldfire Risk Classification
+			2015 Free State...</p>
+		</article>
+		<article>
+			<h3><a href="http://www.sanbi.org/news/south-african-nie-approves-first-four-small-grants-0" title="South African NIE approves first four small grants'">South African NIE approves first four small grants</a> <small>15 June 2016</small></h3>
+			<p>The South African National Biodiversity Institute (SANBI) as the National Implementing Entity (NIE) and its partners, Executing Entity (SouthSouthNorth) and locally based Facilitating Agencies (Conservation...</p>
+		</article>
+		<p class="rss-footer">Read more news on <a href="http://www.sanbi.org/news">sanbi.org</a></p>
+	</div>
 </div>
 {% endblock content %}
 
@@ -78,5 +75,25 @@ var searchAutoCompleteUrl = "{% url 'search_autocomplete' %}";
 var searchRedirectUrl = "{% url 'taxa_detail' 0 %}";
 </script>
 <script src="{% static 'search.js' %}"></script>
+<script>
+$(document).ready(function() {
+	var assessmentListUrl = "{% url 'assessment_list' %}" + '?format=json';
+	console.log('hi');
+	$.ajax({
+		url: assessmentListUrl,
+		success: function(data, textStatus, jqXHR) {
+			rs = data['results'];
+			html = '';
+			$.each(rs, function(index, value) {
+				html += '<article><div class="ass-image"></div><h3>' + value['taxon'] + '</h3>';
+				html += '<h4><span class="ass-cat ass-' + value['redlist_category'].slice(-3,-1) + '">' + value['redlist_category'] + '</span>';
+				html += ' <small>Scope: ' + value['scope'] + ' on ' + value['date'] + '</small></h4>';
+				html += value['rationale'] + '</article>';
+			});
+			$('#assessments').append(html);
+		}
+	});
+});
+</script>
 {% endblock js %}
 

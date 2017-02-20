@@ -246,7 +246,6 @@ class Info(models.Model):
     # cites = models.
 
     # Where the species exists
-    distribution = models.TextField(blank=True)
     habitat_narrative = models.TextField(blank=True)
     habitats = models.ManyToManyField(Habitat, blank=True,
                                       help_text="<strong>Start typing to search through options.</strong> ")
@@ -382,6 +381,9 @@ class GeneralDistribution(models.Model):
         (OTHER, 'Other'),
     )
     level = models.CharField(max_length=1, choices=LEVEL_CHOICES, null=True, blank=True)
+
+    # Description
+    description = models.TextField(blank=True)
 
     # Reference(s?) for the residency status & distribution
     reference = models.ForeignKey(Reference)

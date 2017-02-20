@@ -35,13 +35,14 @@
     font-weight: bold;
     font-size: 2em;
 }
-#carousel { max-height: 250px; }
+#carousel { max-height: 200px; }
 #main-carousel-text  {
 	margin-top: 50px;
 }
 .jstree-default .jstree-node {
     margin-left: 100px;
 }
+#main-carousel-text .form-group { width: 100%; }
 #main-carousel-text form {
     margin-top: 30px;
 }

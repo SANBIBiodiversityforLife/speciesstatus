@@ -15,42 +15,56 @@ from mptt.utils import drilldown_tree_for_node
 @api_view(['GET'])
 def api_root(request, format=None):
     return Response({
-        #'taxa': reverse('lineage', request=request, format=format),
-        #'taxon_list': reverse('search_autocomplete', request=request, format=format),
         'taxa': reverse('search_autocomplete', request=request, format=format),
-        #'taxon_detail': reverse('detail', request=request, format=format),
+        'distributions': reverse('distribution_list', request=request, format=format),
     })
 
 
-class CommonNameDetail(mixins.CreateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
-    queryset = models.CommonName.objects.all()
+class DistributionDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = models.GeneralDistribution.objects.all()
+    serializer_class = serializers.DistributionSerializer
+
+
+class DistributionList(generics.ListCreateAPIView):
+    serializer_class = serializers.DistributionSerializer
+    template_name = 'website/distribution.html'
+
+    def get_queryset(self):
+        """
+        This view should return a list of all the distribution objects for a taxon, or all distributions
+        """
+        if self.kwargs['pk'] is not None:
+            return models.GeneralDistribution.objects.filter(taxon=self.kwargs['pk'])
+        else:
+            return models.GeneralDistribution.objects.all()
+
+
+class CommonNameList(generics.ListCreateAPIView):
     serializer_class = serializers.CommonNameSerializer
 
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
+    def get_queryset(self):
+        """
+        This view should return a list of all the common names for a taxon, or all common names
+        """
+        if self.kwargs['pk'] is not None:
+            return models.CommonName.objects.filter(taxon=self.kwargs['pk'])
+        else:
+            return models.CommonName.objects.all()
 
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
 
-    def get_form(self, request, *args, **kwargs):
-        serializer = self.get_serializer()
-        return Response({'form': serializer})
+class CommonNameDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = models.CommonName.objects.all()
+    serializer_class = serializers.CommonNameSerializer
 
 
 class TaxonDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = models.Taxon.objects.all()
-    serializer_class = serializers.TaxonSerializer
+    serializer_class = serializers.TaxonInfoSerializer
     template_name = 'website/taxon.html'
-
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        ancestors = instance.get_ancestors(include_self=True)
-        ancestors_serializer = serializers.AncestorSerializer(ancestors, many=True)
-        return Response({'taxon': serializer, 'ancestors': ancestors_serializer.data})
 
 
 class TaxonListView(generics.ListAPIView):
+    """ Used by the ajax search function """
     queryset = models.Taxon.objects.all()
     serializer_class = serializers.TaxonSerializer
     filter_backends = (filters.SearchFilter,)
@@ -61,7 +75,6 @@ class TaxonListView(generics.ListAPIView):
                      'info__reproduction',
                      'info__trophic',
                      'info__uses',
-                     'info__distribution',
                      'common_names__name')
 
 
@@ -71,58 +84,70 @@ class ChildrenView(generics.RetrieveAPIView):
 
 
 def unflatten_tree(flat_tree_data, parent_id = 0):
+    """
+    Recursively walks through a flat list of nodes and nests them based on parent ids
+    :param flat_tree_data: A flat list of nodes with a 'parent' value which is a parent id
+    :param parent_id: The ID of the current parent searching for in the list
+    :return: Nested dictionaries { id: 1, children: {id: 2, children: {id: 3, etc....
+    """
     children = [x for x in flat_tree_data if x['parent'] == parent_id]
     for child in children:
         child['children'] = unflatten_tree(flat_tree_data, child['id'])
     return children
-    # test = [{'id': 1, 'parent_id': 0},{'id': 2, 'parent_id': 0},{'id': 3, 'parent_id': 0},{'id': 4, 'parent_id': 2},{'id': 5, 'parent_id': 4},]
 
 
-def get_ancestors(ancestors, node):
-    if node.parent:
-        print(node.parent)
-        ancestors.append(node.parent)
-        get_ancestors(ancestors, node.parent)
-    else:
-        return ancestors
+class AncestorsView(generics.RetrieveAPIView):
+    queryset = models.Taxon.objects.all()
+    serializer_class = serializers.TaxonBasicSerializerWithRank
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        # Retrieve a flat list of all nodes in the lineage
+        ancestors = list(drilldown_tree_for_node(instance))
+
+        # Serialize them all
+        serializer = self.get_serializer(ancestors, many=True)
+        return Response(serializer.data)
+
 
 class LineageView(generics.RetrieveAPIView):
+    """
+    Retrieves a complete lineage of a node in the taxon tree,
+    and the siblings of each node in the lineage. Used to build a jstree.
+    """
     queryset = models.Taxon.objects.all()
     serializer_class = serializers.TaxonBasicSerializerWithRank
     template_name = 'website/tree.html'
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
+
+        # Retrieve a flat list of all nodes in the lineage
         ancestors = list(drilldown_tree_for_node(instance))
-        #al = []
-        #for a in ancestors_old:
-        #    al.append(a)
-        #ancestors = get_ancestors([instance], instance)
+
+        # Loop through them and add the siblings to a flat list of nodes
         nodes = []
         for node in ancestors:
-            print(node)
             nodes.append(node)
             siblings = node.get_siblings()
             if len(siblings) > 0:
                 nodes.extend(siblings)
         nodes_set = list(set(nodes))
 
+        # Serialize them all
         serializer = self.get_serializer(nodes_set, many=True)
-        # root = serializer.data[0]
+
+        # Get the root node - this is always Life and always the first node in the ancestors
         root = [x for x in serializer.data if x['id'] == ancestors[0].id][0]
+
+        # Unflatten the serialized list of nodes - so each node will have a "children" value which contains all
+        # children for that node
         root['children'] = unflatten_tree(serializer.data, ancestors[0].id)
 
-        # How the heck do you access the entire thing in template? no idea, have to make it a param
+        # Pass the information either to the HTML differently, along with the pk
         if TemplateHTMLRenderer in self.renderer_classes:
             params = {"lineage": JSONRenderer().render(serializer.data), 'pk': instance.id}
             return Response(params)
         else:
             return Response(root)
-
-
-@api_view(['GET'])
-def get_lineage(species_name):
-    root = models.Taxon.objects.filter(name=species_name).first()
-    ancestors = root.get_ancestors(include_self=True)
-    serializer = serializers.TaxonLineageSerializer(ancestors, many=True)
-    return Response(serializer.data)

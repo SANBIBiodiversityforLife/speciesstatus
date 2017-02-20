@@ -12,7 +12,7 @@
 {% block heading %}
 	<div id="main-carousel-text">
 		<div class="container"><div class="row">
-			<div class="col-md-12 text-center">
+			<div class="col-md-12">
 				<form action="/Search" class="form-inline" method="get">
 					<div class="form-group">
             <label for="searchterm">Search for species</label>
@@ -37,6 +37,12 @@
 
 {% block content %}
 <div id="news"><div class="container">
+	<ul class="nav nav-pills">
+		<li role="presentation" class="active"><a href="#">Explore tree</a></li>
+		<li role="presentation"><a href="#">Explore genera</a></li>
+		<li role="presentation"><a href="#">Explore redlistings</a></li>
+	</ul>
+	<hr>
   <!--<label for="jstree-input">Search for species</label>
   <input class="search-input form-control" id="jstree-input"></input>-->
   <div id="jstree"></div>
@@ -55,7 +61,7 @@ var searchRedirectUrl = "{% url 'lineage_pk' 0 %}";
 <script>
 // These two URLs are used in the script.js
 var getChildrenUrl = "{% url 'api_lineage' 0 %}";
-var taxaDetailUrl = "{% url 'taxa_detail' 0 %}";
+var taxaDetailUrl = "{% url 'last_assessment_detail' 0 %}";
 var current_pk = {{ pk }};
 
 $(document).ready(function() {
@@ -79,7 +85,8 @@ $(document).ready(function() {
 		node.icon = 'glyphicon glyphicon-leaf';
 		node["li_attr"] = { "class" : "tree-depth-" + node.rank.id,
 			"style" : "color: " +  blendColors('#f0ac28', '#0c61a9', node.rank.id/9) }
-		if(current_pk == node.id) {
+
+		if(current_pk == node.id && node.rank.id != 9 && node.rank.id != 1 && node.rank.id != 2) {
 			node['li_attr']['class'] += ' tree-highlight-node';
 		}
 		if(node['children'].length > 0) {

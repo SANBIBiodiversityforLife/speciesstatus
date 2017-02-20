@@ -20,7 +20,7 @@
 {% block content_main %}
 <nav class="redlist">
   <ul class="nav nav-pills">
-    <li role="presentation" class="active"><a href="#"><strong>{{ assessment.date }}:</strong> {{ assessment.scope }}</a></li>
+    <li role="presentation" class="active"><a href="#"><strong>{{ date }}:</strong> {{ scope }}</a></li>
     <li role="presentation" class="disabled"><a href="#">No other assessments for this species</a></li>
     <li role="presentation" class="iucn-check"><a href="#">Check IUCN global redlist <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a></li>
   </ul>
@@ -28,16 +28,16 @@
 
 <div class="row" id="redlist-summary">
   <div class="col-md-3"><div>
-    <strong>{{ assessment.redlist_category }}</strong>
-    <br>{{ assessment.redlist_criteria }}
+    <strong>{{ redlist_category }}</strong>
+    <br>{{ redlist_criteria }}
   </div></div>
   <div class="col-md-9">
-  {% for item in contributions %}
+  {% for item in contribution_set %}
   {% ifchanged item.type %}
   {% if not forloop.first %}</div>{% endif %}
-  <div class="contribution-type contribution-{{ item.get_type_display|lower }}"><strong>{{ item.get_type_display }}s:</strong>
+  <div class="contribution-type contribution-{{ item.type|lower }}"><strong>{{ item.type }}s:</strong>
   {% endifchanged %}
-  <span class="contributor">{{ item.person.first }} {{ item.person.surname }}</span>
+  <span class="contributor">{{ item.person }}</span>
   {% if forloop.last %}</div>{% endif %}
   {% endfor %}
   </div>
@@ -46,49 +46,50 @@
 <div class="row">
   <div class="col-md-9">
     <section id="species-info">
-    {% for key, item in assessment.items %}
-    {% if item %}
-      {% if key == 'conservation_actions' or key == 'rationale' or key == 'change_rationale' or key == 'notes' or key == 'population_trend_narrative' or key == 'population_trend_nature' %}
-      <article>
-        <h2 id="{{ key }}Anchor"><span>{{ key }}</span>{% if user.is_authenticated %}
-        <button type="button" class="btn btn-info btn-sm info-modal-trigger" data-toggle="modal" data-target="#infoModal">Edit</button>{% endif %}</h2>
-        <div class="item-info">{{ item|safe }}</div>
-      </article>
-      {% elif key == 'threats' %}
-      <article>
-        <h2 id="{{ key }}Anchor"><span>Threats</span>{% if user.is_authenticated %}
-        <button type="button" class="btn btn-info btn-sm info-modal-trigger" data-toggle="modal" data-target="#infoModal">Edit</button>{% endif %}</h2>
-        <div class="item-info">
-          <table class="table table-striped">
-            <thead>
-              <tr><th>Severity</th><th>Timing</th><th>Threat</th></tr>
-            </thead>
-            <tbody>
-            {% for i in item %}
-              <tr><td>{{ i.severity }}</td><td>{{ i.timing }}</td><td>{{ i.threat }}</td></tr>
-            {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </article>
-      {% endif %}
-    {% endif %}
-    {% endfor %}
+      <article><h2>Rationale{% if change_rationale %}
+        <small>(Changed due to {{ change_rationale|safe }})</small>{% endif %}</h2> {{ rationale|safe }}
+        </article>
+      {% if notes %}<article><h2>Notes</h2>{{ notes|safe }}</article>{% endif %}
+
+      {% if distribution_narrative %}<article><h2>Distribution</h2>{{ distribution_narrative|safe }}</article>{% endif %}
+
+      {% if population_narrative %}<article><h2>Population</h2>{{ population_narrative|safe }}</article>{% endif %}
+      {% if population_trend_narrative %}<article id="poptrend">
+        <h2>Population trend {% if population_trend_nature %} <small>{{ population_trend_nature }}</small>{% endif %}</h2>
+        {{ population_trend_narrative|safe }}
+      </article>{% endif %}
+
+      {% if threats_narrative %}<article><h2>Threats</h2>{{ threats_narrative|safe }}</article>{% endif %}
+      {% if threats %}<article><!--<h2>Threats table</h2><hr>
+       <table class="table table-striped">
+          <thead>
+            <tr><th>Severity</th><th>Timing</th><th>Threat</th></tr>
+          </thead>
+          <tbody>
+          {% for i in threats %}
+            <tr><td>{{ i.severity }}</td><td>{{ i.timing }}</td><td>{{ i.threat }}</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>--></article>{% endif %}
+      {% if use_trade_narrative %}<article><h2>Uses and trade</h2>{{ use_trade_narrative|safe }}</article>{% endif %}
+
+      {% if conservation_narrative %}<article><h2>Conservation</h2>{{ conservation_narrative|safe }}</article>{% endif %}
+      {% if research_narrative %}<article><h2>Research</h2>{{ research_narrative|safe }}</article>{% endif %}
+      {% if conservation_actions %}<article><h2>Conservation and research actions</h2>{{ conservation_actions|safe }}</article>{% endif %}
     </section>
-    <section id="species-info">
+    <section>
       <article>
-        <h2 id="{{ key }}Anchor"><span>References</span>{% if user.is_authenticated %}
-        <button type="button" class="btn btn-info btn-sm info-modal-trigger" data-toggle="modal" data-target="#infoModal">Edit</button>{% endif %}</h2>
+        <h2 id="{{ key }}Anchor"><span>References</span></h2>
         <div class="item-info">
           <table id="pubTable" class="display table"></table>
-          <pre id="bibtex">[{% for a in assessment.references %}{{ a }},{% endfor %}]</pre>
+          <pre id="bibtex">[{% for a in references %}{{ a }},{% endfor %}]</pre>
         </div>
       </article>
     </section>
   </div>
   <div class="col-md-3 assessment-aside">
     <h2>Additional info</h2>
-    {% for key, value in assessment.temp_field.items %}
+    {% for key, value in temp_field.items %}
       <strong>{{ key }}</strong>: {{ value }}<br>
     {% endfor %}
   </div>

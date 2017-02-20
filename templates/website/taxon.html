@@ -14,39 +14,27 @@
 {% block heading %}
 	<section id="taxon-heading" class="triangles banner">
 		<div class="container">
-      <!-- Hierarchical path -->
-      <div id="breadcrumb">
-        {% for item in ancestors %}
-        {% if not forloop.first %}<a href="{% url 'lineage_pk' item.id %}">{% endif %}
-        {{ item.name }}
-        {% if not forloop.first %}</a>{% endif %}
-        {% if not forloop.last %}<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
-        {% else %}<a href="{% url 'lineage_pk' item.id %}" type="button" class="btn btn-warning btn-sm"  data-toggle="tooltip" data-placement="top" title='Rank: {{ taxon.data.rank }}, {% if taxon.data.synonyms %}Synonyms: {{ taxon.data.synonyms|join:" // " }}{% else %}Name status: Accepted{% endif %}'>View tree</a>
-        {% endif %}
-        {% endfor %}
-      </div>
+      <!-- Hierarchical path - Gets filled in with javascript-->
+      <div id="breadcrumb"></div>
 
       <!-- Name and rank -->
-      <h1>{{ taxon.data.get_full_name|safe }}</h1>
+      <h1></h1>
 
       <!-- Common names -->
-      <h2><span>{{ taxon.data.common_names|join:"</span><span>" }}</span>{% if user.is_authenticated %}
-      <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-backdrop="static" data-target="#commonNamesModal">Add Common Names</button>{% endif %}</h2>
+      <h2 id="common-names"></h2>
       <ul class="nav nav-tabs nav-inverse">
+        <li role="presentation"{% if request.resolver_match.url_name == 'last_assessment_detail' %} class="active"{% endif %}>
+          <a href="{% url 'last_assessment_detail' 0 %}">RedList assessments</a>
+        </li>
+        <li role="presentation"{% if request.resolver_match.url_name == 'distribution_list' %} class="active"{% endif %}>
+          <a href="{% url 'distribution_list' 0 %}">Distribution map</a>
+        </li>
         <li role="presentation"{% if request.resolver_match.url_name == 'taxa_detail' %} class="active"{% endif %}>
-          <a href="{% url 'taxa_detail' taxon.data.id %}">General</a>
+          <a href="{% url 'taxa_detail' 0 %}">Species information</a>
         </li>
         <li role="presentation"{% if request.resolver_match.url_name == 'taxa_images' %} class="active"{% endif %}>
-          <a href="{% url 'taxa_detail' taxon.data.id %}">Images</a>
+          <a href="{% url 'taxa_detail' 0 %}">Images</a>
         </li>
-        <li role="presentation"{% if request.resolver_match.url_name == 'taxa_distribution' %} class="active"{% endif %}>
-          <a href="{% url 'taxa_detail' taxon.data.id %}">Distribution map</a>
-        </li>
-        {% if taxon.data.get_latest_assessment %}
-        <li role="presentation"{% if request.resolver_match.url_name == 'assessment_detail' %} class="active"{% endif %}>
-          <a href="{% url 'assessment_detail' taxon.data.get_latest_assessment %}">RedList assessments</a>
-        </li>
-        {% endif %}
       </ul>
     </div>
 	</section>
@@ -56,20 +44,33 @@
 <!-- Main content of species page -->
 {% block content_main %}
 <div class="row">
-  <div class="col-md-9"><section id="species-info">
-  {% for key, item in taxon.data.info.items %}
-  {% if item %}
-    <article>
-      <h2 id="{{ key }}Anchor"><span>{{ key }}</span>{% if user.is_authenticated %}
-      <button type="button" class="btn btn-info btn-sm info-modal-trigger" data-toggle="modal" data-target="#infoModal">Edit</button>{% endif %}</h2>
-      <div class="item-info">{{ item|safe }}</div>
-    </article>
-  {% endif %}
-  {% endfor %}
+  <div class="col-md-9">
+    <section id="facts"><h2>Factsheet</h2>
+      <dl class="dl-horizontal">
+        {% if info.reproductive_type %}
+        <dt>Reproductive strategy</dt>
+        <dd>{% for i in info.reproductive_type %}<span class="ele ele{{ forloop.counter }}">{{ i|safe }}</span>{% endfor %}</dd>
+        {% endif %}
+        {% if info.habitats %}
+        <dt>Habitats</dt>
+        <dd>{% for i in info.habitats %}<span class="ele ele{{ forloop.counter }}">{{ i|safe }}</span>{% endfor %}</dd>
+        {% endif %}
+        {% if info.congregatory %}
+        <dt>Movement behaviour</dt>
+        <dd>{% for i in info.congregatory %}<span class="ele ele{{ forloop.counter }}">{{ i|safe }}</span>{% endfor %}</dd>
+        {% endif %}
+        {% if info.max_size and info.size_units %}<dt>Max size</dt><dd>{{ info.max_size }} {{ info.size_units }}</dd>{% endif %}
+        {% if info.average_fecundity %}<dt>Fecundity<dd>{{ info.average_fecundity }} (yearly average)</dd>{% endif %}
+      </dl>
+    </section>
+    <section id="species-info">
+    {% if info.habitat_narrative %}
+    <article><h2 id="habitat_narrativeAnchor">Habitat</h2>{{ info.habitat_narrative|safe }}</article>
+    {% endif %}
   </section></div>
   <div class="col-md-3">
     <ul id="species-side-nav" class="nav nav-pills nav-stacked" data-spy="affix" data-offset-top="20" data-offset-bottom="200">
-      {% for key, item in taxon.data.info.items %}{% if item %}
+      {% for key, item in info.items %}{% if item %}
       <li><a href="#{{ key }}Anchor">{{ key }}</a></li>
       {% endif %}{% endfor %}
     </ul>
@@ -132,10 +133,21 @@
 <script src="{% static 'bibtex-js-master/src/bibtex_js.js' %}"></script>
 <script src="{% static 'ckeditor/ckeditor.js' %}"></script>
 <script>
+var id = window.location.href.split('/').slice(-2, -1)[0];
+
+var ancestors_url = ("{% url 'api_ancestors' 0 %}" + "?format=json").replace('0', id);
+
+var lineage_url = "{% url 'lineage_pk' 0 %}";
+
+var common_names_url = ("{% url 'api_common_names' 0 %}" + "?format=json").replace('0', id);
+</script>
+<script src="{% static 'taxa-header.js' %}"></script>
+<script>
 $(document).ready(function() {
   $(function () {
     $('[data-toggle="tooltip"]').tooltip()
   })
+
   // Fix for ckeditor in a bootstrap modal
   // See http://stackoverflow.com/questions/22637455/how-to-use-ckeditor-in-a-bootstrap-modal
   jQuery.fn.modal.Constructor.prototype.enforceFocus = function () {
@@ -149,16 +161,6 @@ $(document).ready(function() {
       }
     })
   };
-
-  // Add triangle background
-	var params = {
-	  height: $('.triangles').outerHeight(),
-		width: $('.triangles').outerWidth(),
-    x_colors: 'Blues',
-    y_colors: 'match_x'
-  };
-	var pattern = new Trianglify(params);
-	$('.triangles').attr('style', 'background: url(' + pattern.png() + ') no-repeat center center');
 
   // Place correct data when modal shows
   $('#infoModal').on('show.bs.modal', function (event) {

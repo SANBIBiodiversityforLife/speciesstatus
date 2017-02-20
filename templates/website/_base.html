@@ -42,7 +42,7 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav">
             <li><a href="#"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span> Search map</a></li>
-            <li><a href="#"><span class="glyphicon glyphicon-tree-conifer" aria-hidden="true"></span> Explore taxonomic tree</a></li>
+            <li><a href="{% url 'lineage_pk' 4 %}"><span class="glyphicon glyphicon-tree-conifer" aria-hidden="true"></span> Explore species</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
@@ -65,7 +65,8 @@
     <div class="container">
         {% block content %}{% endblock %}
     </div>
-	{% block subcontent %}{% endblock %}
+	  {% block subcontent %}{% endblock %}
+  <footer><div class="container">SANBI website | Terms and conditions | Contact us</div></footer>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>

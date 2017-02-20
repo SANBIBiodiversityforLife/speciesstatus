@@ -7,7 +7,9 @@ from rest_framework.renderers import TemplateHTMLRenderer, BrowsableAPIRenderer,
 urlpatterns = [
     # Browsable API
     url(r'^api/$', views.api_root),
+    url(r'^api/ancestors/(?P<pk>[0-9]+)/$', views.AncestorsView.as_view(renderer_classes=(BrowsableAPIRenderer, JSONRenderer)), name='api_ancestors'),
     url(r'^api/detail/(?P<pk>[0-9]+)/$', views.TaxonDetail.as_view(renderer_classes=(BrowsableAPIRenderer, JSONRenderer))),
+    url(r'^api/common-names/(?P<pk>[0-9]+)/$', views.CommonNameList.as_view(renderer_classes=(BrowsableAPIRenderer, JSONRenderer)), name='api_common_names'),
     url(r'^api/common-name/(?P<pk>[0-9]+)/$', views.CommonNameDetail.as_view()),
     url(r'^api/lineage/(?P<pk>\d*)/$', views.LineageView.as_view(renderer_classes=(BrowsableAPIRenderer, JSONRenderer)), name='api_lineage'),
     url(r'^api/children/(?P<pk>\d*)/$',
@@ -18,9 +20,6 @@ urlpatterns = [
     url(r'^detail/(?P<pk>[0-9]+)/$', views.TaxonDetail.as_view(renderer_classes=(TemplateHTMLRenderer,)), name='taxa_detail'),
     url(r'^list/$', views.TaxonListView.as_view(), name='search_autocomplete'),
     url(r'^lineage/(?P<pk>\d*)/$', views.LineageView.as_view(renderer_classes=(TemplateHTMLRenderer,)), name='lineage_pk'),
-
-    #url(r'^lineage/(?P<slug>[-\w]+)/$', views.get_lineage, name='lineage_slug'), lookup_field = 'slug'
-
-    #url(r'^lineage/(?P<pk>\d*)/$', views.get_lineage, name='lineage_pk'),
+    url(r'^distribution/(?P<pk>\d*)/$', views.DistributionList.as_view(renderer_classes=(TemplateHTMLRenderer, JSONRenderer)), name='distribution_list'),
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)

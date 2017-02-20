@@ -75,6 +75,7 @@ class Assessment(models.Model):
     subpopulation_number = IntegerRangeField(null=True, blank=True)
     population_past = IntegerRangeField(null=True, blank=True)
     population_future = IntegerRangeField(null=True, blank=True)
+    population_trend = models.CharField(max_length=200, null=True, blank=True)
     UNDERSTOOD = 'U'
     REVERSIBLE = 'R'
     CEASED = 'C'

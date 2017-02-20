@@ -1,5 +1,5 @@
 #taxon-heading {
-  padding-top: 110px;
+  padding-top: 90px;
   margin-bottom: 20px;
   color: #fff;
   font-weight: bold;
@@ -7,7 +7,7 @@
   font-size: 1.1em;
 }
 #taxon-heading h1 {
-  margin-top: 30px;
+  margin-top: 25px;
   text-shadow:1px 1px 10px rgba(0, 0, 0, 0.8);
   font-weight: bold;
   font-size: 3.5em;
@@ -21,7 +21,7 @@
 }
 #taxon-heading h2 {
   font-size: 1em;
-  line-height: 2em;
+  line-height: 1.5em;
 }
 #taxon-heading a {
   color: #fff;
@@ -128,4 +128,32 @@ nav.redlist .nav-pills>li.active>a, nav.redlist .nav-pills>li.active>a:focus, na
 }
 #redlist-summary>div:first-child div strong {
     font-size: 1.5em;
+}
+#facts dl dt, #facts dl dd {
+  line-height: 2em;
+  margin-bottom: 10px;
+}
+#facts h2 {
+  text-align: center;
+  margin-top: 0;
+  color: #333;
+}
+#facts:hover {
+  background: linear-gradient(to bottom, #ffffa8 0%,#E5E0A5 100%);
+}
+#facts {
+  background: linear-gradient(to bottom, #fff6d8 0%,#fff4c4 100%);
+  padding: 20px 20px 0px 20px;
+  border-radius: 25px;
+  border: 1px solid #CCC;
+}
+span.ele:hover { background-color: rgba(200, 200, 200, 0.2); }
+span.ele {
+  padding: 5px;
+  margin-right: 5px;
+  background-color: rgba(20, 20, 20, 0.1);
+}
+#poptrend h3 { display: none; }
+article h3 {
+  font-size: 1.1em; font-weight: bold;
 }

@@ -10,6 +10,7 @@ django-autocomplete-light==3.1.8
 django-mptt==0.8.6
 django-polymorphic==1.0.1
 djangorestframework==3.4.6
+djangorestframework-gis==0.11
 djangorestframework-recursive==0.1.1
 execnet==1.4.1
 future==0.14.3
