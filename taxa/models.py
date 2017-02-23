@@ -146,6 +146,8 @@ class Taxon(MPTTModel):
 
     class Meta:
         verbose_name_plural = 'taxa'
+        # Ensure that we don't duplicate taxa
+        unique_together = ('name', 'parent', 'rank')
 
     # This is used when serializing data (geojson, etc) so that we don't get a meaningless number as output
     def natural_key(self):
@@ -240,7 +242,6 @@ class Info(models.Model):
 
     # Trophic strategy
     trophic = models.TextField(blank=True)
-    uses = models.TextField(blank=True)
 
     # Random!
     # cites = models.

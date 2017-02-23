@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from taxa.models import Taxon, Info, CommonName, GeneralDistribution
+from taxa.models import Taxon, Info, CommonName, GeneralDistribution, Description, Language
 from rest_framework_recursive.fields import RecursiveField
 from biblio.serializers import ReferenceDOISerializer
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
@@ -125,7 +125,7 @@ class TaxonInfoSerializer(serializers.ModelSerializer):
         model = Taxon
         fields = ('id', 'info')
 
-class TaxonSerializer(serializers.ModelSerializer):
+class TaxonSearchSerializer(serializers.ModelSerializer):
     children = ChildrenInfoField(required=False, many=True, read_only=True)
     rank = serializers.StringRelatedField(read_only=True)
     get_latest_assessment = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -176,3 +176,38 @@ class DistributionSerializer(GeoFeatureModelSerializer):
         model = GeneralDistribution
         geo_field = "distribution_polygon"
         fields = ('date', 'residency_status', 'level', 'reference', 'description')
+
+
+class RankSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Taxon
+        fields = ('id', 'name')
+
+
+class CommonNameWriteSerializer(serializers.ModelSerializer):
+    language = serializers.PrimaryKeyRelatedField(queryset=Language.objects.all())
+
+    class Meta:
+        model = CommonName
+        fields = ('name', 'language')
+
+class TaxonWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Taxon
+        fields = ('id', 'name', 'rank', 'parent', 'notes')
+
+
+class DescriptionWriteSerializer(serializers.ModelSerializer):
+    taxon = serializers.PrimaryKeyRelatedField(queryset=Taxon.objects.all())
+
+    class Meta:
+        model = Description
+        fields = ('taxon', 'reference')
+
+
+class InfoWriteSerializer(serializers.ModelSerializer):
+    taxon = serializers.PrimaryKeyRelatedField(queryset=Taxon.objects.all())
+
+    class Meta:
+        model = Info
+        fields = ('taxon', 'trophic', 'diagnostics', 'morphology', 'habitat_narrative', 'habitats')

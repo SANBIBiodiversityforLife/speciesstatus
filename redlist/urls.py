@@ -11,6 +11,8 @@ urlpatterns = [
     #    name='api_assessment'),
     url(r'^list/$', views.AssessmentList.as_view(renderer_classes=(BrowsableAPIRenderer, JSONRenderer)),
         name='assessment_list'),
+    url(r'^api/assessment-write/$', views.AssessmentWrite.as_view(renderer_classes=(BrowsableAPIRenderer, JSONRenderer)),
+        name='assessment_write'),
 
     # HTML template views
     url(r'^detail/(?P<pk>[0-9]+)/$', views.AssessmentDetail.as_view(renderer_classes=(TemplateHTMLRenderer, JSONRenderer)),

@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from redlist.models import Assessment, Contribution, Threat, ThreatNature
+from taxa.models import Taxon
 from bibtexparser.bwriter import BibTexWriter; from bibtexparser.bibdatabase import BibDatabase
 
 
@@ -81,3 +82,20 @@ class AssessmentSerializer(serializers.ModelSerializer):
                   'distribution_narrative',
                   'temp_field')
 
+
+class AssessmentWriteSerializer(serializers.ModelSerializer):
+    taxon = serializers.PrimaryKeyRelatedField(queryset=Taxon.objects.all())
+
+    class Meta: # notes = inclusion reason
+        model = Assessment
+        fields = ('taxon', 'scope', 'date', 'redlist_category', 'redlist_criteria', 'population_trend_narrative',
+                  'rationale', 'conservation_narrative', 'distribution_narrative', 'population_narrative', 'notes',
+                  'threats_narrative', 'research_narrative', 'change_rationale', 'temp_field')
+
+
+class ContributionWriteSerializer(serializers.ModelSerializer):
+    assessment = serializers.PrimaryKeyRelatedField(queryset=Assessment.objects.all())
+
+    class Meta:
+        model = Contribution
+        fields = ('assessment', 'person', 'type', 'weight')

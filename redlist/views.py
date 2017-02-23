@@ -9,7 +9,8 @@ from rest_framework.response import Response
 @api_view(['GET'])
 def api_root(request, format=None):
     return Response({
-        'assessment': reverse('assessment_list', request=request, format=format),
+        'assessment list top 3': reverse('assessment_list', request=request, format=format),
+        'assessment list or write': reverse('assessment_write', request=request, format=format),
     })
 
 
@@ -37,3 +38,8 @@ class AssessmentDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = models.Assessment.objects.all()
     serializer_class = serializers.AssessmentSerializer
     template_name = 'website/assessment.html'
+
+
+class AssessmentWrite(generics.ListCreateAPIView):
+    queryset = models.Assessment.objects.all()
+    serializer_class = serializers.AssessmentWriteSerializer

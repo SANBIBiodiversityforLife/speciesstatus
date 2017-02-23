@@ -15,9 +15,51 @@ from mptt.utils import drilldown_tree_for_node
 @api_view(['GET'])
 def api_root(request, format=None):
     return Response({
-        'taxa': reverse('search_autocomplete', request=request, format=format),
-        'distributions': reverse('distribution_list', request=request, format=format),
+        'taxa-search': reverse('search_autocomplete', request=request, format=format),
+        'rank-list - Get a list of all taxonomic ranks': reverse('rank_list', request=request, format=format),
+        'taxon-write - Write taxa into the taxa tree': reverse('api_taxon_write', request=request, format=format),
+        'description-write - Write original description references for the taxa': reverse('api_description_write', request=request, format=format),
+        'info-write - Write non-taxonomic information': reverse('api_info_write', request=request, format=format),
+        # 'distributions': reverse('distribution_list', request=request, format=format),
     })
+
+
+class RankList(generics.ListCreateAPIView):
+    queryset=models.Rank.objects.all()
+    serializer_class = serializers.RankSerializer
+
+
+class TaxonWrite(generics.ListCreateAPIView):
+    queryset = models.Taxon.objects.all()
+    serializer_class = serializers.TaxonWriteSerializer
+
+    # Overriding super method to use .get_or_create() instead of .save()
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(): # raise_exception=True
+            instance, created = serializer.get_or_create()
+            headers = self.get_success_headers(serializer.data)
+            if created:
+                return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            else:
+                return Response(serializer.data, status=status.HTTP_202_ACCEPTED, headers=headers)
+        else:
+            try:
+                taxon = models.Taxon.objects.get(**serializer.data)
+                taxon = serializers.TaxonWriteSerializer(taxon)
+                return Response(taxon.data, status=status.HTTP_202_ACCEPTED)
+            except models.Taxon.DoesNotExist:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DescriptionWrite(generics.ListCreateAPIView):
+    queryset = models.Description.objects.all()
+    serializer_class = serializers.DescriptionWriteSerializer
+
+
+class InfoWrite(generics.ListCreateAPIView):
+    queryset = models.Info.objects.all()
+    serializer_class = serializers.InfoWriteSerializer
 
 
 class DistributionDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -66,7 +108,7 @@ class TaxonDetail(generics.RetrieveUpdateDestroyAPIView):
 class TaxonListView(generics.ListAPIView):
     """ Used by the ajax search function """
     queryset = models.Taxon.objects.all()
-    serializer_class = serializers.TaxonSerializer
+    serializer_class = serializers.TaxonSearchSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',
                      'info__morphology',
@@ -74,7 +116,6 @@ class TaxonListView(generics.ListAPIView):
                      'info__movement',
                      'info__reproduction',
                      'info__trophic',
-                     'info__uses',
                      'common_names__name')
 
 

@@ -15,6 +15,10 @@ urlpatterns = [
     url(r'^api/children/(?P<pk>\d*)/$',
         views.ChildrenView.as_view(renderer_classes=(BrowsableAPIRenderer, JSONRenderer)),
         name='api_children'),
+    url(r'^api/taxon-write/$', views.TaxonWrite.as_view(renderer_classes=(BrowsableAPIRenderer, JSONRenderer)), name='api_taxon_write'),
+    url(r'^api/description-write/$', views.DescriptionWrite.as_view(renderer_classes=(BrowsableAPIRenderer, JSONRenderer)), name='api_description_write'),
+    url(r'^api/info-write/$', views.InfoWrite.as_view(renderer_classes=(BrowsableAPIRenderer, JSONRenderer)), name='api_info_write'),
+    url(r'^api/rank-list/$', views.RankList.as_view(renderer_classes=(BrowsableAPIRenderer, JSONRenderer)), name='api_rank_list'),
 
     # HTML template views
     url(r'^detail/(?P<pk>[0-9]+)/$', views.TaxonDetail.as_view(renderer_classes=(TemplateHTMLRenderer,)), name='taxa_detail'),

@@ -1,0 +1,58 @@
+{% extends "website/_base.html" %}
+{% load static %}
+
+{% block css %}
+<link href="{% static 'index.css' %}" rel="stylesheet">
+<link href="{% static 'taxon.css' %}" rel="stylesheet">
+{% endblock css %}
+
+{% block heading %}
+<section id="taxon-heading" class="triangles banner">
+  <div class="container"><h1>About</h1></div>
+</section>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-8">
+    <h2>IUCN categories</h2>
+    <p>South Africa uses the internationally endorsed IUCN Red List Categories and Criteria in the Red List of South African plants. This scientific system is designed to measure species' risk of extinction. The purpose of this system is to highlight those species that are most urgently in need of conservation action.</p>
+    <p>Due to its strong focus on determining risk of extinction, the IUCN system does not highlight species that are at low risk of extinction, but may nonetheless be of high conservation importance. Because the Red List of South African plants is used widely in South African conservation practices such as systematic conservation planning or protected area expansion, we use an amended system of categories designed to highlight those species that are at low risk of extinction but of conservation concern.</p>
+    <h3>Global and national (regional) assessments</h3>
+    <p>The IUCN Red List categories and criteria are designed to be applied to the entire, or global, range of a species. Such assessments, which take into account the world-wide distribution range of a species, are known as global assessments and are included in the IUCN's international Red List of Threatened Species.</p>
+    <p>However, the system also allows for assessments of geographical subsections of a species' global range. Such subsections are typically marked by a human-defined boundary, such as a country of provincial border. The assessments of such subsections are known as regional assessments, and use the same set of criteria as global assessments. However, if a species is not endemic to the region, the regional assessment procedures contain an additional step to adjust the regional status to allow for the impact of individuals moving between populations within and outside the region on the extinction risk of the species within the region.</p>
+    <p>The assessments contained in the Red List of South African plants are regional assessments, also called national assessments. This means that if a plant species is not endemic to South Africa, only that part of the species' distribution range falling within South Africa was evaluated in the assessment. Therefore a species' status on the national Red List may differ from its global status on the IUCN Red List. Where category adjustments were made according to regional assessment procedures, the adjusted status is indicated by the category abbreviation followed by an asterisk (*).</p>
+	</div>
+	<div class="col-md-4">
+		<h2>Contact us</h2>
+		<hr>
+    <p><a href="http://www.sanbi.org/contact">Contact us on www.sanbi.org</a></p>
+    <h3>Head Office</h3>
+    <p>
+    South African National Biodiversity Institute<br>
+    Private Bag X101<br>
+    Silverton, 0184<br>
+    South Africa<br>
+    Tel +27 (0)12 843 5000 Fax: +27 (0)12 804 3211<br>
+    Physical Address: 2 Cussonia Ave, Brummeria, Pretoria.
+    </p>
+	</div>
+</div>
+{% endblock content %}
+
+{% block js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/trianglify/1.0.1/trianglify.min.js"></script>
+<script>
+  $(document).ready(function() {
+      // We are nesting all of these dones just so that trianglify can get the right height for his bg
+      var params = {
+        height: $('.triangles').outerHeight(),
+        width: $('.triangles').outerWidth(),
+        x_colors: 'Blues',
+        y_colors: 'match_x'
+      };
+      var pattern = new Trianglify(params);
+      $('.triangles').attr('style', 'background: url(' + pattern.png() + ') no-repeat center center');
+  });
+</script>
+{% endblock %}
