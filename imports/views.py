@@ -12,7 +12,7 @@ from django.db.models import Count
 from django.http import HttpResponse
 import pandas as pd
 from psycopg2.extras import NumericRange
-from imports import sis_import, spstatus_import
+from imports import sis_import, spstatus_import, sarca_sabca
 import pdb
 import re
 import requests
@@ -209,6 +209,8 @@ def import_phylums(request):
 def sis(request):
     sis_import.import_sis()
 
+def sarca(request):
+    sarca_sabca.import_sql()
 
 def spstatus(request):
     spstatus_import.import_spstatus()
