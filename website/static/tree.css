@@ -54,7 +54,7 @@
     margin-top: -7px;
     margin-left: 10px;
 }
-span.assessment {
+.assessment {
     background-color: #777;
     color: white;
     padding: 5px;
@@ -62,10 +62,3 @@ span.assessment {
     font-size: 0.6em;
     font-weight: bold;
 }
-span.assessment-LC { background-color: #3da72b; }
-span.assessment-NT { background-color: #9da72b; }
-span.assessment-VU { background-color: #c2ad21; }
-span.assessment-EN { background-color: #d7b600; }
-span.assessment-CR { background-color: #d25e00; }
-span.assessment-EW { background-color: #d24000; }
-span.assessment-EX { background-color: #d20000; }

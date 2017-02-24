@@ -91,7 +91,6 @@ class InfoSerializer(serializers.ModelSerializer):
         fields = ('morphology',
                   'diagnostics',
                   'trophic',
-                  'uses',
                   'movement',
                   'migration_patterns',
                   'congregatory',
@@ -185,11 +184,11 @@ class RankSerializer(serializers.ModelSerializer):
 
 
 class CommonNameWriteSerializer(serializers.ModelSerializer):
-    language = serializers.PrimaryKeyRelatedField(queryset=Language.objects.all())
+    # language = serializers.PrimaryKeyRelatedField(queryset=Language.objects.all())
 
     class Meta:
         model = CommonName
-        fields = ('name', 'language')
+        fields = ('name', 'language', 'taxon')
 
 class TaxonWriteSerializer(serializers.ModelSerializer):
     class Meta:

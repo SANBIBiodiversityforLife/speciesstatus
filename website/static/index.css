@@ -101,10 +101,8 @@ p.rss-footer {
   margin-bottom: 15px;
   padding-bottom: 15px;
 }
-.ass-cat {
+.assessment-cat {
   padding: 5px;
   border-radius: 5px;
   color: white;
 }
-.ass-EN { background-color: #b7af0c; }
-.ass-LC {  background-color: #499947; }

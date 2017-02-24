@@ -40,9 +40,10 @@ class ThreatNatureSerializer(serializers.HyperlinkedModelSerializer):
 class AssessmentSerializer(serializers.ModelSerializer):
     # Fields for overwriting the default serializer classes
     scope = serializers.CharField(source='get_scope_display')
-    redlist_category = serializers.CharField(source='get_redlist_category_display')
+    redlist_category_display = serializers.CharField(source='get_redlist_category_display')
     population_trend_nature = serializers.CharField(source='get_population_trend_nature_display')
     taxon = serializers.StringRelatedField(read_only=True)
+    taxon_id = serializers.PrimaryKeyRelatedField(read_only=True)
     conservation_actions = serializers.StringRelatedField(read_only=True, many=True)
     references = HstoreBibtexField(read_only=True, many=True)
     date = serializers.DateField(format='%b %Y')
@@ -62,12 +63,14 @@ class AssessmentSerializer(serializers.ModelSerializer):
         fields = ('id',
                   'contribution_set',
                   'taxon',
+                  'taxon_id',
                   'scope',
                   'rationale',
                   'change_rationale',
                   'date',
                   'notes',
                   'redlist_category',
+                  'redlist_category_display',
                   'redlist_criteria',
                   'population_narrative',
                   'population_trend_narrative',
@@ -88,7 +91,7 @@ class AssessmentWriteSerializer(serializers.ModelSerializer):
 
     class Meta: # notes = inclusion reason
         model = Assessment
-        fields = ('taxon', 'scope', 'date', 'redlist_category', 'redlist_criteria', 'population_trend_narrative',
+        fields = ('id', 'taxon', 'scope', 'date', 'redlist_category', 'redlist_criteria', 'population_trend_narrative',
                   'rationale', 'conservation_narrative', 'distribution_narrative', 'population_narrative', 'notes',
                   'threats_narrative', 'research_narrative', 'change_rationale', 'temp_field')
 

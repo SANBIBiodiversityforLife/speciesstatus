@@ -17,6 +17,7 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from website import views as website_views
 from imports import views as imports_views
+from people import views as people_views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -33,6 +34,7 @@ urlpatterns = [
     url(r'^taxa/', include('taxa.urls')),
     url(r'^biblio/', include('biblio.urls')),
     url(r'^assessment/', include('redlist.urls')),
+    url(r'^api/people/', people_views.PeopleList.as_view(), name='api_people'),
 
     # Index
     url(r'^$', website_views.IndexView.as_view(), name='index'),

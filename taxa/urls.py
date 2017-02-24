@@ -16,9 +16,10 @@ urlpatterns = [
         views.ChildrenView.as_view(renderer_classes=(BrowsableAPIRenderer, JSONRenderer)),
         name='api_children'),
     url(r'^api/taxon-write/$', views.TaxonWrite.as_view(renderer_classes=(BrowsableAPIRenderer, JSONRenderer)), name='api_taxon_write'),
-    url(r'^api/description-write/$', views.DescriptionWrite.as_view(renderer_classes=(BrowsableAPIRenderer, JSONRenderer)), name='api_description_write'),
     url(r'^api/info-write/$', views.InfoWrite.as_view(renderer_classes=(BrowsableAPIRenderer, JSONRenderer)), name='api_info_write'),
+    url(r'^api/cn-write/$', views.CommonNameWrite.as_view(renderer_classes=(BrowsableAPIRenderer, JSONRenderer)), name='api_cn_write'),
     url(r'^api/rank-list/$', views.RankList.as_view(renderer_classes=(BrowsableAPIRenderer, JSONRenderer)), name='api_rank_list'),
+    url(r'^api/description-format-write/$', views.create_taxon_authority, name='api_descrip_write'),
 
     # HTML template views
     url(r'^detail/(?P<pk>[0-9]+)/$', views.TaxonDetail.as_view(renderer_classes=(TemplateHTMLRenderer,)), name='taxa_detail'),

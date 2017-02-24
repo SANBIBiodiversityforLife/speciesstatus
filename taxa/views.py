@@ -10,18 +10,36 @@ from rest_framework.response import Response
 from rest_framework import filters
 from rest_framework import mixins
 from mptt.utils import drilldown_tree_for_node
+from imports import views as imports_views
 
 
 @api_view(['GET'])
 def api_root(request, format=None):
     return Response({
         'taxa-search': reverse('search_autocomplete', request=request, format=format),
-        'rank-list - Get a list of all taxonomic ranks': reverse('rank_list', request=request, format=format),
+        'rank-list - Get a list of all taxonomic ranks': reverse('api_rank_list', request=request, format=format),
         'taxon-write - Write taxa into the taxa tree': reverse('api_taxon_write', request=request, format=format),
-        'description-write - Write original description references for the taxa': reverse('api_description_write', request=request, format=format),
         'info-write - Write non-taxonomic information': reverse('api_info_write', request=request, format=format),
+        'common-name-write - Write common names information': reverse('api_cn_write', request=request, format=format),
         # 'distributions': reverse('distribution_list', request=request, format=format),
     })
+
+@api_view(['GET', 'POST'])
+def create_taxon_authority(request):
+    """
+    Takes in a taxon description reference such as (Johaadien & Khatieb, 2008), and creates a reference
+    """
+    if request.method == 'POST':
+        taxon = models.Taxon.objects.get(pk=request.data['taxon_pk'])
+        a_s = request.data['author_string']
+        desc, created = imports_views.create_taxon_description(authority=request.data['author_string'], taxon=taxon)
+        desc_s = serializers.DescriptionWriteSerializer(desc)
+        if created:
+            return Response(desc_s.data, status=status.HTTP_202_ACCEPTED)
+        else:
+            return Response(desc_s.data, status=status.HTTP_201_CREATED)
+
+    #imports_views.create_taxon_description(request['data'],
 
 
 class RankList(generics.ListCreateAPIView):
@@ -36,13 +54,10 @@ class TaxonWrite(generics.ListCreateAPIView):
     # Overriding super method to use .get_or_create() instead of .save()
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid(): # raise_exception=True
-            instance, created = serializer.get_or_create()
+        if serializer.is_valid(): # raise_exception=True in super
+            self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
-            if created:
-                return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-            else:
-                return Response(serializer.data, status=status.HTTP_202_ACCEPTED, headers=headers)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         else:
             try:
                 taxon = models.Taxon.objects.get(**serializer.data)
@@ -52,9 +67,9 @@ class TaxonWrite(generics.ListCreateAPIView):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class DescriptionWrite(generics.ListCreateAPIView):
-    queryset = models.Description.objects.all()
-    serializer_class = serializers.DescriptionWriteSerializer
+class CommonNameWrite(generics.ListCreateAPIView):
+    queryset = models.CommonName.objects.all()
+    serializer_class = serializers.CommonNameWriteSerializer
 
 
 class InfoWrite(generics.ListCreateAPIView):
