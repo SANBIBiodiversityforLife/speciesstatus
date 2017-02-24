@@ -9,7 +9,35 @@ import requests
 import bibtexparser
 import pybtex
 from io import StringIO
+from rest_framework import generics
 import pybtex.database.input.bibtex
+
+
+
+class RefList(generics.ListCreateAPIView):
+    queryset=models.Reference.objects.all()
+    serializer_class = serializers.ReferenceWriteSerializer
+
+    # Overriding super method to use .get_or_create() instead of .save()
+    def create(self, request, *args, **kwargs):
+        import pdb; pdb.set_trace()
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(): # raise_exception=True
+            instance, created = serializer.get_or_create()
+            headers = self.get_success_headers(serializer.data)
+            if created:
+                return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            else:
+                return Response(serializer.data, status=status.HTTP_202_ACCEPTED, headers=headers)
+        else:
+            try:
+                ref = models.Reference.objects.get(**serializer.data)
+                ref = serializers.ReferenceWriteSerializer(ref)
+                return Response(ref.data, status=status.HTTP_202_ACCEPTED)
+            except models.Reference.DoesNotExist:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 def get_bibtex_from_doi(doi):
     url = "http://dx.doi.org/{}".format(doi)

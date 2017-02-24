@@ -96,13 +96,29 @@ $(document).ready(function() {
 			node['children'] = node.child_count > 0
 		}
 	};
+/*$('#jstree').on("changed.jstree", function (e, data) {
 
-$('#jstree').on("changed.jstree", function (e, data) {
 			if(data.selected.length) {
-				var nodeID = data.instance.get_node(data.selected[0]).id;
-				window.location.href = taxaDetailUrl.slice(0, -1) + nodeID;
+				var node = data.instance.get_node(data.selected[0]);
+				if(node.original.rank.id == 8 || node.original.rank.id == 10) {
+					window.location.href = taxaDetailUrl.slice(0, -1) + node.id;
+				} else {
+				console.log(node);
+					 console.log('hi');
+					 $('#jstree').toggle_node(node);
+					 //data.instance.open_node($(this));
+				}
 			}
-		})
+		})*/
+$('#jstree').on('select_node.jstree', function (e, data) {
+		node = data.node;
+		if(node.original.rank.id == 8 || node.original.rank.id == 10) {
+			window.location.href = taxaDetailUrl.slice(0, -1) + node.id;
+		} else {
+			console.log(node);
+		}
+    data.instance.toggle_node(data.node);
+})
 .jstree({
   "core" : {
     "animation" : 0,

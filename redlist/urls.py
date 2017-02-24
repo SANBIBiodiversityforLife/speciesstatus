@@ -13,6 +13,8 @@ urlpatterns = [
         name='assessment_list'),
     url(r'^api/assessment-write/$', views.AssessmentWrite.as_view(renderer_classes=(BrowsableAPIRenderer, JSONRenderer)),
         name='assessment_write'),
+    url(r'^api/contribution-write/$', views.ContributionWrite.as_view(renderer_classes=(BrowsableAPIRenderer, JSONRenderer)),
+        name='contribution_write'),
 
     # HTML template views
     url(r'^detail/(?P<pk>[0-9]+)/$', views.AssessmentDetail.as_view(renderer_classes=(TemplateHTMLRenderer, JSONRenderer)),

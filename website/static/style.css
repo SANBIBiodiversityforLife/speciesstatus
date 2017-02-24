@@ -12,3 +12,10 @@ footer {
   padding: 60px 0;
   background: linear-gradient(to bottom, #4b659e 0%,#005075 100%);
 }
+.assessment-LC { background-color: #006666 !important; color: #FFF; }
+.assessment-NT { background-color: #006666 !important; color: #9ed09b !important; }
+.assessment-VU { background-color: #cc9900 !important; color: #FFF; }
+.assessment-EN { background-color: #cc6633 !important; color: #FFF; }
+.assessment-CR { background-color: #cc3333 !important; color: #FFF; }
+.assessment-EW { background-color: #d24000 !important; color: #FFF; }
+.assessment-EX { background-color: #000000 !important; color: #cc3333 !important; }

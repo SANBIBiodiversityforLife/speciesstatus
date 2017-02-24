@@ -11,6 +11,7 @@ def api_root(request, format=None):
     return Response({
         'assessment list top 3': reverse('assessment_list', request=request, format=format),
         'assessment list or write': reverse('assessment_write', request=request, format=format),
+        'contribution list or write': reverse('contribution_write', request=request, format=format),
     })
 
 
@@ -43,3 +44,8 @@ class AssessmentDetail(generics.RetrieveUpdateDestroyAPIView):
 class AssessmentWrite(generics.ListCreateAPIView):
     queryset = models.Assessment.objects.all()
     serializer_class = serializers.AssessmentWriteSerializer
+
+
+class ContributionWrite(generics.ListCreateAPIView):
+    queryset = models.Contribution.objects.all()
+    serializer_class = serializers.ContributionWriteSerializer

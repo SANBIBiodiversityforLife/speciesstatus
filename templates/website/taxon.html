@@ -48,6 +48,7 @@
 {% block content_main %}
 <div class="row">
   <div class="col-md-9">
+    {% if info.reproductive_type or info.habitats or info.congregatory or info.max_size or info.average_fecundity %}
     <section id="facts"><h2>Factsheet</h2>
       <dl class="dl-horizontal">
         {% if info.reproductive_type %}
@@ -66,11 +67,19 @@
         {% if info.average_fecundity %}<dt>Fecundity<dd>{{ info.average_fecundity }} (yearly average)</dd>{% endif %}
       </dl>
     </section>
+    {% endif %}
     <section id="species-info">
+    {% if info.trophic %}
+    <article><h2 id="trophic_narrativeAnchor">Trophic</h2>{{ info.trophic|safe }}</article>
+    {% endif %}
+    {% if info.diagnostics %}
+    <article><h2 id="diagnostics_narrativeAnchor">Habitat</h2>{{ info.diagnostics|safe }}</article>
+    {% endif %}
     {% if info.habitat_narrative %}
     <article><h2 id="habitat_narrativeAnchor">Habitat</h2>{{ info.habitat_narrative|safe }}</article>
     {% endif %}
-  </section></div>
+    </section>
+  </div>
   <div class="col-md-3">
     <ul id="species-side-nav" class="nav nav-pills nav-stacked" data-spy="affix" data-offset-top="20" data-offset-bottom="200">
       {% for key, item in info.items %}{% if item %}

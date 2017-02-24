@@ -108,7 +108,7 @@ def get_or_create_author(surname, first=''):
         return p
 
 
-def create_taxon_description(authority, taxon, mendeley_session):
+def create_taxon_description(authority, taxon, mendeley_session=None):
     """
     Takes in a authority string like (Barnard, 1980), splits it into year and author
     Attempts to find the author and year in mendeley and in the database, otherwise it create a new reference
@@ -123,22 +123,23 @@ def create_taxon_description(authority, taxon, mendeley_session):
     authority = authority.split(',')
     year = authority[-1].strip()
     authors = authority[0]
+    cits = []
 
     # Sanity check, authority should have been split up into year and author list of length 2
     if len(authority) < 2:  # Someone is going to have to fix this...
         year = '0'
 
-    # Try and find citation
-    try:
-        rs = mendeley_session.catalog.advanced_search(author=authors, min_year=year, max_year=year, view='bib')
+    if mendeley_session:
+        # Try and find citation
+        try:
+            rs = mendeley_session.catalog.advanced_search(author=authors, min_year=year, max_year=year, view='bib')
 
-        # Kind of embarrassing but i can't work out how to get len(rs.iter())
-        cits = []
-        for r in rs.iter():
-            cits.append(r)
-    except:
-        import pdb;
-        pdb.set_trace()
+            # Kind of embarrassing but i can't work out how to get len(rs.iter())
+            for r in rs.iter():
+                cits.append(r)
+        except:
+            import pdb;
+            pdb.set_trace()
 
     # If we get only one result then hurrah we can use it to populate our references table
     if len(cits) == 1:
@@ -200,6 +201,7 @@ def create_taxon_description(authority, taxon, mendeley_session):
     description, created = models.Description.objects.get_or_create(reference=reference,
                                                                     taxon=taxon,
                                                                     weight=int(bracketed))
+    return description, created
 
 
 def import_phylums(request):

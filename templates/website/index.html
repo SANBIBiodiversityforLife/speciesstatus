@@ -72,21 +72,23 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 <script>
 var searchAutoCompleteUrl = "{% url 'search_autocomplete' %}";
-var searchRedirectUrl = "{% url 'taxa_detail' 0 %}";
+var searchRedirectUrl = "{% url 'last_assessment_detail' 0 %}";
+var assessment_redirect = "{% url 'assessment_detail' 0 %}";
 </script>
 <script src="{% static 'search.js' %}"></script>
 <script>
 $(document).ready(function() {
 	var assessmentListUrl = "{% url 'assessment_list' %}" + '?format=json';
-	console.log('hi');
 	$.ajax({
 		url: assessmentListUrl,
 		success: function(data, textStatus, jqXHR) {
 			rs = data['results'];
 			html = '';
 			$.each(rs, function(index, value) {
-				html += '<article><div class="ass-image"></div><h3>' + value['taxon'] + '</h3>';
-				html += '<h4><span class="ass-cat ass-' + value['redlist_category'].slice(-3,-1) + '">' + value['redlist_category'] + '</span>';
+				console.log(value);
+				redir_url = searchRedirectUrl.replace('0', value['taxon_id']);
+				html += '<article><div class="ass-image"></div><h3><a href="' + redir_url + '">' + value['taxon'] + '</a></h3>';
+				html += '<h4><span class="assessment-cat assessment-' + value['redlist_category'] + '">' + value['redlist_category_display'] + '</span>';
 				html += ' <small>Scope: ' + value['scope'] + ' on ' + value['date'] + '</small></h4>';
 				html += value['rationale'] + '</article>';
 			});
