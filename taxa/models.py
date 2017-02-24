@@ -338,6 +338,25 @@ class Info(models.Model):
     )
 
 
+class PointDistribution(models.Model):
+    """Point data can be associated with a taxon"""
+    taxon = models.ForeignKey(Taxon, related_name='point_distributions')
+    point = models.PointField()
+
+    # Record the date range on which the observation was made and who collected it
+    date = models.DateField(null=True, blank=True)
+    collector = models.ForeignKey(Person)
+
+    # From where we have this data
+    origin_code = models.CharField(max_length=100, null=True, blank=True)
+
+    # Uncertainty/precision of the point
+    precision_m = models.IntegerField(null=True, blank=True)
+
+    # QDS locus
+    qds = models.CharField(max_length=8, null=True, blank=True)
+
+
 class GeneralDistribution(models.Model):
     """Multiple distribution polygons + corresponding residency status can be associated with a taxon"""
     taxon = models.ForeignKey(Taxon, related_name='general_distributions')

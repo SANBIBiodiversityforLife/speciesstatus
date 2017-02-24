@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from taxa.models import Taxon, Info, CommonName, GeneralDistribution, Description, Language
+from taxa.models import Taxon, Info, CommonName, GeneralDistribution, Description, PointDistribution
 from rest_framework_recursive.fields import RecursiveField
 from biblio.serializers import ReferenceDOISerializer
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
@@ -175,6 +175,15 @@ class DistributionSerializer(GeoFeatureModelSerializer):
         model = GeneralDistribution
         geo_field = "distribution_polygon"
         fields = ('date', 'residency_status', 'level', 'reference', 'description')
+
+
+class PointSerializer(GeoFeatureModelSerializer):
+    collector = serializers.StringRelatedField()
+
+    class Meta:
+        model = PointDistribution
+        geo_field = "point"
+        fields = ('date', 'collector', 'precision_m')
 
 
 class RankSerializer(serializers.ModelSerializer):

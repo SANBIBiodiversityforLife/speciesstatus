@@ -114,7 +114,7 @@ nav.redlist {
     font-size: 1.5em;
 }
 nav.redlist .nav-pills>li.active>a, nav.redlist .nav-pills>li.active>a:focus, nav.redlist .nav-pills>li.active>a:hover {
-    background-color: #b73f33;
+    background-color: #5c97d6;
 }
 
 .contribution-type {

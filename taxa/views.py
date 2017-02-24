@@ -24,6 +24,7 @@ def api_root(request, format=None):
         # 'distributions': reverse('distribution_list', request=request, format=format),
     })
 
+
 @api_view(['GET', 'POST'])
 def create_taxon_authority(request):
     """
@@ -32,7 +33,7 @@ def create_taxon_authority(request):
     if request.method == 'POST':
         taxon = models.Taxon.objects.get(pk=request.data['taxon_pk'])
         a_s = request.data['author_string']
-        desc, created = imports_views.create_taxon_description(authority=request.data['author_string'], taxon=taxon)
+        desc, created = imports_views.create_taxon_description(authority=str(request.data['author_string']), taxon=taxon)
         desc_s = serializers.DescriptionWriteSerializer(desc)
         if created:
             return Response(desc_s.data, status=status.HTTP_202_ACCEPTED)
@@ -94,6 +95,20 @@ class DistributionList(generics.ListCreateAPIView):
             return models.GeneralDistribution.objects.filter(taxon=self.kwargs['pk'])
         else:
             return models.GeneralDistribution.objects.all()
+
+
+class PointDistributionList(generics.ListCreateAPIView):
+    serializer_class = serializers.PointSerializer
+    template_name = 'website/distribution.html'
+
+    def get_queryset(self):
+        """
+        This view should return a list of all the distribution points for a taxon, or all distributions
+        """
+        if self.kwargs['pk'] is not None:
+            return models.PointDistribution.objects.filter(taxon=self.kwargs['pk'])
+        else:
+            return models.PointDistribution.objects.all()
 
 
 class CommonNameList(generics.ListCreateAPIView):
