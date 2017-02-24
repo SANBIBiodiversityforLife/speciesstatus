@@ -33,6 +33,7 @@
 <script src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
 
 <script src="{% static 'leaflet/leaflet-measure.min.js' %}"></script>
+<script src="{% static 'Leaflet.heat-gh-pages/dist/leaflet-heat.js' %}"></script>
 <script src="{% static 'maps.js' %}"></script>
 <script>
 var dist_url = ("{% url 'distribution_list' 0 %}" + "?format=json").replace('0', id);
