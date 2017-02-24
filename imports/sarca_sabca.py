@@ -25,11 +25,16 @@ def import_sql():
 
 
     conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='', db='sarca')
-    sql = """
-    SELECT
+    dql =  pymysql.connect(host='localhost', port=3306, user='root', passwd='', db='sarca_sanbi')
+    cons_sql = """SELECT Sp_code, Item_text
+FROM asmt_vocabulary vocab
+JOIN asmt_conservation_measure cons
+ON vocab.Item_order = cons.Measure_code
+WHERE vocab.Keyword = 'conservation_measures';"""
+    sql = """SELECT
     Sp_code
     ,CASE WHEN rl_A1a = 1 THEN 'A1a' END as A1a
-    'CASE WHEN rl_A1b = 1 THEN 'A1b' END as A1b
+    ,CASE WHEN rl_A1b = 1 THEN 'A1b' END as A1b
     ,CASE WHEN rl_A1c = 1 THEN 'A1c' END as A1c
     ,CASE WHEN rl_A1d = 1 THEN 'A1d' END as A1d
     ,CASE WHEN rl_A1e = 1 THEN 'A1e' END as A1e
@@ -75,13 +80,7 @@ def import_sql():
     ,CASE WHEN 'rl_D1' = 1 THEN 'D1'END AS D1
     ,CASE WHEN 'rl_D2' = 1 THEN 'D2'END AS D2
     ,CASE WHEN 'rl_E' = 1 THEN 'E'END AS E
-    FROM asmt_data
-    """
-    cons_sql = """SELECT Sp_code, Item_text
-FROM asmt_vocabulary vocab
-JOIN asmt_conservation_measure cons
-ON vocab.Item_order = cons.Measure_code
-WHERE vocab.Keyword = 'conservation_measures';"""
+    FROM asmt_data"""
     ppl_sql = """SELECT Sp_code
 		,Author1 AS name
 		,Author2 AS name2
@@ -104,6 +103,20 @@ WHERE vocab.Keyword = 'conservation_measures';"""
 FROM asmt_bibliography AS biblio
 JOIN asmt_bibliography_link AS link
 ON biblio.Bib_code = link.Bib_code"""
+    dist = """
+    SELECT Sp_code,
+Institution_code+'|'+Collection_code AS origin_code,
+collector,
+Decimal_latitude AS lat,
+Decimal_longitude AS "long",
+Coords_uncertainty_description AS uncert,
+Locus AS locus,
+Year_collected AS year,
+Month_collected AS month,
+Day_collected AS day
+FROM sarca_sanbi.vm_data;"""
+
+    d = pd.read_sql(dist, dql)
 
     criteria = pd.read_sql(sql, conn)
     t = pd.read_sql(taxa_sql, conn)
@@ -170,7 +183,7 @@ ON biblio.Bib_code = link.Bib_code"""
 
         return '|'.join(cats)
 
-    temp = criteria[0:3].apply(test, axis=1)
+    temp = criteria.apply(test, axis=1)
     criteria['criteria'] = temp
 
     for index, row in assess.iterrows():
