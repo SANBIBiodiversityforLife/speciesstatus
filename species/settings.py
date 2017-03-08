@@ -90,7 +90,7 @@ DATABASES = {
          'ENGINE': 'django.contrib.gis.db.backends.postgis',
          'NAME': 'species',
          'USER': 'postgres',
-         'PASSWORD': 'admin',
+         'PASSWORD': 'postgres',
          'PORT': '5432',
     }
 }
@@ -161,3 +161,5 @@ REST_FRAMEWORK = {
 
 # Application specific settings
 MENDELEY_SETTINGS = {'ID': '3513', 'SECRET': 'gOVvM5RmKseDgcmH', 'REDIRECT': 'http://species.sanbi.org'}
+
+#GEOS_LIBRARY_PATH = 'C:\\Program Files\\PostgreSQL\\9.6\\bin\\libgeos_c.dll'

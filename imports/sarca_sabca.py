@@ -1,3 +1,4 @@
+
 from django.shortcuts import render
 from taxa import models
 from biblio import models as biblio_models
@@ -15,6 +16,8 @@ import pymysql
 from psycopg2.extras import NumericRange
 from imports import views as imports_views
 import datetime
+from django.contrib.gis.geos import Point
+
 
 def import_sql():
     mendeley_id = '3513'
@@ -31,56 +34,7 @@ FROM asmt_vocabulary vocab
 JOIN asmt_conservation_measure cons
 ON vocab.Item_order = cons.Measure_code
 WHERE vocab.Keyword = 'conservation_measures';"""
-    sql = """SELECT
-    Sp_code
-    ,CASE WHEN rl_A1a = 1 THEN 'A1a' END as A1a
-    ,CASE WHEN rl_A1b = 1 THEN 'A1b' END as A1b
-    ,CASE WHEN rl_A1c = 1 THEN 'A1c' END as A1c
-    ,CASE WHEN rl_A1d = 1 THEN 'A1d' END as A1d
-    ,CASE WHEN rl_A1e = 1 THEN 'A1e' END as A1e
-    ,CASE WHEN rl_A2a = 1 THEN 'A2a' END as A2a
-    ,CASE WHEN rl_A2b = 1 THEN 'A2b' END as A2b
-    ,CASE WHEN rl_A2c = 1 THEN 'A2c' END as A2c
-    ,CASE WHEN rl_A2d = 1 THEN 'A2d' END as A2d
-    ,CASE WHEN rl_A2e = 1 THEN 'A2e' END as A2e
-    ,CASE WHEN rl_A3b = 1 THEN 'A3b' END as A3b
-    ,CASE WHEN rl_A3c = 1 THEN 'A3c' END as A3c
-    ,CASE WHEN rl_A3d = 1 THEN 'A3d' END as A3d
-    ,CASE WHEN rl_A3e = 1 THEN 'A3e' END as A3e
-    ,CASE WHEN rl_A4a = 1 THEN 'A4a' END as A4a
-    ,CASE WHEN rl_A4b = 1 THEN 'A4b' END as A4b
-    ,CASE WHEN rl_A4c = 1 THEN 'A4c' END as A4c
-    ,CASE WHEN rl_A4d = 1 THEN 'A4d' END as A4d
-    ,CASE WHEN rl_A4e = 1 THEN 'A4e' END as A4e
-    ,CASE WHEN rl_B1a = 1 THEN 'B1a' END as B1a
-    ,CASE WHEN rl_B1b_i = 1 THEN 'B1b(i)' END as B1b_i
-    ,CASE WHEN rl_B1b_ii = 1 THEN 'B1b(ii)' END as B1b_ii
-    ,CASE WHEN 'rl_B1b_iii' = 1 THEN 'B1b(iii)'END AS B1b_iii
-    ,CASE WHEN 'rl_B1b_iv' = 1 THEN 'B1b(iv)'END AS B1b_iv
-    ,CASE WHEN 'rl_B1b_v' = 1 THEN 'B1b(v)'END AS B1b_v
-    ,CASE WHEN 'rl_B1c_i' = 1 THEN 'B1c(i)'END AS B1c_i
-    ,CASE WHEN 'rl_B1c_ii' = 1 THEN 'B1c(ii)'END AS B1c_ii
-    ,CASE WHEN 'rl_B1c_iii' = 1 THEN 'B1c(iii)'END AS B1c_iii
-    ,CASE WHEN 'rl_B1c_iv' = 1 THEN 'B1c(iv)'END AS B1c_iv
-    ,CASE WHEN 'rl_B2a' = 1 THEN 'B2a'END AS B2a
-    ,CASE WHEN 'rl_B2b_i' = 1 THEN 'B2b(i)'END AS B2b_i
-    ,CASE WHEN 'rl_B2b_ii' = 1 THEN 'B2b(ii)'END AS B2b_ii
-    ,CASE WHEN 'rl_B2b_iii' = 1 THEN 'B2b(iii)'END AS B2b_iii
-    ,CASE WHEN 'rl_B2b_iv' = 1 THEN 'B2b(iv)'END AS B2b_iv
-    ,CASE WHEN 'rl_B2b_v' = 1 THEN 'B2b(v)'END AS B2b_v
-    ,CASE WHEN 'rl_B2c_i' = 1 THEN 'B2c(i)'END AS B2c_i
-    ,CASE WHEN 'rl_B2c_ii' = 1 THEN 'B2c(ii)'END AS B2c_ii
-    ,CASE WHEN 'rl_B2c_iii' = 1 THEN 'B2c(iii)'END AS B2c_iii
-    ,CASE WHEN 'rl_B2c_iv' = 1 THEN 'B2c(iv)'END AS B2c_iv
-    ,CASE WHEN 'rl_C1' = 1 THEN 'C1'END AS C1
-    ,CASE WHEN 'rl_C2a_i' = 1 THEN 'C2a(i)'END AS C2a_i
-    ,CASE WHEN 'rl_C2a_ii' = 1 THEN 'C2a(ii)'END AS C2a_ii
-    ,CASE WHEN 'rl_C2b' = 1 THEN 'C2b'END AS C2b
-    ,CASE WHEN 'rl_D' = 1 THEN 'D'END AS D
-    ,CASE WHEN 'rl_D1' = 1 THEN 'D1'END AS D1
-    ,CASE WHEN 'rl_D2' = 1 THEN 'D2'END AS D2
-    ,CASE WHEN 'rl_E' = 1 THEN 'E'END AS E
-    FROM asmt_data"""
+
     ppl_sql = """SELECT Sp_code
 		,Author1 AS name
 		,Author2 AS name2
@@ -118,7 +72,6 @@ FROM sarca_sanbi.vm_data;"""
 
     d = pd.read_sql(dist, dql)
 
-    criteria = pd.read_sql(sql, conn)
     t = pd.read_sql(taxa_sql, conn)
     cn = pd.read_sql("SELECT * FROM sarca.asmt_common_names;", conn)
     ppl = pd.read_sql(ppl_sql, conn)
@@ -175,16 +128,22 @@ FROM sarca_sanbi.vm_data;"""
     }
 
     # Iterate through the allfields table, 1 row represents 1 assessment for a taxon
+    temp = assess.iloc[:, 162:209]
+    temp['Sp_code'] = assess['Sp_code']
+
     def test(row):
         cats = []
         for index, item in enumerate(row):
-            if item is not None and item != 'None' and index != 0:
+            if item != 0 and index != 0:
                 cats.append(item)
-
         return '|'.join(cats)
 
-    temp = criteria.apply(test, axis=1)
-    criteria['criteria'] = temp
+    p = temp.loc[:, ].replace(1, pd.Series(temp.columns, temp.columns))
+    k = p.reindex_axis(['Sp_code'] + list(p.columns[:-1]), axis=1)
+    temp_cr = k.apply(test, axis=1)
+    assess['criteria'] = temp_cr
+
+
 
     for index, row in assess.iterrows():
         # Retrieve the taxon info for the assessment we're on
@@ -230,9 +189,9 @@ FROM sarca_sanbi.vm_data;"""
             taxon=species, date= datetime.date(2016, 2, 1)
         )
 
-        criteria = criteria.loc[criteria['Sp_code'] == row['Sp_code'], 'criteria']
-        if criteria is not None:
-            a.redlist_criteria = criteria
+        #criteria = criteria.loc[criteria['Sp_code'] == row['Sp_code'], 'criteria']
+        #if criteria is not None:
+        a.redlist_criteria = assess_row['criteria']
         if 'AOO2' in row:
             a.area_occupancy = NumericRange(int(row['AOO2']), int(row['AOO2']))
         if 'EOO2' in row:
@@ -245,7 +204,7 @@ FROM sarca_sanbi.vm_data;"""
         # Convert all of the other columns data into json and stick it in the temp hstore field
         # There is SO much info and no way to structure it, best if someone goes and pulls it out manually
         # as and when they need it
-        hstore_values = {k: v for k, v in row.items() if k not in exclude_from_assessment}
+        #hstore_values = {k: v for k, v in row.items() if k not in exclude_from_assessment}
         #a.temp_field = hstore_values
 
         # Save the assessment object now everything has been added to it above
@@ -382,9 +341,9 @@ FROM sarca_sanbi.vm_data;"""
                 import pdb; pdb.set_trace()
 
         # Get a list of all contributors/assessors/whatevers for the assessment
-        ppl = ppl.loc[ppl['Sp_code'] == row['Sp_code']]
+        ppl_ = ppl.loc[ppl['Sp_code'] == row['Sp_code']]
         # people_rows.sort_values(['lastName', 'firstName'], inplace=True)
-        for i, p in ppl.iterrows():
+        for i, p in ppl_.iterrows():
             author1, created = people_models.Person.objects.get_or_create(first=p['firstname'], surname=p['surname'])
             if created:
                 #person.email = p['email']
@@ -411,6 +370,27 @@ FROM sarca_sanbi.vm_data;"""
                                                                type='A',
                                                                weight=2)
                 c.save()
+
+        dist = d.loc[d['Sp_code'] == row['Sp_code']]
+        for i, occur in dist.iterrows():
+            occur = {k: v for k, v in occur.items() if pd.notnull(v)}
+            if 'long' in occur and 'lat' in occur:
+                point = models.PointDistribution(taxon=species, point=Point(occur['long'], occur['lat']))
+                if 'year' in occur:
+                    day = occur['day'] if 'day' in occur else 1
+                    month = occur['month'] if 'month' in occur else 1
+                    point.date = datetime.date(int(occur['year']), int(month), int(day))
+                # if 'collector' in occur:
+                #     import pdb; pdb.set_trace()
+                #     person = imports_views.create_authors(occur['collector'])[0]
+                #     point.collector = person
+                if 'locus' in occur:
+                    point.qds = occur['locus']
+                if 'origin_code' in occur:
+                    point.origin_code = str(occur['origin_code'])[:8]
+
+                point.save()
+
 
     print('done')
     import pdb
