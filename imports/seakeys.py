@@ -100,8 +100,8 @@ def import_seakeys():
     csv_file = os.path.join(pwd, 'seakeys.csv')
     reader = csv.DictReader(open(csv_file, encoding='ISO-8859-1'))
     for row in reader:
-        if reader.line_num < 139:
-            continue
+        #if reader.line_num < 139:
+        #    continue
         print(row['Genus'] + ' ' + row['Species'])
         # Skip all of the species with no assessments
         if row['Regional status 2015'].strip() == '':
@@ -270,7 +270,7 @@ def import_seakeys():
                     bibtex_dict['pages'] = reference['Pagination'].replace('–', '--').replace('-', '--').replace(' ', '')
                 if 'Secondary Title' in reference and reference['Secondary Title'].strip() != '':
                     reference['Secondary Title'] = imports_views.fix_case(reference['Secondary Title'])
-                    if type == 'journal':
+                    if type == 'article':
                         bibtex_dict['journal'] = reference['Secondary Title'].strip()
                     elif type == 'bookchapter':
                         bibtex_dict['booktitle'] = bibtex_dict['title']
