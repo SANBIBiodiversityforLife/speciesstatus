@@ -406,7 +406,7 @@ class GeneralDistribution(models.Model):
     description = models.TextField(blank=True)
 
     # Reference(s?) for the residency status & distribution
-    reference = models.ForeignKey(Reference)
+    reference = models.ForeignKey(Reference, null=True, blank=True)
 
     class Meta:
         # Ensure that we don't duplicate distributions for a taxon

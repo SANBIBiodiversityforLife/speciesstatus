@@ -37,12 +37,18 @@
 <script src="{% static 'maps.js' %}"></script>
 <script>
 var dist_url = ("{% url 'distribution_list' 0 %}" + "?format=json").replace('0', id);
-
+var dist_url_poly = ("{% url 'distribution_list_polygon' 0 %}" + "?format=json").replace('0', id);
+console.log(dist_url);
 $(document).ready(function() {
   $.ajax({
     url: dist_url,
-    success: function(data, textStatus, jqXHR) {
-      init_map(data);
+    success: function(point_data, textStatus, jqXHR) {
+      $.ajax({
+        url: dist_url_poly,
+        success: function(poly_data, textStatus, jqXHR) {
+          init_map(point_data, poly_data);
+        }
+      });
     }
   })
 });
