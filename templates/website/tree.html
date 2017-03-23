@@ -10,29 +10,9 @@
 {% endblock css %}
 
 {% block heading %}
-	<div id="main-carousel-text">
-		<div class="container"><div class="row">
-			<div class="col-md-12">
-				<form action="/Search" class="form-inline" method="get">
-					<div class="form-group">
-            <label for="searchterm">Search for species</label>
-						<input name="searchterm" id="searchterm" type="text" class="search-query form-control" autocomplete="off" placeholder="Enter common name, ecological traits, scientific names, etc." data-provide="typeahead" data-items="4" data-source="">
-						<button type="submit" class="btn btn-info">
-								Search
-								<span class="glyphicon glyphicon-search"></span>
-							</button>
-					</div>
-				</form>
-			</div>
-		</div></div>
-	</div>
-	<div id="carousel" class="carousel slide" data-ride="carousel">
-	  <div class="carousel-inner" role="listbox">
-		<div class="item active">
-		  <img src="{% static 'img/carousel/1.jpg' %}" alt="...">
-		</div>
-	  </div>
-	</div>
+<div class="search-header"><div class="container"><div class="row">
+
+</div></div></div>
 {% endblock %}
 
 {% block content %}
@@ -47,7 +27,12 @@
   <input class="search-input form-control" id="jstree-input"></input>-->
   <div id="contentcontainer">
     <div id="azgenera"></div>
-    <div id="jstree"></div>
+		<div id="treejump"><form action="/Search" method="get">
+				<label for="searchterm">Jump to</label>
+				<input name="searchterm" id="searchterm" type="text" class="search-query form-control" autocomplete="off" placeholder="Enter common name, ecological traits, scientific names, etc." data-provide="typeahead" data-items="4" data-source="">
+		</form></div>
+    <div id="jstree">
+		</div>
     <div id="redlistcat"></div>
   </div>
 </div></div>
@@ -60,8 +45,9 @@
 <script>
 var searchAutoCompleteUrl = "{% url 'search_autocomplete' %}";
 var searchRedirectUrl = "{% url 'lineage_pk' 0 %}";
-var generaAZUrl = "{% url 'api_genera_list' 'A' %}?format=json";
+var generaAZUrl = "{% url 'api_genera_list' 'A' 'Aves' %}?format=json";
 var categoryListUrl = "{% url 'api_category_list' 'LC' %}?format=json";
+var taxaGroupList = "{% url 'api_get_taxa_group_list'%}?format=json";
 </script>
 <script src="{% static 'search.js' %}"></script>
 <script>
@@ -76,24 +62,30 @@ var current_pk = {{ pk }};
 <script>
 $(document).ready(function() {
 	tree_view();
+  $('#contentcontainer>div').hide();
+  $('#jstree').show();
+  $('#treejump').show();
+  tree_view();
+
 	$('#az-view').click(function() {
 		$(this).siblings().removeClass('active');
 		$(this).addClass('active');
-		$('#contentcontainer div').hide();
+		$('#contentcontainer>div').hide();
 		$('#azgenera').show();
 		populate_genera(generaAZUrl);
 	});
 	$('#tree-view').click(function() {
 		$(this).siblings().removeClass('active');
 		$(this).addClass('active');
-		$('#contentcontainer div').hide();
+		$('#contentcontainer>div').hide();
 		$('#jstree').show();
+		$('#treejump').show();
 		tree_view();
 	});
 	$('#status-view').click(function() {
 		$(this).siblings().removeClass('active');
 		$(this).addClass('active');
-		$('#contentcontainer div').hide();
+		$('#contentcontainer>div').hide();
 		$('#redlistcat').show();
 		populate_categories(categoryListUrl);
 	});

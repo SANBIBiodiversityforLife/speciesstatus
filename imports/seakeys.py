@@ -100,7 +100,7 @@ def import_seakeys():
     csv_file = os.path.join(pwd, 'seakeys.csv')
     reader = csv.DictReader(open(csv_file, encoding='ISO-8859-1'))
     for row in reader:
-        #if reader.line_num < 139:
+        #if reader.line_num < 114:
         #    continue
         print(row['Genus'] + ' ' + row['Species'])
         # Skip all of the species with no assessments
@@ -190,14 +190,26 @@ def import_seakeys():
         for i, contributor in enumerate(row['Redlist assessor'].split(',')):
             contributor = contributor.strip()
             names = contributor.split(' ')
-            person, created = people_models.Person.objects.get_or_create(first=names[0], surname=names[1])
+            try:
+                if len(names) == 2:
+                    person, created = people_models.Person.objects.get_or_create(first=names[0], surname=names[1])
+                else:
+                    person, created = people_models.Person.objects.get_or_create(surname=names[0])
+            except:
+                import pdb; pdb.set_trace()
             c = redlist_models.Contribution(person=person, assessment=assessment, weight=i,
                                             type=redlist_models.Contribution.ASSESSOR)
             c.save()
         for i, contributor in enumerate(row['Redlist reviewer'].split(',')):
             contributor = contributor.strip()
             names = contributor.split(' ')
-            person, created = people_models.Person.objects.get_or_create(first=names[0], surname=names[1])
+            try:
+                if len(names) == 2:
+                    person, created = people_models.Person.objects.get_or_create(first=names[0], surname=names[1])
+                else:
+                    person, created = people_models.Person.objects.get_or_create(surname=names[0])
+            except:
+                import pdb; pdb.set_trace()
             c = redlist_models.Contribution(person=person, assessment=assessment, weight=i,
                                             type=redlist_models.Contribution.REVIEWER)
             c.save()
@@ -229,8 +241,11 @@ def import_seakeys():
                 matches = re.findall(regex, reference['Authors'])
                 authors = []
                 for m in matches:
-                    surname = m[1].strip()
-                    initials = m[0].replace('.', '').strip()
+                    try:
+                        surname = m[1].strip()
+                        initials = m[0].replace('.', '').strip()
+                    except:
+                        import pdb; pdb.set_trace()
 
                     # Try and get all possible people in the database first
                     p = people_models.Person.objects.filter(surname=surname, initials=initials).first()

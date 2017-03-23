@@ -82,3 +82,17 @@
   cursor: pointer;
 }
 #redlist-cat-headings a:hover { color: white; text-decoration: none; }
+
+.search-header {
+  padding-top: 80px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  padding-left: 50px;
+}
+#treejump form {
+  margin-bottom: 20px;
+}
+#treejump input {
+  display: inline-block;
+  width: 50%;
+}

@@ -8,4 +8,5 @@ admin.site.register(models.Taxon)
 admin.site.register(models.Description)
 admin.site.register(models.CommonName)
 admin.site.register(models.GeneralDistribution, admin.GeoModelAdmin)
+admin.site.register(models.PointDistribution, admin.GeoModelAdmin)
 

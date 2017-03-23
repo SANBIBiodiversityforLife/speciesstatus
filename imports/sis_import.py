@@ -44,7 +44,8 @@ def import_sis():
     dir = 'C:\\Users\\JohaadienR\\Documents\\Projects\\python-sites\\species\\data-sources\\'
 
     # Amphibians
-    animal_dirs = ['Amphibians_SIS\\Amphibians\\', 'Dragonflies_SIS\\Dragonflies_Regional\\']
+    animal_dirs = ['Amphibians_SIS\\Amphibians\\', 'Dragonflies_SIS\\new\\']
+    animal_dirs = ['Dragonflies_SIS\\new\\']
     # animal_dir = dir + 'Amphibians_SIS\\Amphibians\\'
     # animal_dir = dir + 'Dragonflies_SIS\\Dragonflies_Regional\\'
     # animal_dir = dir + 'Dragonflies_SIS\\Dragonflies\\'
@@ -284,10 +285,18 @@ def import_sis():
                     print(r['year'])
                     continue
 
+
+
                 # For the year you sometimes have 1981b for example, so just get first 4 chars
-                bibtex_dict = {'year': str(r['year'])[:4],
-                               'title': r['title'],
+                bibtex_dict = {'title': r['title'],
                                'author': author_string}
+
+                try:
+                    #if r['year'].strip().lower() != 'in press':
+                    int(str(r['year'])[:4])
+                    bibtex_dict['year'] = str(r['year'])[:4]
+                except ValueError:
+                    bibtex_dict['year'] = str(r['year'])
 
                 # Fuck I don't understand why people try to make bibliographic data relational, it's a headache
                 # When there's a perfectly good language designed to hold and express it - bibtex
@@ -296,7 +305,8 @@ def import_sis():
                 # See http://www.openoffice.org/bibliographic/bibtex-defs.html for list of relevant bibtex fields
                 r = {k: v for k, v in r.items() if pd.notnull(v)}
                 r['type'] = r['type'].lower()
-                if r['type'] == 'journal article':
+
+                if r['type'] == 'journal article' or r['type'] == 'rldb' or r['type'] == 'other':
                     bibtex_dict['ENTRYTYPE'] = 'article'
                     if 'volume' in r:
                         bibtex_dict['volume'] = r['volume']
@@ -347,6 +357,11 @@ def import_sis():
                         bibtex_dict['address'] = r['url']
                     if 'publisher' in r:
                         bibtex_dict['publisher'] = r['publisher']
+                elif r['type'] == 'report':
+                    if 'publisher' in r:
+                        bibtex_dict['institution'] = r['publisher']
+                    if 'place_published' in r:
+                        bibtex_dict['address'] = r['place_published']
                 else:
                     print(r)
                     import pdb; pdb.set_trace() # It's some type we haven't thought of yet
@@ -357,9 +372,13 @@ def import_sis():
                 bibtex_dict['ID'] = row['internal_taxon_id']
 
                 # Create and save the reference object
-                ref = biblio_models.Reference(year=int(bibtex_dict['year']),
-                                              title=bibtex_dict['title'],
+                ref = biblio_models.Reference(title=bibtex_dict['title'],
                                               bibtex=bibtex_dict)
+
+                try:
+                    ref.year = int(bibtex_dict['year'])
+                except ValueError:
+                    pass
                 ref.save()
 
                 # Assign authors to the reference

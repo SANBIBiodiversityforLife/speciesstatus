@@ -11,7 +11,7 @@
 		<div class="container"><div class="row">
 			<div class="col-md-12 text-center">
 				<h1>Search for species</h1>
-				<form action="/Search" class="navbar-form" method="get">
+				<form action="/search" class="navbar-form search-form" method="get">
 					<div class="input-group col-md-8">
 						<input name="searchterm" id="searchterm" type="text" class="search-query form-control input-lg" autocomplete="off" placeholder="Enter common name, ecological traits, scientific names, etc." data-provide="typeahead" data-items="4" data-source="">
 						<div class="input-group-btn">
@@ -23,7 +23,7 @@
 					</div>
 				</form>
 				<div class="secondary-button">
-					<span class="text">Alternatively,</span> <a href="{% url 'lineage_pk' 4 %}" class="btn btn-warning" role="button" id="explore"><span class="glyphicon glyphicon-tree-conifer" aria-hidden="true"></span> Explore species</a>
+					<span class="text">Alternatively,</span> <a href="{% url 'lineage_pk' 4 %}" class="btn btn-warning" role="button" id="explore">Explore species</a>
 				</div>
 			</div>
 		</div></div>

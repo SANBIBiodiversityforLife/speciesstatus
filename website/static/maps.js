@@ -58,7 +58,7 @@ function init_map(point_data, poly_data) {
     },
   });
   polys.addTo(map);
-  map.fitBounds(polys.getBounds());
+  // map.fitBounds(polys.getBounds());
   toggleLayers['Expert opinion'] = polys;
 
   // Add geojson layer and create a coords list from that for the heatmap
@@ -68,6 +68,8 @@ function init_map(point_data, poly_data) {
       coords.push([feature.geometry.coordinates[1], feature.geometry.coordinates[0]]);
     },
   });
+
+  console.log(coords);
   //s.addTo(map);
   // Add heatmap
   heat = L.heatLayer(coords, {

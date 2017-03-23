@@ -408,10 +408,6 @@ class GeneralDistribution(models.Model):
     # Reference(s?) for the residency status & distribution
     reference = models.ForeignKey(Reference, null=True, blank=True)
 
-    class Meta:
-        # Ensure that we don't duplicate distributions for a taxon
-        unique_together = ('taxon', 'distribution_polygon')
-
 
 class AnimalInfo(models.Model):
     is_migrant = models.BooleanField()

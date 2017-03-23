@@ -61,6 +61,15 @@ class LargePagination(pagination.PageNumberPagination):
     page_size = 30
 
 
+@api_view(['GET'])
+def get_taxa_group_list(request):
+    """Utility function used to retrieve a list of the taxa groups"""
+    if request.method == 'GET':
+        class_rank = models.Rank.objects.get(name='Class')
+        class_nodes = models.Taxon.objects.values_list('name', flat=True).filter(rank=class_rank).order_by('name')
+        return Response(class_nodes, status=status.HTTP_202_ACCEPTED)
+
+
 class AlphabeticalGeneraList(generics.ListCreateAPIView):
     """An alphabetical listing of genera"""
     serializer_class = serializers.TaxonBasicSerializerWithRank
@@ -68,9 +77,13 @@ class AlphabeticalGeneraList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         letter = 'A' if 'letter' not in self.kwargs else self.kwargs['letter']
+        class_name = 'Aves' if 'class' not in self.kwargs else self.kwargs['class']
+        class_node = models.Taxon.objects.get(name=class_name)
+
         species_rank = models.Rank.objects.get(name='Species')
         subspecies_rank = models.Rank.objects.get(name='Subspecies')
-        return models.Taxon.objects.filter(name__startswith=letter, rank__in=[species_rank, subspecies_rank]).order_by('name')
+        return class_node.get_descendants().filter(name__startswith=letter, rank__in=[species_rank, subspecies_rank]).order_by('name')
+        #return models.Taxon.objects.filter(name__startswith=letter, rank__in=[species_rank, subspecies_rank]).order_by('name')
 
 
 class CategoryList(generics.ListCreateAPIView):

@@ -240,27 +240,11 @@ def seakeys(request):
 def insert_bird_distrib_data(request):
     pwd = os.path.abspath(os.path.dirname(__file__))
     dir = os.path.join(pwd, '..', 'data-sources', 'bird_redlist_distribs')
-    with open(os.path.join(dir, 'ciconia_abdimii.json')) as data_file:
-        distributions = json.load(data_file)
 
-    sp_rank = models.Rank.objects.get(name='Species')
-    random = models.Taxon.objects.filter(rank=sp_rank).first()
-    # Load the polygons as geometries
-    for d in distributions['features']:
-        polygon_points = []
-        for ring in d['geometry']['rings'][0]:
-            polygon_points.append((ring[0], ring[1]))
-        polygon_tuple = tuple(polygon_points)
-        # polygon = GEOSGeometry('POLYGON((' + ', '.join(polygon_points) + '))', srid=9102022)
-        polygon = Polygon(polygon_tuple, srid=4326)
-
-        distrib = models.GeneralDistribution(taxon=random, distribution_polygon=polygon)
-        import pdb; pdb.set_trace()
-    exit()
     bird_parent_node = models.Taxon.objects.get(name='Aves')
     species_rank = models.Rank.objects.get(name='Species')
     subspecies_rank = models.Rank.objects.get(name='Subspecies')
-    birds = bird_parent_node.get_descendents().filter(rank__in=[species_rank, subspecies_rank])
+    birds = bird_parent_node.get_descendants().filter(rank__in=[species_rank, subspecies_rank])
     for bird in birds:
         bird_file = os.path.join(dir, bird.name.replace(' ', '_') + '.json')
         if not os.path.exists(bird_file):
@@ -268,7 +252,16 @@ def insert_bird_distrib_data(request):
 
         with open(bird_file) as data_file:
             distributions = json.load(data_file)
-        import pdb; pdb.set_trace()
+
+            for distribution in distributions['features']:
+                polygon_points = []
+                for ring in distribution['geometry']['rings'][0]:
+                    polygon_points.append((ring[0], ring[1]))
+                polygon_tuple = tuple(polygon_points)
+                polygon = Polygon(polygon_tuple, srid=4326)
+                distrib = models.GeneralDistribution(taxon=bird, distribution_polygon=polygon)
+                distrib.save()
+
 
 def download_missing_images(request):
     # Could also try
