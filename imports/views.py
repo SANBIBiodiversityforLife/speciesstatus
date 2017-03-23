@@ -12,7 +12,7 @@ from django.db.models import Count
 from django.http import HttpResponse
 import pandas as pd
 from psycopg2.extras import NumericRange
-from imports import sis_import, spstatus_import, sarca_sabca
+from imports import sis_import, spstatus_import, sarca_sabca, sabca
 import pdb
 import re
 import requests
@@ -122,6 +122,7 @@ def create_taxon_description(authority, taxon, mendeley_session=None):
     authority = re.sub('[()]', '', authority)
     authority = authority.split(',')
     year = authority[-1].strip()
+    year = re.sub('[^0-9]', '', year)
     authors = authority[0]
     cits = []
 
@@ -214,7 +215,8 @@ def sis(request):
 def sarca(request):
     sarca_sabca.import_sql()
 
+def sabca_r(request):
+    sabca.import_sabca_sql()
+
 def spstatus(request):
     spstatus_import.import_spstatus()
-
-
