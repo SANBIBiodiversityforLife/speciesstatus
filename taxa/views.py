@@ -221,7 +221,10 @@ class TaxonDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class TaxonListView(generics.ListAPIView):
     """ Used by the ajax search function """
-    queryset = models.Taxon.objects.all()
+
+    species_rank = models.Rank.objects.get(name='Species')
+    subspecies_rank = models.Rank.objects.get(name='Subspecies')
+    queryset = models.Taxon.objects.filter(rank__in=[species_rank, subspecies_rank])
     serializer_class = serializers.TaxonBasicSerializerWithRank
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',
@@ -231,6 +234,8 @@ class TaxonListView(generics.ListAPIView):
                      'info__reproduction',
                      'info__trophic',
                      'common_names__name')
+    template_name = 'website/search.html'
+
 
 
 class ChildrenView(generics.RetrieveAPIView):

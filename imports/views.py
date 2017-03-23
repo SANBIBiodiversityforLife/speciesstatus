@@ -12,12 +12,10 @@ from django.db.models import Count
 from django.http import HttpResponse
 import pandas as pd
 from psycopg2.extras import NumericRange
-<<<<<<< HEAD
+
 from imports import sis_import, spstatus_import, sarca_sabca, sabca
-=======
 from imports import sis_import, spstatus_import
 from imports import seakeys as seakeys_import
->>>>>>> 220ceaf7cd403315ebd1c9c60914c7be29e7d073
 import pdb
 import re
 import requests
@@ -140,12 +138,12 @@ def create_taxon_description(authority, taxon, mendeley_session=None):
     # Splits up an authority string formatted in the standard way e.g. (Barnard, 1937) into year and author
     bracketed = '(' in authority
     authority = re.sub('[()]', '', authority)
-<<<<<<< HEAD
+
     authority = authority.split(',')
     year = authority[-1].strip()
     year = re.sub('[^0-9]', '', year)
     authors = authority[0]
-=======
+
     # Split into year + authors
     matches = re.findall(r'\d{4}', authority)
     if matches and len(matches) == 1:
@@ -155,7 +153,7 @@ def create_taxon_description(authority, taxon, mendeley_session=None):
         print('no year found or many years found') # Someone is going to have to fix this
         year = 0
         authors = authority
->>>>>>> 220ceaf7cd403315ebd1c9c60914c7be29e7d073
+
     cits = []
 
     if mendeley_session:
@@ -235,7 +233,6 @@ def create_taxon_description(authority, taxon, mendeley_session=None):
 def import_phylums(request):
     sis_import.import_phylums()
 
-
 def sis(request):
     sis_import.import_sis()
 
@@ -245,10 +242,9 @@ def sarca(request):
 def sabca_r(request):
     sabca.import_sabca_sql()
 
-<<<<<<< HEAD
 def spstatus(request):
     spstatus_import.import_spstatus()
-=======
+
 def seakeys(request):
     seakeys_import.import_seakeys()
 
@@ -385,4 +381,3 @@ def populate_higher_level_common_names(request):
     #r = requests.get('http://api.gbif.org/v1/species?' + )
     #r.json()
 
->>>>>>> 220ceaf7cd403315ebd1c9c60914c7be29e7d073
