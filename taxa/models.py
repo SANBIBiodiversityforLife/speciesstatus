@@ -345,7 +345,7 @@ class PointDistribution(models.Model):
 
     # Record the date range on which the observation was made and who collected it
     date = models.DateField(null=True, blank=True)
-    collector = models.ForeignKey(Person)
+    collector = models.ForeignKey(Person, null=True, blank=True)
 
     # From where we have this data
     origin_code = models.CharField(max_length=100, null=True, blank=True)

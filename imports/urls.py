@@ -6,6 +6,8 @@ from rest_framework.renderers import TemplateHTMLRenderer, BrowsableAPIRenderer,
 
 urlpatterns = [
     url(r'^sis/$', views.sis, name='import_sis'),
+    url(r'^sarca/$', views.sarca, name='import_sarca'),
+    url(r'^sabca/$', views.sabca_r, name='import_sabca'),
     url(r'^spstatus/$', views.spstatus, name='import_spstatus'),
     url(r'^seakeys/$', views.seakeys, name='import_seakeys'),
     url(r'^bird-distribs/$', views.insert_bird_distrib_data, name='insert_bird_distrib_data'),
