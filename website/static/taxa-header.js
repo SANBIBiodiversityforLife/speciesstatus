@@ -1,4 +1,31 @@
 $(document).ready(function() {
+  // Retrieve species image if possible
+  $.ajax({
+    url: '/taxa/get-images/' + id + '/?format=json',
+    success: function(data, textStatus, jqXHR) {
+      if(data != 0) {
+        $('#taxon-img-container img').attr('src', '/static/' + data['thumb']);
+        $('#taxon-img-container a').attr('href', '/static/' + data['file']);
+        $('#taxon-img-container a').attr('data-title', 'Photographer: ' + data['author']);
+        $('#taxon-img-container a').attr('data-footer', '&copy; ' + data['copyright']);
+        //$('#taxon-img-container a').attr('data-remote', '/static/' + data['file']);
+
+        $('#imgphotographer').append(data['author']);
+        $('#imgcopyright').append(data['copyright']);
+        //$('#taxon-img-container').show();
+        $('#taxon-img-container').css('width', '200px');
+        $('#taxon-img-container img').hover(function() { $('#taxon-img-container div').show('fast'); },
+                                            function() { $('#taxon-img-container div').hide('fast'); });
+      } else {
+        $('#taxon-img-container').hide();
+      }
+      console.log(data);
+      console.log(textStatus);
+    }
+  });
+
+
+
   // Replace all nav with correct urls
   $('.nav-tabs a').each(function(index, ele) { $(ele).attr('href', $(ele).attr('href').replace('0', id)); });
 

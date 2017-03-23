@@ -1,0 +1,77 @@
+{% extends "website/_base.html" %}
+{% load static %}
+
+{% block css %}
+<link href="{% static 'index.css' %}" rel="stylesheet">
+<link href="{% static 'jstree/dist/themes/default/style.css' %}" rel="stylesheet">
+<link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.9/leaflet.draw.css" />
+<link rel="stylesheet" href="{% static 'leaflet/leaflet-measure.css' %}">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css">
+
+<link href="{% static 'style.css' %}" rel="stylesheet">
+<link href="{% static 'tree.css' %}" rel="stylesheet">
+{% endblock css %}
+
+{% block heading %}
+	<div id="main-carousel-text">
+		<div class="container"><div class="row">
+			<div class="col-md-12">
+				<form action="/Search" class="form-inline" method="get">
+					<div class="form-group">
+            <label for="searchterm">Search for species</label>
+						<input name="searchterm" id="searchterm" type="text" class="search-query form-control" autocomplete="off" placeholder="Enter common name, ecological traits, scientific names, etc." data-provide="typeahead" data-items="4" data-source="">
+						<button type="submit" class="btn btn-info">
+								Search
+								<span class="glyphicon glyphicon-search"></span>
+							</button>
+					</div>
+				</form>
+			</div>
+		</div></div>
+	</div>
+	<div id="carousel" class="carousel slide" data-ride="carousel">
+	  <div class="carousel-inner" role="listbox">
+		<div class="item active">
+		  <img src="{% static 'img/carousel/1.jpg' %}" alt="...">
+		</div>
+	  </div>
+	</div>
+{% endblock %}
+
+{% block content %}
+<div id="distribution"></div>
+<h2>Upload a KML to view a list of species in that area</h2>
+<div id="leaflet" style="height: 600px"></div>
+<hr><h3>Distributions</h3>
+<table id="places" class="table">
+  <thead><tr>
+    <th>Status</th>
+    <th>First observed</th>
+    <th>Area of extent</th>
+    <th>Description</th>
+  </tr></thead>
+  <tbody></tbody>
+</table>
+{% endblock content %}
+
+{% block js %}
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+<script src="https://unpkg.com/esri-leaflet@2.0.7"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.9/leaflet.draw.js"></script>
+<script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
+
+<script src="{% static 'leaflet/leaflet-measure.min.js' %}"></script>
+<script src="https://unpkg.com/togeojson@0.14.2"></script>
+<script src="{% static 'leaflet-filelayer/leaflet.filelayer.js' %}"></script>
+<script src="{% static 'Leaflet.heat-gh-pages/dist/leaflet-heat.js' %}"></script>
+<script>
+var find_distrib_url = '{% url "api_get_taxa_in_polygon" %}';
+</script>
+<script src="{% static 'map-search.js' %}"></script>
+{% endblock js %}

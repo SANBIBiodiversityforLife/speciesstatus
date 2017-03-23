@@ -12,10 +12,33 @@ footer {
   padding: 60px 0;
   background: linear-gradient(to bottom, #4b659e 0%,#005075 100%);
 }
-.assessment-LC { background-color: #006666 !important; color: #FFF; }
-.assessment-NT { background-color: #006666 !important; color: #9ed09b !important; }
-.assessment-VU { background-color: #cc9900 !important; color: #FFF; }
-.assessment-EN { background-color: #cc6633 !important; color: #FFF; }
-.assessment-CR { background-color: #cc3333 !important; color: #FFF; }
-.assessment-EW { background-color: #d24000 !important; color: #FFF; }
-.assessment-EX { background-color: #000000 !important; color: #cc3333 !important; }
+.assessment-DD { background-color: #777 !important; color: #FFF; border: 1px solid #b2b2b2; }
+.assessment-LC { background-color: #006666 !important; color: #FFF; border: 1px solid #b2b2b2; }
+.assessment-NT { background-color: #006666 !important; color: #9ed09b !important; border: 1px solid #b2b2b2; }
+.assessment-VU { background-color: #cc9900 !important; color: #FFF; border: 1px solid #b2b2b2; }
+.assessment-EN { background-color: #cc6633 !important; color: #FFF; border: 1px solid #b2b2b2; }
+.assessment-CR { background-color: #cc3333 !important; color: #FFF; border: 1px solid #b2b2b2; }
+.assessment-EW { background-color: #d24000 !important; color: #FFF; border: 1px solid #b2b2b2; }
+.assessment-EX { background-color: #000000 !important; color: #cc3333 !important; border: 1px solid #b2b2b2; }
+#homebg, #carousel {
+  width: 100%;
+}
+#logo {
+  position: absolute;
+  top: -10px;
+  z-index: 10;
+  background-color: white;
+  border: 1px solid #dadada;
+  padding: 3px;
+}
+#logo img {
+  padding: 10px 10px 5px 10px;
+  border: 1px solid #dadada;
+
+}
+navbar {
+  max-height: 50px;
+  overflow: visible;
+  padding-left: 250px;
+}
+#primary-nav { margin-left: 220px; }

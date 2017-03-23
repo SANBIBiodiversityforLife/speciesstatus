@@ -11,7 +11,7 @@
 		<div class="container"><div class="row">
 			<div class="col-md-12 text-center">
 				<h1>Search for species</h1>
-				<form action="/Search" class="navbar-form" method="get">
+				<form action="/search" class="navbar-form search-form" method="get">
 					<div class="input-group col-md-8">
 						<input name="searchterm" id="searchterm" type="text" class="search-query form-control input-lg" autocomplete="off" placeholder="Enter common name, ecological traits, scientific names, etc." data-provide="typeahead" data-items="4" data-source="">
 						<div class="input-group-btn">
@@ -23,15 +23,15 @@
 					</div>
 				</form>
 				<div class="secondary-button">
-					<span class="text">Alternatively,</span> <a href="#" class="btn btn-warning" role="button" id="explore"><span class="glyphicon glyphicon-tree-conifer" aria-hidden="true"></span> Explore taxonomic tree</a>
+					<span class="text">Alternatively,</span> <a href="{% url 'lineage_pk' 4 %}" class="btn btn-warning" role="button" id="explore">Explore species</a>
 				</div>
 			</div>
 		</div></div>
 	</div>
-<!--
-	<div id="homebg" height="400px" style="position: relative;">
+
+	<!--<div id="homebg" height="400px" style="position: relative;">
 		<video playsinline autoplay muted loop poster="polina.jpg" id="bgvid"">
-			<source src="{% static 'fishswimming.mp4' %}" type="video/mp4">
+			<source src="{% static 'bee.mp4' %}" type="video/mp4">
 		</video>
 	</div>-->
 
@@ -45,7 +45,10 @@
 {% endblock %}
 
 {% block content %}
+<div class="row"><div class="col-md-12"><h2 class="main-heading">An overview of our data<br><small>(SANBI are working on adding new species and assessments)</small></h2>
+	<canvas id="canvas" height="80"></canvas></div></div>
 <div class="row">
+	<hr>
 	<div class="col-md-8" id="assessments">
 		<h2>Latest assessments</h2><hr>
 	</div>
@@ -70,11 +73,14 @@
 
 {% block js %}
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js"></script>
 <script>
+var chartDataUrl = "{% url 'redlist_statistics' %}?format=json";
 var searchAutoCompleteUrl = "{% url 'search_autocomplete' %}";
 var searchRedirectUrl = "{% url 'last_assessment_detail' 0 %}";
 var assessment_redirect = "{% url 'assessment_detail' 0 %}";
 </script>
+<script src="{% static 'data-chart.js' %}"></script>
 <script src="{% static 'search.js' %}"></script>
 <script>
 $(document).ready(function() {
@@ -85,7 +91,6 @@ $(document).ready(function() {
 			rs = data['results'];
 			html = '';
 			$.each(rs, function(index, value) {
-				console.log(value);
 				redir_url = searchRedirectUrl.replace('0', value['taxon_id']);
 				html += '<article><div class="ass-image"></div><h3><a href="' + redir_url + '">' + value['taxon'] + '</a></h3>';
 				html += '<h4><span class="assessment-cat assessment-' + value['redlist_category'] + '">' + value['redlist_category_display'] + '</span>';

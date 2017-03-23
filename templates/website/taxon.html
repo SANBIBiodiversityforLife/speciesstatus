@@ -6,6 +6,7 @@
 {% block css %}
 <link href="{% static 'taxon.css' %}" rel="stylesheet">
 <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.1.1/ekko-lightbox.min.css" rel="stylesheet">
 {% block extra-css %}{% endblock extra-css %}
 {% endblock css %}
 
@@ -14,17 +15,27 @@
 {% block heading %}
 	<section id="taxon-heading" class="triangles banner">
 		<div class="container">
-      <!-- Hierarchical path - Gets filled in with javascript-->
-      <div id="breadcrumb"></div>
+      <div class="row"><div class="col-md-12">
+        <!-- Hierarchical path - Gets filled in with javascript -->
+        <div id="breadcrumb"></div>
 
-      <!-- Image -->
-      <div id="spimage"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Anax_imperator_female.jpg/240px-Anax_imperator_female.jpg"></div>
+        <!-- Image -->
+        <div id="taxon-img-container">
+           <a href="#" data-toggle="lightbox"><img src=""></a>
+           <div>
+             Photographer: <br>
+             <span id="imgphotographer"></span> <br><br> &copy; <span id="imgcopyright">
+           </div>
+        </div>
 
-      <!-- Name and rank -->
-      <h1></h1>
+        <!-- Name and rank -->
+        <h1></h1>
 
-      <!-- Common names -->
-      <h2 id="common-names"></h2>
+        <!-- Common names -->
+        <h2 id="common-names"></h2>
+      </div></div>
+
+      <!-- Tabs -->
       <ul class="nav nav-tabs nav-inverse">
         <li role="presentation"{% if request.resolver_match.url_name == 'last_assessment_detail' %} class="active"{% endif %}>
           <a href="{% url 'last_assessment_detail' 0 %}">RedList assessments</a>
@@ -35,9 +46,6 @@
         <li role="presentation"{% if request.resolver_match.url_name == 'taxa_detail' %} class="active"{% endif %}>
           <a href="{% url 'taxa_detail' 0 %}">Species information</a>
         </li>
-        <li role="presentation"{% if request.resolver_match.url_name == 'taxa_images' %} class="active"{% endif %}>
-          <a href="{% url 'taxa_detail' 0 %}">Images</a>
-        </li>
       </ul>
     </div>
 	</section>
@@ -47,7 +55,7 @@
 <!-- Main content of species page -->
 {% block content_main %}
 <div class="row">
-  <div class="col-md-9">
+  <div class="col-md-8">
     {% if info.reproductive_type or info.habitats or info.congregatory or info.max_size or info.average_fecundity %}
     <section id="facts"><h2>Factsheet</h2>
       <dl class="dl-horizontal">
@@ -73,19 +81,23 @@
     <article><h2 id="trophic_narrativeAnchor">Trophic</h2>{{ info.trophic|safe }}</article>
     {% endif %}
     {% if info.diagnostics %}
-    <article><h2 id="diagnostics_narrativeAnchor">Habitat</h2>{{ info.diagnostics|safe }}</article>
+    <article><h2 id="diagnostics_narrativeAnchor">Diagnostics</h2>{{ info.diagnostics|safe }}</article>
     {% endif %}
     {% if info.habitat_narrative %}
     <article><h2 id="habitat_narrativeAnchor">Habitat</h2>{{ info.habitat_narrative|safe }}</article>
     {% endif %}
     </section>
   </div>
-  <div class="col-md-3">
-    <ul id="species-side-nav" class="nav nav-pills nav-stacked" data-spy="affix" data-offset-top="20" data-offset-bottom="200">
+  <div class="col-md-4"><div class="scanty-info">
+    <h3>Not much information here?</h3>
+    <p>SANBI is currently in the process of adding more information about species to this database. </p>
+    <hr>
+    <p><a class="search-eol" href="http://eol.org/search?q=Chirindia+occidentalis&search=Go">Search for this species on <img src="http://cdn8.openculture.com/wp-content/uploads/2013/09/eol_logo_globe.jpg" style="width: 200px; background-color: white; padding: 10px; border-radius: 10px;"></a></p>
+  </div><!--<ul id="species-side-nav" class="nav nav-pills nav-stacked" data-spy="affix" data-offset-top="20" data-offset-bottom="200">
       {% for key, item in info.items %}{% if item %}
       <li><a href="#{{ key }}Anchor">{{ key }}</a></li>
       {% endif %}{% endfor %}
-    </ul>
+    </ul>-->
   </div>
 </div>
 {% endblock content_main %}
@@ -140,6 +152,7 @@
 {% endblock content %}
 
 {% block js %}
+<script src="//cdn.rawgit.com/noelboss/featherlight/1.7.1/release/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/trianglify/1.0.1/trianglify.min.js"></script>
 <script src="{% static 'bibtex-js-master/src/bibtex_js.js' %}"></script>
@@ -154,8 +167,14 @@ var lineage_url = "{% url 'lineage_pk' 0 %}";
 var common_names_url = ("{% url 'api_common_names' 0 %}" + "?format=json").replace('0', id);
 </script>
 <script src="{% static 'taxa-header.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.1.1/ekko-lightbox.min.js"></script>
 <script>
+$(document).on('click', '[data-toggle="lightbox"]', function(event) {
+    event.preventDefault();
+    $(this).ekkoLightbox();
+});
 $(document).ready(function() {
+
   $(function () {
     $('[data-toggle="tooltip"]').tooltip()
   })

@@ -406,11 +406,7 @@ class GeneralDistribution(models.Model):
     description = models.TextField(blank=True)
 
     # Reference(s?) for the residency status & distribution
-    reference = models.ForeignKey(Reference)
-
-    class Meta:
-        # Ensure that we don't duplicate distributions for a taxon
-        unique_together = ('taxon', 'distribution_polygon')
+    reference = models.ForeignKey(Reference, null=True, blank=True)
 
 
 class AnimalInfo(models.Model):

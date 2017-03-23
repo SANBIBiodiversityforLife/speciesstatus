@@ -55,6 +55,8 @@ docs/_build/
 .idea/*
 data-sources
 data-sources/*
+website/static/sp-imgs
+website/static/sp-imgs/*
 
 tmp
 tmp/*

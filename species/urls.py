@@ -39,4 +39,5 @@ urlpatterns = [
     # Index
     url(r'^$', website_views.IndexView.as_view(), name='index'),
     url(r'^about/$', website_views.AboutView.as_view(), name='about'),
+    url(r'^map/$', website_views.MapView.as_view(), name='map'),
 ]

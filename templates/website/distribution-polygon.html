@@ -1,0 +1,50 @@
+{% extends "website/taxon.html" %}
+{% load static %}
+{% load mptt_tags %}
+{% load rest_framework %}
+
+{% block extra-css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.9/leaflet.draw.css" />
+<link rel="stylesheet" href="{% static 'leaflet/leaflet-measure.css' %}">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css">
+{% endblock %}
+
+{% block content_main %}
+<div id="distribution"></div>
+<div id="leaflet" style="height: 600px"></div>
+<hr><h3>Distributions</h3>
+<table id="places" class="table">
+  <thead><tr>
+    <th>Status</th>
+    <th>First observed</th>
+    <th>Area of extent</th>
+    <th>Description</th>
+  </tr></thead>
+  <tbody></tbody>
+</table>
+{% endblock %}
+
+{% block extra-js %}
+<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+<script src="https://unpkg.com/esri-leaflet@2.0.7"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.9/leaflet.draw.js"></script>
+<script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
+
+<script src="{% static 'leaflet/leaflet-measure.min.js' %}"></script>
+<script src="{% static 'Leaflet.heat-gh-pages/dist/leaflet-heat.js' %}"></script>
+<script src="{% static 'maps.js' %}"></script>
+<script>
+var dist_url = ("{% url 'distribution_list' 0 %}" + "?format=json").replace('0', id);
+
+$(document).ready(function() {
+  $.ajax({
+    url: dist_url,
+    success: function(data, textStatus, jqXHR) {
+      init_map(data);
+    }
+  })
+});
+</script>
+{% endblock extra-js %}

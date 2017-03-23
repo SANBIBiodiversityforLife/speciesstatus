@@ -62,3 +62,37 @@
     font-size: 0.6em;
     font-weight: bold;
 }
+
+#generaAZ a {
+  padding: 2px 5px;
+  border-radius: 2px;
+  background-color: #d9edf7;
+  font-weight: bold;
+}
+#generaAZ a:hover {
+  color: white;
+  background-color: #74A6BF;
+}
+#redlist-cat-headings a {
+  font-size: 1.2em;
+  font-weight: normal;
+  padding: 5px;
+  margin-right: 10px;
+  border: 0;
+  cursor: pointer;
+}
+#redlist-cat-headings a:hover { color: white; text-decoration: none; }
+
+.search-header {
+  padding-top: 80px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  padding-left: 50px;
+}
+#treejump form {
+  margin-bottom: 20px;
+}
+#treejump input {
+  display: inline-block;
+  width: 50%;
+}

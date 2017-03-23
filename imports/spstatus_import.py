@@ -60,7 +60,7 @@ def import_spstatus():
     references.loc[:, 'taxonid'] = references.loc[:, 'taxonid'].astype(int)
     region = pd.read_table(dir + 'region.csv', sep='|', lineterminator='^', names=cols.loc[cols['table'] == 'region', 'column'])
     reviews = pd.read_table(dir + 'reviews.csv', sep='|', lineterminator='^', names=cols.loc[cols['table'] == 'reviews', 'column'])
-    contributors = pd.read_table(dir + 'sources.csv', sep='|', lineterminator='^', names=cols.loc[cols['table'] == 'reviews', 'column'])
+    contributors = pd.read_table(dir + 'sources.csv', sep='|', lineterminator='^', names=cols.loc[cols['table'] == 'sources', 'column'])
     taxon = pd.read_table(dir + 'taxon.csv', sep='|', lineterminator='^', names=cols.loc[cols['table'] == 'taxon', 'column'])
     taxon_habitat = pd.read_table(dir + 'taxonhabitat.csv', sep='|', lineterminator='^', names=cols.loc[cols['table'] == 'taxonhabitat', 'column'])
     conservation = pd.read_table(dir + 'taxonmanagement.csv', sep='|', lineterminator='^', names=cols.loc[cols['table'] == 'taxonmanagement', 'column'], quoting=csv.QUOTE_NONE, encoding='latin_1')
@@ -128,15 +128,28 @@ def import_spstatus():
         print('row: ' + str(index))
         if index < 0:
             continue
+
         # !import code; code.interact(local=vars())
         # Remove all row columns which do not contain info
         row = {k: v for k, v in row.items() if pd.notnull(v)}
+
+        # Skipping taxon without assessments
+        if 'iucn_natl_date' not in row or 'notesiucn' not in row:
+            print('no assessment data')
+            continue
+        try:
+            y = int(row['iucn_natl_date'])
+        except ValueError:
+            print('no assessment year')
+            continue
 
         # Get the corresponding taxon information
         taxon_row = i_taxon.loc[i_taxon['taxonid'] == row['taxonid']]
         if len(taxon_row) == 0:
             continue # I give up....
         taxon_row = {k: v.iloc[0] for k, v in taxon_row.items() if pd.notnull(v.iloc[0])}
+        if taxon_row['name'] == 'Aves': # Don't import birds
+            continue
         taxon_row['genus'] = taxon_row['genus'].replace(' spp - All species', '')
         taxon_row['genus'] = taxon_row['genus'].replace(' - All species', '')
         species, species_was_created = create_taxon(taxon_row, mendeley_session)
@@ -162,8 +175,6 @@ def import_spstatus():
                 info.save()
 
         # Create an assessment object and add any necessary info to it
-        if 'iucn_natl_date' not in row or not isinstance(row['iucn_natl_date'], int):
-            continue
         assess_date = datetime.date(year=int(row['iucn_natl_date']), month=1, day=1)
         a = redlist_models.Assessment(taxon=species, date=assess_date)
         a.redlist_category = redlist_cat_mapping[row['category']]
@@ -179,21 +190,23 @@ def import_spstatus():
             a.conservation_narrative = '\r\n'.join(list(i_rows['rec_notes']))
 
         i_rows = i_population.loc[i_population['taxonid'] == row['taxonid']]
-        population = {k: v.iloc[0] for k, v in i_rows.items() if pd.notnull(v.iloc[0])}
-        if 'estimatedpopulation' in population:
-            a.population_current = pop_est_mapping[population['estimatedpopulation']]
-        if 'percentage' in population:
-            a.population_future = percent_mapping[population['percentage']]
-        if 'fieldstudyinformation' in population:
-            a.population_narrative = population['fieldstudyinformation']
+        if len(i_rows):
+            population = {k: v.iloc[0] for k, v in i_rows.items() if pd.notnull(v.iloc[0])}
+            if 'estimatedpopulation' in population:
+                a.population_current = pop_est_mapping[population['estimatedpopulation']]
+            if 'percentage' in population:
+                a.population_future = percent_mapping[population['percentage']]
+            if 'fieldstudyinformation' in population:
+                a.population_narrative = population['fieldstudyinformation']
 
         i_rows = i_threats.loc[i_threats['taxonid'] == row['taxonid']]
-        # Concatenate threat + note on future threat
-        i_rows.loc[pd.notnull(i_rows['notesonfuturethreat']), 'description'] = 'Threat: ' + i_rows.loc[
-            pd.notnull(i_rows['notesonfuturethreat']), 'description'] + ' / ' + i_rows.loc[pd.notnull(
-            i_rows['notesonfuturethreat']), 'notesonfuturethreat']
-        threat_descrips = i_rows.loc[pd.notnull(i_rows['description']), 'description']
-        a.threats_narrative = '\r\n'.join(list(threat_descrips))
+        if len(i_rows):
+            # Concatenate threat + note on future threat
+            i_rows.loc[pd.notnull(i_rows['notesonfuturethreat']), 'description'] = 'Threat: ' + i_rows.loc[
+                pd.notnull(i_rows['notesonfuturethreat']), 'description'] + ' / ' + i_rows.loc[pd.notnull(
+                i_rows['notesonfuturethreat']), 'notesonfuturethreat']
+            threat_descrips = i_rows.loc[pd.notnull(i_rows['description']), 'description']
+            a.threats_narrative = '\r\n'.join(list(threat_descrips))
 
         hstore_values = {k: v for k, v in row.items() if k in include_from_assessment}
         a.temp_field = hstore_values
@@ -242,6 +255,22 @@ def import_spstatus():
             # Associate with the assessment
             a.references.add(ref)
 
+        # Get a list of all contributors/assessors/whatevers for the assessment
+        people_rows = contributors.loc[i_taxon['taxonid'] == row['taxonid']]
+        for i, p in people_rows.iterrows():
+            if isinstance(p['sources'], str):
+                authors = imports_views.create_authors(p['sources'])
+                for i, x in enumerate(authors):
+                    c = redlist_models.Contribution(person=x, assessment=a, weight=i,
+                                                    type=redlist_models.Contribution.ASSESSOR)
+                    c.save()
+            if isinstance(p['compilers'], str):
+                faciliators = imports_views.create_authors(p['compilers'])
+                for i, x in enumerate(faciliators):
+                    c = redlist_models.Contribution(person=x, assessment=a, weight=i,
+                                                    type=redlist_models.Contribution.ASSESSOR)
+                    c.save()
+
 
 def create_taxon(row, mendeley_session):
     """
@@ -265,6 +294,9 @@ def create_taxon(row, mendeley_session):
         rank, created = models.Rank.objects.get_or_create(name=t[0])
         taxon_name = t[1].strip().capitalize()
         parent, created = models.Taxon.objects.get_or_create(parent=parent, name=taxon_name, rank=rank)
+        if created and taxon_name == 'Actinopterygii':
+            english = models.Language.objects.get(name='English')
+            models.CommonName.objects.get_or_create(language=english, name='Ray-finned fish', taxon=parent)
 
     # Finally add the species to the taxa hierarchy - sometimes this thing only goes go genus level so put it in an if
     if 'species' in row:

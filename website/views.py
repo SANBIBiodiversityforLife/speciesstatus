@@ -25,3 +25,6 @@ class IndexView(TemplateView):
 class AboutView(TemplateView):
     template_name = 'website/about.html'
 
+class MapView(TemplateView):
+    template_name = 'website/main_map.html'
+

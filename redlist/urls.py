@@ -21,6 +21,7 @@ urlpatterns = [
         name='assessment_detail'),
     url(r'^last-assessment/(?P<taxon_pk>[0-9]+)/$', views.LastAssessmentDetail.as_view(renderer_classes=(TemplateHTMLRenderer, JSONRenderer)),
         name='last_assessment_detail'),
+    url(r'^statistics/$', views.redlist_statistics, name='redlist_statistics'),
 
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)

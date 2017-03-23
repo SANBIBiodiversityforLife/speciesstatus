@@ -1,34 +1,62 @@
 #taxon-heading {
-  padding-top: 80px;
+ /* padding-top: 80px;*/
   margin-bottom: 20px;
   color: #fff;
   font-weight: bold;
   /*text-align: center;*/
   font-size: 1.1em;
 }
-#breadcrumb { margin-bottom: 15px; }
-#spimage {
-  width: 200px;
+#breadcrumb { margin-top: 10px; margin-bottom: 5px; }
+#taxon-heading .container>div { height: 280px; }
+#taxon-heading .container>div>div { padding-top: 30px; }
+
+#taxon-img-container {
+  width: 1px;
   height: 155px;
   float: left;
   background-color: white;
   border-radius: 3px;
   margin-right: 15px;
   margin-bottom: 20px;
+  /*position: relative;*/
 }
-#spimage img {
+#taxon-img-container img {
   max-width: 180px;
   margin-left: 10px;
   margin-top: 10px;
 }
+#taxon-img-container div {
+  font-size: 0.7em;
+  /*position: absolute;
+  top: 13px;
+  left: 13px;*/
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 10px;
+  display: block;
+  margin-top: -135px;
+  margin-left: 10px;
+  margin-right: 10px;
+  position: relative;
+  display: none;
+  pointer-events: none;
+}
+#imgphotographer {
+  font-size: 1.2em;
+}
+#imgcopyright {
+  line-height: 0.8em;
+  font-weight: normal;
+}
+
+
 #taxon-heading h1 {
-  margin-top: 25px;
   text-shadow:1px 1px 10px rgba(0, 0, 0, 0.8);
   font-weight: bold;
   font-size: 3.5em;
   padding-bottom: 10px;
   border-bottom: 1px solid white;
   margin-bottom: 0;
+  margin-top: 15px;
   overflow: hidden;
 }
 #taxon-heading h2 {
@@ -58,7 +86,6 @@
     color: #2d2d2d !important;
 }
 #taxon-heading .nav-tabs {
-    margin-top: 20px;
 }
 #species-info h2, #species-side-nav li a {
   text-transform: capitalize;
@@ -116,7 +143,9 @@ nav.redlist {
 nav.redlist .nav-pills>li.active>a, nav.redlist .nav-pills>li.active>a:focus, nav.redlist .nav-pills>li.active>a:hover {
     background-color: #5c97d6;
 }
-
+nav.redlist .small-pill {
+  font-size: 0.7em;
+}
 .contribution-type {
     display: inline-block;
     padding: 5px 10px;
@@ -175,4 +204,10 @@ span.ele {
 #poptrend h3 { display: none; }
 article h3 {
   font-size: 1.1em; font-weight: bold;
+}
+.scanty-info {
+  background-color: #ffffbc;
+  border-radius: 20px;
+  padding: 10px 20px 20px 20px;
+  text-align: center;
 }
