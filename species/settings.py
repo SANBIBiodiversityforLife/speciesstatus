@@ -90,7 +90,7 @@ DATABASES = {
          'ENGINE': 'django.contrib.gis.db.backends.postgis',
          'NAME': 'species',
          'USER': 'postgres',
-         'PASSWORD': 'admin',
+         'PASSWORD': 'fill-in-local-settings-py',
          'PORT': '5432',
     }
 }
@@ -161,3 +161,8 @@ REST_FRAMEWORK = {
 
 # Application specific settings
 MENDELEY_SETTINGS = {'ID': '3513', 'SECRET': 'gOVvM5RmKseDgcmH', 'REDIRECT': 'http://species.sanbi.org'}
+
+try:
+    from species.local_settings import *
+except ImportError:
+    pass

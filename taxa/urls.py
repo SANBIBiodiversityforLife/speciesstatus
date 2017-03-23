@@ -30,7 +30,7 @@ urlpatterns = [
 
     # HTML template views
     url(r'^detail/(?P<pk>[0-9]+)/$', views.TaxonDetail.as_view(renderer_classes=(TemplateHTMLRenderer,)), name='taxa_detail'),
-    url(r'^list/$', views.TaxonListView.as_view(), name='search_autocomplete'),
+    url(r'^list/$', views.TaxonListView.as_view(renderer_classes=(TemplateHTMLRenderer, JSONRenderer, BrowsableAPIRenderer)), name='search_autocomplete'),
     url(r'^lineage/(?P<pk>\d*)/$', views.LineageView.as_view(renderer_classes=(TemplateHTMLRenderer,)), name='lineage_pk'),
     url(r'^distribution/(?P<pk>\d*)/$', views.DistributionList.as_view(renderer_classes=(TemplateHTMLRenderer, JSONRenderer)), name='distribution_list_polygon'),
     url(r'^distribution/point/(?P<pk>\d*)/$', views.PointDistributionList.as_view(renderer_classes=(TemplateHTMLRenderer, JSONRenderer)), name='distribution_list'),

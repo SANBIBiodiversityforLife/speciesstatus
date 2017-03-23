@@ -67,5 +67,6 @@ tmp/*
 >>>>>>> 4dfeef6943d58bde2d8ea1213250f6e1aa49ef0f
 
 # Production settings
+species/local_settings.py
 
 # File uploads

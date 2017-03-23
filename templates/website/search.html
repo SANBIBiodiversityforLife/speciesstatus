@@ -2,5 +2,16 @@
 {% load static %}
 
 {% block heading %}
-<h1>Search for species</h1>
+<div class="container no-banner">
+<h1>Search for "{{ request.GET.searchterm }}"</h1><hr>
+  {% for result in results %}
+  <p><a href="{% url 'last_assessment_detail' 0 %}">{{ result.name }}</a>
+    {% if result.get_top_common_name %} - {{ result.get_top_common_name }}{% endif %}
+    ({{ result.rank.name }})
+    {% if result.get_latest_assessment %}
+    <span class="assessment assessment-{{ result.get_latest_assessment }}">{{ result.get_latest_assessment }}</span>
+    {% endif %}
+  </p>
+  {% endfor %}
+</div>
 {% endblock %}
