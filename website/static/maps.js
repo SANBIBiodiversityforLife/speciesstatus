@@ -1,5 +1,11 @@
 function init_map(point_data, poly_data) {
   map = L.map('leaflet').setView([-29, 24.5], 5);
+
+  //setting zooming limits
+  map.options.maxZoom = 7;
+  map.fire('zoomend');
+
+
   var measureControl = new L.Control.Measure();
   measureControl.addTo(map);
   // Add the baselayers and vegmap overlay
