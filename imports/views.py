@@ -137,10 +137,6 @@ def create_taxon_description(authority, taxon, mendeley_session=None):
     # Splits up an authority string formatted in the standard way e.g. (Barnard, 1937) into year and author
     bracketed = '(' in authority
     authority = re.sub('[()]', '', authority)
-    authority = authority.split(',')
-    year = authority[-1].strip()
-    year = re.sub('[^0-9]', '', year)
-    authors = authority[0]
     # Split into year + authors
     matches = re.findall(r'\d{4}', authority)
     if matches and len(matches) == 1:
@@ -356,12 +352,15 @@ def populate_higher_level_common_names(request):
         if taxon_name in common_names:
             common_name = models.CommonName.objects.get_or_create(name=common_names[taxon_name], taxon=taxon, language=english)
             continue
-
+        
         # Otherwise search GBIF
         r = requests.get('http://api.gbif.org/v1/species/search?q=' + taxon.name.lower() + '&rank=' + str(taxon.rank))
         gbif = r.json()
         print('-----')
-        print(taxon.name.lower())
+        try:
+            print(taxon.name.lower())
+        except:
+            print('could not print')
         #import pdb; pdb.set_trace()
         try:
             for result in gbif['results']:
@@ -372,7 +371,7 @@ def populate_higher_level_common_names(request):
                             common_name = models.CommonName.objects.get_or_create(name=common_name_text, taxon=taxon, language=english)
                             print('GBIF ' + taxon.name.lower() + ' : ' + common_name_text)
                             break
-        except (KeyError, IndexError, UnicodeDecodeError):
+        except (KeyError, IndexError, UnicodeDecodeError, UnicodeEncodeError):
             import pdb; pdb.set_trace()
         # common_name.save()
 

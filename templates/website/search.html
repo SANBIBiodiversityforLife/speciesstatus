@@ -3,15 +3,33 @@
 
 {% block heading %}
 <div class="container no-banner">
-<h1>Search for "{{ request.GET.searchterm }}"</h1><hr>
-  {% for result in results %}
-  <p><a href="{% url 'last_assessment_detail' 0 %}">{{ result.name }}</a>
-    {% if result.get_top_common_name %} - {{ result.get_top_common_name }}{% endif %}
-    ({{ result.rank.name }})
-    {% if result.get_latest_assessment %}
-    <span class="assessment assessment-{{ result.get_latest_assessment }}">{{ result.get_latest_assessment }}</span>
-    {% endif %}
-  </p>
-  {% endfor %}
+<h1>Search for "{{ request.GET.search }}" <small>({{ count }} results)</small></h1><hr>
+  <form action="{% url 'search_autocomplete' %}" class="navbar-form search-form" method="get">
+    <div class="input-group col-md-8">
+      <input name="search" id="search" type="text" value="{{ request.GET.search }}" class="search-query form-control input-lg" autocomplete="off" placeholder="Enter common name, ecological traits, scientific names, etc." data-provide="typeahead" data-items="4" data-source="">
+      <div class="input-group-btn">
+        <button type="submit" class="btn btn-info btn-lg">
+          New search
+          <span class="glyphicon glyphicon-search"></span>
+        </button>
+      </div>
+    </div>
+  </form>
+  <hr>
+  {% if request.GET.search == '' %}
+    <p><strong>No search term entered</strong></p>
+  {% else %}
+    {% for result in results %}
+    <p><a href="{% url 'last_assessment_detail' result.id %}">{{ result.name }}</a>
+      {% if result.get_top_common_name %} - {{ result.get_top_common_name }}{% endif %}
+      ({{ result.rank.name }})
+      {% if result.get_latest_assessment %}
+      <span class="assessment assessment-{{ result.get_latest_assessment }}">{{ result.get_latest_assessment }}</span>
+      {% endif %}
+    </p>
+    {% empty %}
+    <p><strong>No results</strong></p>
+    {% endfor %}
+  {% endif %}
 </div>
 {% endblock %}

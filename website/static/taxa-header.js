@@ -2,24 +2,46 @@ $(document).ready(function() {
   // Retrieve species image if possible
   $.ajax({
     url: '/taxa/get-images/' + id + '/?format=json',
-    success: function(data, textStatus, jqXHR) {
-      if(data != 0) {
-        $('#taxon-img-container img').attr('src', '/static/' + data['thumb']);
+    success: function(all_data, textStatus, jqXHR) {
+      if(all_data != 0) {
+        // The initial image gets added, it's the thumbnail which people click to view other images
+        var data = all_data.shift();
+        $('#taxon-img-container img').attr('src', '/static/' + data['file']); // thumb should go here
         $('#taxon-img-container a').attr('href', '/static/' + data['file']);
-        $('#taxon-img-container a').attr('data-title', 'Photographer: ' + data['author']);
-        $('#taxon-img-container a').attr('data-footer', '&copy; ' + data['copyright']);
-        //$('#taxon-img-container a').attr('data-remote', '/static/' + data['file']);
 
+        // Add all of the data attributes which will show up on the slideshow
+        $('#taxon-img-container a').attr('data-title', 'Photographer: ' + data['author']);
+        if(data['source']) {
+          $('#taxon-img-container a').attr('data-footer', '&copy; ' + data['copyright'] + ' - Source: ' + data['source']);
+        } else {
+          $('#taxon-img-container a').attr('data-footer', '&copy; ' + data['copyright']);
+        }
+
+        // This will appear on hover over the image
         $('#imgphotographer').append(data['author']);
         $('#imgcopyright').append(data['copyright']);
-        //$('#taxon-img-container').show();
+
+        // Next expand the image container (seeing as the img exists), we can't show/hide bcos it screws up the automatically generated triangular pattern
         $('#taxon-img-container').css('width', '200px');
         $('#taxon-img-container img').hover(function() { $('#taxon-img-container div').show('fast'); },
                                             function() { $('#taxon-img-container div').hide('fast'); });
+
+        // Loop over the other images and add them to the hidden image gallery div so people can scroll through them
+        $.each(all_data, function(index, data) {
+          var html = '<a href="/static/' + data['file'] + '" data-toggle="lightbox" data-gallery="species-gallery" ';
+          html += 'data-title="Photographer: ' + data['author'] + '" ';
+          if(data['source']) {
+            html += 'data-footer="&copy; ' + data['copyright'] + ' - Source: ' + data['source'] + '">';
+          } else {
+            html += 'data-footer="&copy; ' + data['copyright'] + '">';
+          }
+          html += '<img src="/static/' + data['file'] + '"></a>';
+          $('#img-gallery').append(html);
+        });
       } else {
         $('#taxon-img-container').hide();
       }
-      console.log(data);
+      console.log(all_data);
       console.log(textStatus);
     }
   });

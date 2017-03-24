@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	$("#searchterm").autocomplete({
+	$("#search").autocomplete({
     source: function(request, response) {
       $.ajax({
         url: searchAutoCompleteUrl,
@@ -14,7 +14,6 @@ $(document).ready(function() {
               label_text += ' (' + item['get_top_common_name'] + ')'
             }
             if(item['get_latest_assessment']) {
-              console.log(item['get_latest_assessment']);
               label_text += ' <span class="assessment assessment-' + item['get_latest_assessment'] + '">' + item['get_latest_assessment'] + '</span>';
             }
             return {

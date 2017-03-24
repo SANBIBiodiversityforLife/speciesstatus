@@ -89,6 +89,7 @@ def redlist_statistics(request):
         data = {}
         node_names = [t.name for t in class_nodes]
         node_common_names = [t.get_top_common_name().capitalize() for t in class_nodes]
+
         for stat_id, stat_value in statuses:
             node_statuses = {}
             for node in class_nodes:
@@ -96,7 +97,7 @@ def redlist_statistics(request):
                 node_statuses[node.name] = count
             data[stat_value] = node_statuses
 
-        insecta = taxa_models.Taxon.objects.get(name='Insecta')
+        insecta = taxa_models.Taxon.objects.filter(name='Insecta', rank=class_rank).first()
         insecta_nodes = taxa_models.Taxon.objects.filter(parent=insecta)
         for i in insecta_nodes:
             node_names.append(i.name)

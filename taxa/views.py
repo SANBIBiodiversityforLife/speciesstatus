@@ -36,17 +36,25 @@ def api_root(request, format=None):
 def get_images_for_species(request, pk):
     taxon = models.Taxon.objects.values_list('name', flat=True).get(pk=pk)
     taxon = taxon.lower()
-    file_name = taxon.replace(' ', '_') + '.jpg'
-    file_location = os.path.join(settings.BASE_DIR, 'website', 'static', 'sp-imgs', file_name)
+    file_name_template = taxon.replace(' ', '_')
+    file_location = os.path.join(settings.BASE_DIR, 'website', 'static', 'sp-imgs', file_name_template)
 
     # Check the file exists, and then extract the IPTC information embedded in the image for attribution & copyright
-    if os.path.isfile(file_location):
-        info = p.get_json(file_location)
-        return_data = {'file': 'sp-imgs/' + file_name,
-                       'thumb': 'sp-imgs/' + taxon.replace(' ', '_') + '__thumb.jpg'}
+    # 'thumb': 'sp-imgs/' + taxon.replace(' ', '_') + '__thumb.jpg' - might need to do this later
+    i = 1
+    file_info = []
+
+    while(os.path.isfile(file_location + '_' + str(i) + '.jpg')):
+        file_name = file_name_template + '_' + str(i) + '.jpg'
+        info = p.get_json(file_location + '_' + str(i) + '.jpg')
+        return_data = {'file': 'sp-imgs/' + file_name}
         return_data['author'] = 'Unknown' if 'IPTC:By-line' not in info[0] else info[0]['IPTC:By-line']
         return_data['copyright'] = '[None given]' if 'IPTC:CopyrightNotice' not in info[0] else info[0]['IPTC:CopyrightNotice']
-        return Response(return_data, status=status.HTTP_202_ACCEPTED)
+        file_info.append(return_data)
+        i += 1
+
+    if file_info:
+        return Response(file_info, status=status.HTTP_202_ACCEPTED)
     else:
         return Response(False, status=status.HTTP_202_ACCEPTED)
 
@@ -222,9 +230,11 @@ class TaxonDetail(generics.RetrieveUpdateDestroyAPIView):
 class TaxonListView(generics.ListAPIView):
     """ Used by the ajax search function """
 
-    species_rank = models.Rank.objects.get(name='Species')
-    subspecies_rank = models.Rank.objects.get(name='Subspecies')
-    queryset = models.Taxon.objects.filter(rank__in=[species_rank, subspecies_rank])
+    def get_queryset(self):
+        species_rank = models.Rank.objects.get(name='Species')
+        subspecies_rank = models.Rank.objects.get(name='Subspecies')
+        return models.Taxon.objects.filter(rank__in=[species_rank, subspecies_rank])
+
     serializer_class = serializers.TaxonBasicSerializerWithRank
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',

@@ -44,11 +44,8 @@ def import_sis():
     dir = 'C:\\Users\\JohaadienR\\Documents\\Projects\\python-sites\\species\\data-sources\\'
 
     # Amphibians
-    animal_dirs = ['Amphibians_SIS\\Amphibians\\', 'Dragonflies_SIS\\new\\']
-    animal_dirs = ['Dragonflies_SIS\\new\\']
-    # animal_dir = dir + 'Amphibians_SIS\\Amphibians\\'
-    # animal_dir = dir + 'Dragonflies_SIS\\Dragonflies_Regional\\'
-    # animal_dir = dir + 'Dragonflies_SIS\\Dragonflies\\'
+    animal_dirs = ['Amphibians_SIS\\Amphibians\\', 'Dragonflies_SIS\\new\\', 'Mammals_SIS\\']
+    animal_dirs = ['Mammals_SIS\\']
     for animal_dir in animal_dirs:
         animal_dir = dir + animal_dir
         af = pd.read_csv(animal_dir + 'allfields.csv', encoding='iso-8859-1')
@@ -247,14 +244,14 @@ def import_sis():
                     a_o = a_o_upper.split('-')
                     a_o_lower = a_o[0]
                     a_o_upper = a_o[1]
-                a.area_occupancy = NumericRange(int(a_o_lower), int(a_o_upper))
+                a.area_occupancy = NumericRange(int(float(a_o_lower)), int(float(a_o_upper)))
             if 'EOO.range' in row:
                 e_o_upper = row['EOO.range']
                 e_o_lower = row['EOO.range']
                 if '-' in str(e_o_upper):
                     e_o = e_o_upper.split('-')
-                    e_o_lower = a_o[0]
-                    e_o_upper = a_o[1]
+                    e_o_lower = e_o[0]
+                    e_o_upper = e_o[1]
                 a.extent_occurrence = NumericRange(int(e_o_lower), int(e_o_upper))
             if 'RedListCriteria.manualCategory' in assess_row:
                 a.redlist_category = assess_row['RedListCriteria.manualCategory']
@@ -487,8 +484,14 @@ def create_taxon_from_sis(row, mendeley_session):
 
     # Finally add the species to the taxa hierarchy
     rank = models.Rank.objects.get(name='Species')
-    species_name = parent.name + ' ' + row['species'].strip()
+    species_name = parent.name + ' ' + row['species'].strip().capitalize()
     species, created = models.Taxon.objects.get_or_create(parent=parent, name=species_name, rank=rank)
+
+    # Subspecies
+    if row['infra_name'].strip() != '':
+        rank = models.Rank.objects.get(name='Subspecies')
+        subspecies_name = species_name + ' ' + row['infra_name']
+        species, created = models.Taxon.objects.get_or_create(parent=parent, name=species_name, rank=rank)
 
     if not created:
         print('species already exists in db')

@@ -12,6 +12,15 @@ footer {
   padding: 60px 0;
   background: linear-gradient(to bottom, #4b659e 0%,#005075 100%);
 }
+
+.assessment {
+    background-color: #777;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 0.6em;
+    font-weight: bold;
+}
 .assessment-DD { background-color: #777 !important; color: #FFF; border: 1px solid #b2b2b2; }
 .assessment-LC { background-color: #006666 !important; color: #FFF; border: 1px solid #b2b2b2; }
 .assessment-NT { background-color: #006666 !important; color: #9ed09b !important; border: 1px solid #b2b2b2; }
@@ -43,3 +52,7 @@ navbar {
 }
 #primary-nav { margin-left: 220px; }
 .no-banner { padding-top: 80px; }
+.search-form {
+  padding-left: 0;
+}
+p { line-height: 1.8em; }

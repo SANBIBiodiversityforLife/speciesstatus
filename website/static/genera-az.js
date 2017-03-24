@@ -25,8 +25,6 @@ $.ajax({
         var parts = $(this).attr('data-letter-href').split('/')
         var previous = parts.pop();
         var previous = parts.pop();
-        console.log(previous);
-        console.log($(this).attr('data-letter-href').replace(previous, val));
         return $(this).attr('data-letter-href').replace(previous, val);
       });
       $(this).parent().children('a').removeClass('btn-warning');
