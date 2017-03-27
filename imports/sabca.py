@@ -276,7 +276,7 @@ FROM vm_data;"""
             if 'scope' in assess_row:
                 a.scope = scope_mapping[assess_row['scope'].capitalize()]
             if 'criteria' in assess_row:
-                a.redlist_criteria = assess_row['criteria']
+                a.redlist_criteria = assess_row['criteria'].replace('rl_', '')
             if 'aoo2' in row:
                 aoo = re.sub('[^0-9]', '',row['aoo2'])
                 a.area_occupancy = NumericRange(int(aoo), int(int(aoo)))

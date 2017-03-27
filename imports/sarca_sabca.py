@@ -211,7 +211,7 @@ FROM sarca_sanbi.vm_data;"""
                 if value in row:
                     a.distribution_narrative += '<h3>' + key + '</h3><div>' + row[value] + '</div>'
 
-            a.redlist_criteria = assess_row['criteria']
+            a.redlist_criteria = assess_row['criteria'].replace('rl_', '')
             if 'Scope' in assess_row:
                 a.scope = scope_mapping[assess_row['Scope'].capitalize()]
             if 'AOO2' in row:
