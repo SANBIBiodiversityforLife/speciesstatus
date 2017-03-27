@@ -68,7 +68,7 @@ class Assessment(models.Model):
         (NOT_EVALUATED, 'Not Evaluated (NE)')
     )
     redlist_category = models.CharField(max_length=2, choices=REDLIST_CATEGORY_CHOICES)
-    redlist_criteria = models.CharField(max_length=100)
+    redlist_criteria = models.CharField(max_length=200)
 
     # Population stuff
     population_current = IntegerRangeField(null=True, blank=True)

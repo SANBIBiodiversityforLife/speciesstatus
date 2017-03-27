@@ -186,7 +186,10 @@ FROM vm_data;"""
         'not set': redlist_models.Assessment.NOT_EVALUATED,
         'not assessed': redlist_models.Assessment.NOT_EVALUATED,
     }
-
+    scope_mapping={
+        'Regional': redlist_models.Assessment.REGIONAL,
+        'Global': redlist_models.Assessment.GLOBAL
+    }
     # Iterate through the allfields table, 1 row represents 1 assessment for a taxon
 
     def test(row):
@@ -217,249 +220,268 @@ FROM vm_data;"""
         if not created:
             print('Taxon created already')
             continue
-        # Add common names and languages for the taxon
-        try:
-            common_names = cn.loc[cn['sp_code'] == row['sp_code']]
-        except:
-            import pdb; pdb.set_trace()
-        for ind, cns in common_names.iterrows():
-            language, created = models.Language.objects.get_or_create(name=cns['language'])
-            models.CommonName.objects.get_or_create(language=language, name=cns['common_name'], taxon=species)
 
-        # Remove all row columns which do not contain info
-        row = {k: v for k, v in row.items() if pd.notnull(v) and v != ''}
-        # All species objects should have a corresponding info object, so let's create one
-        info = models.Info(taxon=species)
-
-        # Get the taxon info stuff from the assessment csv and save it
-        assess_row = assess.loc[assess['sp_code'] == row['sp_code']]
-
-        #for k, v in assess_row.items():
-        #    import pdb; pdb.set_trace()
-        assess_row = {k: v.iloc[0] for k, v in assess_row.items() if pd.notnull(v.iloc[0]) and v.iloc[0] != ''}
-
-        if 'sys_habitat' in assess_row:
-            info.habitat_narrative = assess_row['sys_habitat']
-        if 'special_population_blog' in assess_row:
-            info.population_trend_narrative = assess_row['special_population_blog']
-        if 'range' in assess_row:
-            info.distribution = assess_row['range']
-
-        info.save()
-
-        # Add habitats
-
-        a = redlist_models.Assessment(
-            taxon=species, date= datetime.date(2016, 2, 1)
-        )
-
-        if 'criteria' in assess_row:
-            a.redlist_criteria = assess_row['criteria']
-        if 'aoo2' in row:
-            aoo = re.sub('[^0-9]', '',row['aoo2'])
-            a.area_occupancy = NumericRange(int(aoo), int(int(aoo)))
-        if 'eoo2' in row:
-            eoo = re.sub('[^0-9]', '', row['eoo2'])
-            a.extent_occurrence = NumericRange(int(eoo), int(eoo))
-        if 'rl_category' in assess_row:
-            a.redlist_category = redlist_cat_mapping[assess_row['rl_category'].lower()]
-        if 'rl_rationale' in assess_row:
-            a.rationale = assess_row['rl_rationale']
-
-        # Convert all of the other columns data into json and stick it in the temp hstore field
-        # There is SO much info and no way to structure it, best if someone goes and pulls it out manually
-        # as and when they need it
-        #hstore_values = {k: v for k, v in row.items() if k not in exclude_from_assessment}
-        #a.temp_field = hstore_values
-
-        # Save the assessment object now everything has been added to it above
-        #import pdb; pdb.set_trace()
-        try:
-            a.save()
-        except:
-            import pdb
-            pdb.set_trace()
-            print(taxon_row)
-            continue
-
-
-
-
-        ref_rows = biblio.loc[biblio['sp_code'] == row['sp_code']]
-        for i, r in ref_rows.iterrows():
-            authors = imports_views.create_authors(r['authors'])
-            author_string = [x.surname + " " + x.initials for x in authors]
-            author_string = ' and '.join(author_string)
-
-            # Sometimes these idiots didn't enter a year, in which case I am throwing the whole reference out
-            if pd.isnull(r['year']):
-                print(r['year'])
-                continue
-
-            # For the year you sometimes have 1981b for example, so just get first 4 chars
-            if str(r['year']).startswith('In'):
-                continue
-            elif r['year'] == '':
-                continue
-            elif r['title'] == '' or pd.isnull(r['title']) or r['title'] is None:
-                continue
-            else:
-                bibtex_dict = {'year': str(r['year'])[:4],
-                            'title': r['title'],
-                            'author': author_string}
-            # Fuck I don't understand why people try to make bibliographic data relational, it's a headache
-            # When there's a perfectly good language designed to hold and express it - bibtex
-            # I am sticking it all in a dictionary apart from title, year and authors, and use bibtexparser to convert
-            # Now I have to add this and that depending on type. FML. Going to get rid of all empty stuff first
-            # See http://www.openoffice.org/bibliographic/bibtex-defs.html for list of relevant bibtex fields
-            r = {k: v for k, v in r.items() if pd.notnull(v) and v != ''}
-            # thesis and dissertations, reports
-
-            r['type'] = r['type'].lower()
-            if r['type'] == 'article':
-                bibtex_dict['ENTRYTYPE'] = 'article'
-                if 'title' in r:
-                    bibtex_dict['title'] = r['title']
-                if 'journal' in r:
-                    bibtex_dict['journal'] = r['journal']
-                if 'editors' in r:
-                    bibtex_dict['editor'] = r['editors']
-                if 'page' in r:
-                    bibtex_dict['pages'] = r['page'].replace('-', '--') # Apparently this is what bibtex wants
-                if 'issue' in r:
-                    bibtex_dict['number'] = r['issue']
-                if 'publisher' in r:
-                    bibtex_dict['publisher'] = r['publisher']
-                if 'pub_locality' in r:
-                    bibtex_dict['address'] = r['pub_locality']
-            elif r['type'] == 'book':
-                bibtex_dict['ENTRYTYPE'] = 'book'
-                if 'editors' in r:
-                    bibtex_dict['editor'] = r['editors']
-                if 'title' in r:
-                    bibtex_dict['title'] = r['title']
-                if 'pub_locality' in r:
-                    bibtex_dict['address'] = r['pub_locality']
-                if 'publisher' in r:
-                    bibtex_dict['publisher'] = r['publisher']
-                if 'page' in r:
-                    bibtex_dict['pages'] = r['page'].replace('-', '--')
-
-                # We have to do some extra things for book chapters
-            elif r['type'] == 'inbook':
-                bibtex_dict['ENTRYTYPE'] = 'inbook'
-                if 'editors' in r:
-                    bibtex_dict['editor'] = r['editors']
-                if 'pub_locality' in r:
-                    bibtex_dict['address'] = r['pub_locality']
-                if 'publisher' in r:
-                    bibtex_dict['publisher'] = r['publisher']
-                if 'page' in r:
-                    bibtex_dict['pages'] = r['page'].replace('-', '--')
-                if 'title' in r:
-                    bibtex_dict['title'] = r['title'] # This is the chapter's title. ARGH.
-                if 'book_title' in r:
-                    bibtex_dict['booktitle'] = r['book_title']
-            elif r['type'] == 'techreport' or r['type'] == 'misc':
-                if r['type'] == 'techreport':
-                    bibtex_dict['ENTRYTYPE'] = 'techreport'
-                if r['type'] == 'misc':
-                    bibtex_dict['ENTRYTYPE'] = 'misc'
-                if 'publisher' in r:
-                    bibtex_dict['institution'] = r['publisher']
-                if 'title' in r:
-                    bibtex_dict['title'] = r['title']
-            else:
-                print(r)
-                import pdb; pdb.set_trace() # It's some type we haven't thought of yet
-
-            # from bibtexparser.bwriter import BibTexWriter; from bibtexparser.bibdatabase import BibDatabase
-            # db = BibDatabase(); db.entries = [bibtex_dict]; writer = BibTexWriter(); writer.write(db)
-            # Required for bibtexparser, just putting in a random number for now
-            bibtex_dict['ID'] = str(row['sp_code'])
-
-            # Create and save the reference object
-            ref = biblio_models.Reference(year=int(bibtex_dict['year']),
-                                          title=bibtex_dict['title'],
-                                          bibtex=bibtex_dict)
+        if created:
+            # Add common names and languages for the taxon
             try:
-                ref.save()
+                common_names = cn.loc[cn['sp_code'] == row['sp_code']]
             except:
                 import pdb; pdb.set_trace()
+            for ind, cns in common_names.iterrows():
+                language, created = models.Language.objects.get_or_create(name=cns['language'])
+                models.CommonName.objects.get_or_create(language=language, name=cns['common_name'], taxon=species)
 
-            # Assign authors to the reference
-            biblio_models.assign_multiple_authors(authors, ref)
-            assessment = a
+            # Remove all row columns which do not contain info
+            row = {k: v for k, v in row.items() if pd.notnull(v) and v != ''}
+            # All species objects should have a corresponding info object, so let's create one
+            info = models.Info(taxon=species)
 
-            # Associate with the assessment
-            assessment.references.add(ref)
+            # Get the taxon info stuff from the assessment csv and save it
+            assess_row = assess.loc[assess['sp_code'] == row['sp_code']]
 
-        # Add Conservation actions
-        cons_rows = cons_actions.loc[cons_actions['sp_code'] == row['sp_code']]
-        for i, c in cons_rows.iterrows():
-            # The conservation actions csv contains lots of codes like 3.1.1, we need to look them up
+            #for k, v in assess_row.items():
+            #    import pdb; pdb.set_trace()
+            assess_row = {k: v.iloc[0] for k, v in assess_row.items() if pd.notnull(v.iloc[0]) and v.iloc[0] != ''}
+            info.habitat_narrative = ''
+            if 'sys_terrestrial' in assess_row:
+                if assess_row['sys_terrestrial'] == 1:
+                    info.habitat_narrative = '<p class="system">Terrestrial</p>'
+            if 'sys_habitat' in assess_row:
+                info.habitat_narrative += assess_row['sys_habitat']
+            info.save()
 
-            action_name = c['item_text'].strip()
+            # Add habitats
+            a = redlist_models.Assessment(
+                taxon=species, date=datetime.date(2013, 1, 1)
+            )
+
+            a.distribution_narrative = ''
+            if 'range' in assess_row:
+                a.distribution_narrative = assess_row['range']
+            temp = {'Area of occupancy': 'aoo2_notes',
+                    'Extent of occurrence': 'eoo2_notes'}
+            for key, value in temp.items():
+                if value in row:
+                    a.distribution_narrative += '<h3>' + key + '</h3><div>' + row[value] + '</div>'
+
+            if 'special_threats_text' in assess_row:
+                a.threats_narrative = assess_row['special_threats_text']
+
+            if 'special_population_trend' in assess_row:
+                a.population_trend = assess_row['special_population_trend']
+            if 'special_population_blog' in assess_row:
+                a.population_trend_narrative = assess_row['special_population_blog']
+            if 'sys_cons_measures' in assess_row:
+                a.conservation_narrative = assess_row['sys_cons_measures']
+            if 'scope' in assess_row:
+                a.scope = scope_mapping[assess_row['scope'].capitalize()]
+            if 'criteria' in assess_row:
+                a.redlist_criteria = assess_row['criteria']
+            if 'aoo2' in row:
+                aoo = re.sub('[^0-9]', '',row['aoo2'])
+                a.area_occupancy = NumericRange(int(aoo), int(int(aoo)))
+            if 'eoo2' in row:
+                eoo = re.sub('[^0-9]', '', row['eoo2'])
+                a.extent_occurrence = NumericRange(int(eoo), int(eoo))
+            if 'rl_category' in assess_row:
+                a.redlist_category = redlist_cat_mapping[assess_row['rl_category'].lower()]
+            if 'rl_rationale_ms' in assess_row:
+                a.rationale = assess_row['rl_rationale_ms']
+
+            # Convert all of the other columns data into json and stick it in the temp hstore field
+            # There is SO much info and no way to structure it, best if someone goes and pulls it out manually
+            # as and when they need it
+            #hstore_values = {k: v for k, v in row.items() if k not in exclude_from_assessment}
+            #a.temp_field = hstore_values
+
+            # Save the assessment object now everything has been added to it above
+            #import pdb; pdb.set_trace()
             try:
-                action, created = redlist_models.Action.objects.get_or_create(name=action_name,
-                                                                 action_type=redlist_models.Action.CONSERVATION)
-                action_nature = redlist_models.ActionNature.objects.create(assessment=a, action=action)
+                a.save()
             except:
-                import pdb; pdb.set_trace()
+                import pdb
+                pdb.set_trace()
+                print(taxon_row)
+                continue
 
-        # Get a list of all contributors/assessors/whatevers for the assessment
-        ppl_ = ppl.loc[ppl['sp_code'] == row['sp_code']]
-        # people_rows.sort_values(['lastName', 'firstName'], inplace=True)
-        for i, p in ppl_.iterrows():
-            author1, created = people_models.Person.objects.get_or_create(first=p['firstname'], surname=p['surname'])
-            if created:
-                #person.email = p['email']
-                author1.initials = p['initials']
-                author1.save()
 
-            # Add the person as an assessor or contributor to the database
-            c = redlist_models.Contribution.objects.create(person=author1,
-                                                           assessment=a,
-                                                           type='A',
-                                                           weight=1)
-            c.save()
 
-            if (p['surname1'] != '') & (pd.notnull(p['surname1'])):
-                author2, created = people_models.Person.objects.get_or_create(first=p['firstname1'], surname=p['surname1'])
+
+            ref_rows = biblio.loc[biblio['sp_code'] == row['sp_code']]
+            for i, r in ref_rows.iterrows():
+                authors = imports_views.create_authors(r['authors'])
+                author_string = [x.surname + " " + x.initials for x in authors]
+                author_string = ' and '.join(author_string)
+
+                # Sometimes these idiots didn't enter a year, in which case I am throwing the whole reference out
+                if pd.isnull(r['year']):
+                    print(r['year'])
+                    continue
+
+                # For the year you sometimes have 1981b for example, so just get first 4 chars
+                if str(r['year']).startswith('In'):
+                    continue
+                elif r['year'] == '':
+                    continue
+                elif r['title'] == '' or pd.isnull(r['title']) or r['title'] is None:
+                    continue
+                else:
+                    bibtex_dict = {'year': str(r['year'])[:4],
+                                'title': r['title'],
+                                'author': author_string}
+                # Fuck I don't understand why people try to make bibliographic data relational, it's a headache
+                # When there's a perfectly good language designed to hold and express it - bibtex
+                # I am sticking it all in a dictionary apart from title, year and authors, and use bibtexparser to convert
+                # Now I have to add this and that depending on type. FML. Going to get rid of all empty stuff first
+                # See http://www.openoffice.org/bibliographic/bibtex-defs.html for list of relevant bibtex fields
+                r = {k: v for k, v in r.items() if pd.notnull(v) and v != ''}
+                # thesis and dissertations, reports
+
+                r['type'] = r['type'].lower()
+                if r['type'] == 'article':
+                    bibtex_dict['ENTRYTYPE'] = 'article'
+                    if 'title' in r:
+                        bibtex_dict['title'] = r['title']
+                    if 'journal' in r:
+                        bibtex_dict['journal'] = r['journal']
+                    if 'editors' in r:
+                        bibtex_dict['editor'] = r['editors']
+                    if 'page' in r:
+                        bibtex_dict['pages'] = r['page'].replace('-', '--') # Apparently this is what bibtex wants
+                    if 'issue' in r:
+                        bibtex_dict['number'] = r['issue']
+                    if 'publisher' in r:
+                        bibtex_dict['publisher'] = r['publisher']
+                    if 'pub_locality' in r:
+                        bibtex_dict['address'] = r['pub_locality']
+                elif r['type'] == 'book':
+                    bibtex_dict['ENTRYTYPE'] = 'book'
+                    if 'editors' in r:
+                        bibtex_dict['editor'] = r['editors']
+                    if 'title' in r:
+                        bibtex_dict['title'] = r['title']
+                    if 'pub_locality' in r:
+                        bibtex_dict['address'] = r['pub_locality']
+                    if 'publisher' in r:
+                        bibtex_dict['publisher'] = r['publisher']
+                    if 'page' in r:
+                        bibtex_dict['pages'] = r['page'].replace('-', '--')
+
+                    # We have to do some extra things for book chapters
+                elif r['type'] == 'inbook':
+                    bibtex_dict['ENTRYTYPE'] = 'inbook'
+                    if 'editors' in r:
+                        bibtex_dict['editor'] = r['editors']
+                    if 'pub_locality' in r:
+                        bibtex_dict['address'] = r['pub_locality']
+                    if 'publisher' in r:
+                        bibtex_dict['publisher'] = r['publisher']
+                    if 'page' in r:
+                        bibtex_dict['pages'] = r['page'].replace('-', '--')
+                    if 'title' in r:
+                        bibtex_dict['title'] = r['title'] # This is the chapter's title. ARGH.
+                    if 'book_title' in r:
+                        bibtex_dict['booktitle'] = r['book_title']
+                elif r['type'] == 'techreport' or r['type'] == 'misc':
+                    if r['type'] == 'techreport':
+                        bibtex_dict['ENTRYTYPE'] = 'techreport'
+                    if r['type'] == 'misc':
+                        bibtex_dict['ENTRYTYPE'] = 'misc'
+                    if 'publisher' in r:
+                        bibtex_dict['institution'] = r['publisher']
+                    if 'title' in r:
+                        bibtex_dict['title'] = r['title']
+                else:
+                    print(r)
+                    import pdb; pdb.set_trace() # It's some type we haven't thought of yet
+
+                # from bibtexparser.bwriter import BibTexWriter; from bibtexparser.bibdatabase import BibDatabase
+                # db = BibDatabase(); db.entries = [bibtex_dict]; writer = BibTexWriter(); writer.write(db)
+                # Required for bibtexparser, just putting in a random number for now
+                bibtex_dict['ID'] = str(row['sp_code'])
+
+                # Create and save the reference object
+                ref = biblio_models.Reference(year=int(bibtex_dict['year']),
+                                              title=bibtex_dict['title'],
+                                              bibtex=bibtex_dict)
+                try:
+                    ref.save()
+                except:
+                    import pdb; pdb.set_trace()
+
+                # Assign authors to the reference
+                biblio_models.assign_multiple_authors(authors, ref)
+                assessment = a
+
+                # Associate with the assessment
+                assessment.references.add(ref)
+
+            # Add Conservation actions
+            cons_rows = cons_actions.loc[cons_actions['sp_code'] == row['sp_code']]
+            for i, c in cons_rows.iterrows():
+                # The conservation actions csv contains lots of codes like 3.1.1, we need to look them up
+
+                action_name = c['item_text'].strip()
+                try:
+                    action, created = redlist_models.Action.objects.get_or_create(name=action_name,
+                                                                     action_type=redlist_models.Action.CONSERVATION)
+                    action_nature = redlist_models.ActionNature.objects.create(assessment=a, action=action)
+                except:
+                    import pdb; pdb.set_trace()
+
+            # Get a list of all contributors/assessors/whatevers for the assessment
+            ppl_ = ppl.loc[ppl['sp_code'] == row['sp_code']]
+            # people_rows.sort_values(['lastName', 'firstName'], inplace=True)
+            for i, p in ppl_.iterrows():
+                author1, created = people_models.Person.objects.get_or_create(first=p['firstname'], surname=p['surname'])
                 if created:
                     #person.email = p['email']
-                    author2.initials = p['initials1']
-                    author2.save()
+                    author1.initials = p['initials']
+                    author1.save()
 
                 # Add the person as an assessor or contributor to the database
-                c = redlist_models.Contribution.objects.create(person=author2,
+                c = redlist_models.Contribution.objects.create(person=author1,
                                                                assessment=a,
                                                                type='A',
-                                                               weight=2)
+                                                               weight=1)
                 c.save()
 
-        dist = d.loc[d['sp_code'] == row['sp_code']]
-        for i, occur in dist.iterrows():
-            occur = {k: v for k, v in occur.items() if pd.notnull(v)}
-            if 'long' in occur and 'lat' in occur:
-                point = models.PointDistribution(taxon=species, point=Point(occur['long'], occur['lat']))
-                if 'year' in occur:
-                    day = occur['day'] if 'day' in occur else 1
-                    month = occur['month'] if 'month' in occur else 1
-                    try:
-                        point.date = datetime.date(int(occur['year']), int(month), int(day))
-                    except:
-                        point.date = datetime.date(int(occur['year']), (int(month)+1), 1)
-                # if 'collector' in occur:
-                #     import pdb; pdb.set_trace()
-                #     person = imports_views.create_authors(occur['collector'])[0]
-                #     point.collector = person
-                if 'locus' in occur:
-                    point.qds = occur['locus']
-                if 'origin_code' in occur:
-                    point.origin_code = str(occur['origin_code'])[:8]
+                if (p['surname1'] != '') & (pd.notnull(p['surname1'])):
+                    author2, created = people_models.Person.objects.get_or_create(first=p['firstname1'], surname=p['surname1'])
+                    if created:
+                        #person.email = p['email']
+                        author2.initials = p['initials1']
+                        author2.save()
 
-                point.save()
+                    # Add the person as an assessor or contributor to the database
+                    c = redlist_models.Contribution.objects.create(person=author2,
+                                                                   assessment=a,
+                                                                   type='A',
+                                                                   weight=2)
+                    c.save()
+
+            dist = d.loc[d['sp_code'] == row['sp_code']]
+            for i, occur in dist.iterrows():
+                occur = {k: v for k, v in occur.items() if pd.notnull(v)}
+                if 'long' in occur and 'lat' in occur:
+                    point = models.PointDistribution(taxon=species, point=Point(occur['long'], occur['lat']))
+                    if 'year' in occur:
+                        day = occur['day'] if 'day' in occur else 1
+                        month = occur['month'] if 'month' in occur else 1
+                        try:
+                            point.date = datetime.date(int(occur['year']), int(month), int(day))
+                        except:
+                            point.date = datetime.date(int(occur['year']), (int(month)+1), 1)
+                    # if 'collector' in occur:
+                    #     import pdb; pdb.set_trace()
+                    #     person = imports_views.create_authors(occur['collector'])[0]
+                    #     point.collector = person
+                    if 'locus' in occur:
+                        point.qds = occur['locus']
+                    if 'origin_code' in occur:
+                        point.origin_code = str(occur['origin_code'])[:8]
+
+                    point.save()
 
 
     print('done')
@@ -492,7 +514,7 @@ def create_taxon_from_sarca_sabca(row, mendeley_session):
     ]
     for t in taxa_hierarchy:
         if t[1] != '':
-            rank, created = models.Rank.objects.get_or_create(name=t[0].title())
+            rank, created = models.Rank.objects.get_or_create(name=t[0].capitalize())
             #taxon_name = t[1].strip().capitalize()
             taxon_name = t[1]
             parent, created = models.Taxon.objects.get_or_create(parent=parent, name=taxon_name, rank=rank)
