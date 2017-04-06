@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block content_main %}
-<div id="distribution"></div>
+
 <div id="leaflet" style="height: 600px"></div>
 <!--<hr><h3>Distributions</h3>
 <table id="places" class="table">
@@ -23,6 +23,8 @@
   </tr></thead>
   <tbody></tbody>
 </table>-->
+<div id="data-providers">Data providers</div>
+<div id="distribution"></div>
 {% endblock %}
 
 {% block extra-js %}
@@ -38,7 +40,6 @@
 <script>
 var dist_url = ("{% url 'distribution_list' 0 %}" + "?format=json").replace('0', id);
 var dist_url_poly = ("{% url 'distribution_list_polygon' 0 %}" + "?format=json").replace('0', id);
-console.log(dist_url);
 $(document).ready(function() {
   $.ajax({
     url: dist_url,

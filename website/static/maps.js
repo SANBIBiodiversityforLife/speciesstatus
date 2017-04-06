@@ -69,13 +69,21 @@ function init_map(point_data, poly_data) {
 
   // Add geojson layer and create a coords list from that for the heatmap
   coords = []
+  institutionCodes=[]
   var pts = new L.geoJson(point_data, {
     onEachFeature: function (feature, layer) {
       coords.push([feature.geometry.coordinates[1], feature.geometry.coordinates[0]]);
+      var actualCode = feature.properties.origin_code.split('|')[0];
+      if(institutionCodes.includes(actualCode)) { console.log('already in ' + actualCode) }
+      else {
+        institutionCodes.push(actualCode);
+      }
     },
   });
+  $('#distribution').html('<span>' + institutionCodes.join('</span><span>') + '</span>');
 
-  console.log(coords);
+
+
   //s.addTo(map);
   // Add heatmap
   heat = L.heatLayer(coords, {
