@@ -33,6 +33,6 @@ urlpatterns = [
     url(r'^list/$', views.TaxonListView.as_view(renderer_classes=(TemplateHTMLRenderer, JSONRenderer, BrowsableAPIRenderer)), name='search_autocomplete'),
     url(r'^lineage/(?P<pk>\d*)/$', views.LineageView.as_view(renderer_classes=(TemplateHTMLRenderer,)), name='lineage_pk'),
     url(r'^distribution/(?P<pk>\d*)/$', views.DistributionList.as_view(renderer_classes=(TemplateHTMLRenderer, JSONRenderer)), name='distribution_list_polygon'),
-    url(r'^distribution/point/(?P<pk>\d*)/$', views.PointDistributionList.as_view(renderer_classes=(TemplateHTMLRenderer, JSONRenderer)), name='distribution_list'),
+    url(r'^distribution/point/(?P<pk>\d*)/$', views.PointDistributionList.as_view(renderer_classes=(TemplateHTMLRenderer, JSONRenderer, BrowsableAPIRenderer)), name='distribution_list'),
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)

@@ -20,11 +20,11 @@ import re
 
 
 def import_sabca_sql():
-    mendeley_id = '3513'
-    mendeley_secret = 'gOVvM5RmKseDgcmH'
-    mendeley_redirect = 'http://species.sanbi.org'
-    mendeley = Mendeley(mendeley_id, client_secret=mendeley_secret, redirect_uri=mendeley_redirect)
-    mendeley_session = mendeley.start_client_credentials_flow().authenticate()
+    #mendeley_id = '3513'
+    #mendeley_secret = 'gOVvM5RmKseDgcmH'
+    #mendeley_redirect = 'http://species.sanbi.org'
+    #mendeley = Mendeley(mendeley_id, client_secret=mendeley_secret, redirect_uri=mendeley_redirect)
+    #mendeley_session = mendeley.start_client_credentials_flow().authenticate()
 
 
     conn = pypyodbc.connect("Driver={SQL Server};Server=CPTDSK0118\SQLEXPRESS;Trusted_Connection=ye‌​s;database=sabca")
@@ -208,12 +208,13 @@ FROM vm_data;"""
 
 
     for index, row in assess.iterrows():
+        print(index)
         # Retrieve the taxon info for the assessment we're on
         taxon_row = t.loc[t['sp_code'] == row['sp_code']]
 
         taxon_row = {k: v.iloc[0] for k, v in taxon_row.items() if pd.notnull(v.iloc[0])}
         try:
-            species, created = create_taxon_from_sarca_sabca(taxon_row, mendeley_session)
+            species, created = create_taxon_from_sarca_sabca(taxon_row)
         except:
             import pdb;
             pdb.set_trace()
@@ -276,7 +277,7 @@ FROM vm_data;"""
             if 'scope' in assess_row:
                 a.scope = scope_mapping[assess_row['scope'].capitalize()]
             if 'criteria' in assess_row:
-                a.redlist_criteria = assess_row['criteria']
+                a.redlist_criteria = assess_row['criteria'].replace('rl_', '')
             if 'aoo2' in row:
                 aoo = re.sub('[^0-9]', '',row['aoo2'])
                 a.area_occupancy = NumericRange(int(aoo), int(int(aoo)))
@@ -303,7 +304,6 @@ FROM vm_data;"""
                 pdb.set_trace()
                 print(taxon_row)
                 continue
-
 
 
 
@@ -460,7 +460,9 @@ FROM vm_data;"""
                                                                    weight=2)
                     c.save()
 
+            print('dists')
             dist = d.loc[d['sp_code'] == row['sp_code']]
+            print('enddists')
             for i, occur in dist.iterrows():
                 occur = {k: v for k, v in occur.items() if pd.notnull(v)}
                 if 'long' in occur and 'lat' in occur:
@@ -491,7 +493,7 @@ FROM vm_data;"""
     return HttpResponse('<html><body><p>Done</p></body></html>')
 
 
-def create_taxon_from_sarca_sabca(row, mendeley_session):
+def create_taxon_from_sarca_sabca(row):
     """
     Adds to the taxa hierarchy from vm_taxonomy
     :param row:
@@ -515,8 +517,7 @@ def create_taxon_from_sarca_sabca(row, mendeley_session):
     for t in taxa_hierarchy:
         if t[1] != '':
             rank, created = models.Rank.objects.get_or_create(name=t[0].capitalize())
-            #taxon_name = t[1].strip().capitalize()
-            taxon_name = t[1]
+            taxon_name = t[1].strip().capitalize()
             parent, created = models.Taxon.objects.get_or_create(parent=parent, name=taxon_name, rank=rank)
 
     # Finally add the species to the taxa hierarchy - sometimes this thing only goes go genus level so put it in an if
@@ -545,6 +546,6 @@ def create_taxon_from_sarca_sabca(row, mendeley_session):
 
         # Create a description and set of references
         if 'taxonomic_authority' in row:
-            imports_views.create_taxon_description(row['taxonomic_authority'], species, mendeley_session)
+            imports_views.create_taxon_description(row['taxonomic_authority'], species)
 
     return species, created

@@ -183,7 +183,7 @@ class PointSerializer(GeoFeatureModelSerializer):
     class Meta:
         model = PointDistribution
         geo_field = "point"
-        fields = ('date', 'collector', 'precision_m')
+        fields = ('date', 'collector', 'precision_m', 'origin_code')
 
 
 class RankSerializer(serializers.ModelSerializer):
