@@ -13,8 +13,21 @@
 <script type="text/javascript">
   $(document).ready(function() {
     bibtexify("#bibtex", "pubTable");
+
+    console.log({% url 'redlist_citation' id %});
+
+    // References
+    $('.references').hide();
+    $('.glyphicon-chevron-down').hide();
+    $('#referencesLink').click(function(event) {
+      event.preventDefault();
+      $('.references').toggle();
+    $('.glyphicon-chevron-down').toggle();
+    $('.glyphicon-chevron-up').toggle();
+    });
   });
 </script>
+<script src="{% static 'assessment-logos.js' %}"></script>
 {% endblock %}
 
 {% block content_main %}
@@ -22,7 +35,7 @@
   <ul class="nav nav-pills">
     <li role="presentation" class="active"><a href="#"><strong>{{ date }}:</strong> {{ scope }}</a></li>
     <li role="presentation" class="disabled small-pill"><a href="#">No other assessments for this species</a></li>
-    <li role="presentation" class="iucn-check small-pill"><a href="http://www.iucnredlist.org/details/184188/0">Check IUCN global redlist <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a></li>
+    <li role="presentation" class="iucn-check small-pill"><a href="http://www.iucnredlist.org/">Check IUCN global redlist <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a></li>
   </ul>
 </nav>
 
@@ -44,55 +57,43 @@
 </div>
 
 <div class="row">
-  <div class="col-md-12">
+  <div class="col-md-10">
     <section id="species-info">
       <article><h2>Rationale{% if change_rationale %}
         <small>(Changed due to {{ change_rationale|safe }})</small>{% endif %}</h2> {{ rationale|safe }}
-        </article>
-      {% if notes %}<article><h2>Notes</h2>{{ notes|safe }}</article>{% endif %}
-
+      </article>
       {% if distribution_narrative %}<article><h2>Distribution</h2>{{ distribution_narrative|safe }}</article>{% endif %}
-
       {% if population_narrative %}<article><h2>Population</h2>{{ population_narrative|safe }}</article>{% endif %}
       {% if population_trend_narrative %}<article id="poptrend">
         <h2>Population trend {% if population_trend_nature %} <small>{{ population_trend_nature }}</small>{% endif %}</h2>
         {{ population_trend_narrative|safe }}
       </article>{% endif %}
-
       {% if threats_narrative %}<article><h2>Threats</h2>{{ threats_narrative|safe }}</article>{% endif %}
-      {% if threats %}<article><!--<h2>Threats table</h2><hr>
-       <table class="table table-striped">
-          <thead>
-            <tr><th>Severity</th><th>Timing</th><th>Threat</th></tr>
-          </thead>
-          <tbody>
-          {% for i in threats %}
-            <tr><td>{{ i.severity }}</td><td>{{ i.timing }}</td><td>{{ i.threat }}</td></tr>
-          {% endfor %}
-          </tbody>
-        </table>--></article>{% endif %}
       {% if use_trade_narrative %}<article><h2>Uses and trade</h2>{{ use_trade_narrative|safe }}</article>{% endif %}
-
       {% if conservation_narrative %}<article><h2>Conservation</h2>{{ conservation_narrative|safe }}</article>{% endif %}
       {% if research_narrative %}<article><h2>Research</h2>{{ research_narrative|safe }}</article>{% endif %}
       {% if conservation_actions %}<article><h2>Conservation and research actions</h2>{{ conservation_actions|safe }}</article>{% endif %}
     </section>
     <section>
-      <article>
-        <h2 id="{{ key }}Anchor"><span>References</span></h2>
-        <div class="item-info">
+      <article style="margin-top: 50px;">
+        <h2 id="{{ key }}Anchor"><a href="#" id="referencesLink" style="background-color: #d1ecff; padding: 5px 10px; border-radius: 5px; margin-top: 30px;"><span>References</span> <span class="glyphicon glyphicon-chevron-up" aria-hidden="true" style="font-size: 0.7em;"></span><span style="font-size: 0.7em;" class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a></h2>
+        <div class="item-info references">
           <table id="pubTable" class="display table"></table>
           <pre id="bibtex">[{% for a in references %}{{ a }},{% endfor %}]</pre>
         </div>
       </article>
+      <article class="howtocite">
+        <h2>How to cite this assessment</h2>
+        <p>Relton C. 2016. A conservation assessment of Balaenoptera acutorostrata subsp. In Child MF, Roxburgh L, Do Linh San E, Raimondo D, Davies-Mostert HT, editors. The Red List of Mammals of South Africa, Swaziland and Lesotho. South African National Biodiversity Institute and Endangered Wildlife Trust, South Africa.</p>
+      </article>
     </section>
   </div>
-  <!--<div class="col-md-3 assessment-aside">
-    <h2>Additional info</h2>
-    {% for key, value in temp_field.items %}
-      <strong>{{ key }}</strong>: {{ value }}<br>
-    {% endfor %}
-  </div>-->
+  <div class="col-md-2 assessment-aside">
+    <h4 class="lead">Lead agencies</h4>
+    <img src="{% static 'logos/adu.png' %}" style="display: none;">
+    <h4 class="partner">Partners</h4>
+    <h4 class="funder">Funders</h4>
+  </div>
 </div>
 
 {% endblock %}

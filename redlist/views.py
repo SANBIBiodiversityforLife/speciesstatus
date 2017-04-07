@@ -24,7 +24,7 @@ class TopThreePagination(pagination.PageNumberPagination):
 
 class AssessmentList(generics.ListAPIView):
     queryset = models.Assessment.objects.all()
-    serializer_class = serializers.AssessmentSerializer
+    serializer_class = serializers.AssessmentSimpleSerializer
     pagination_class=TopThreePagination
 
 
@@ -55,25 +55,34 @@ class ContributionWrite(generics.ListCreateAPIView):
 
 
 @api_view(['GET'])
-def redlist_statistics_old(request):
-    """
-    Returns interesting stats about the db
-    """
+def redlist_citation(request, pk):
     if request.method == 'GET':
+        assessment = models.Assessment.objects.get(pk=pk)
+        contributions = models.Contribution.objects.filter(assessment=assessment, type=models.Contribution.ASSESSOR)
+        author_strings = []
+        for c in contributions:
+            author_strings.append(c.person.surname + ' ' + c.person.first[0] + '.')
+        resp =  ', '.join(author_strings) + ' ' +  str(assessment.date.year) + '. A conservation assessment of ' + \
+               assessment.taxon.name + ' ' + assessment.taxon.rank.name.lower() + '.'
+
         class_rank = taxa_models.Rank.objects.get(name='Class')
-        class_nodes = taxa_models.Taxon.objects.filter(rank=class_rank)
-        statuses = models.Assessment.REDLIST_CATEGORY_CHOICES
-        data = []
-        node_names = [t.name for t in class_nodes]
-        for stat_id, stat_value in statuses:
-            node_statuses = {}
-            for node in class_nodes:
-                count = node.get_descendants().filter(assessment__redlist_category=stat_id).count()
-                node_statuses[node.name] = count
-            data.append({stat_value: node_statuses})
-        import pprint
-        pprint.pprint(data)
-        resp = {'statistics': data, 'orders': node_names, 'statuses': [s[1] for s in statuses]}
+        class_ = assessment.taxon.get_ancestors().get(rank=class_rank).name.lower()
+        if class_ == 'mammalia':
+            resp += ' <strong>In Child MF, Roxburgh L, Do Linh San E, Raimondo D, Davies-Mostert HT, editors. The Red List of Mammals of South Africa, Swaziland and Lesotho. South African National Biodiversity Institute and Endangered Wildlife Trust, South Africa.</strong>'
+        elif class_ == 'reptilia':
+            resp += ' <strong>In SAMWAYS, M.J. & SIMAIKA, J.P. 2016. Manual of Freshwater Assessment for South Africa: Dragonfly Biotic Index. Suricata 2. South African National Biodiversity Institute, Pretoria.</strong>'
+        elif class_ == 'aves':
+            if not assessment.rationale:
+                resp += ' <strong>In The Eskom Red Data Book of Birds of South Africa, Lesotho and Swaziland. Taylor, MR, Peacock F, Wanless RW (eds). BirdLife South Africa, Johannesburg, South Africa.</strong>'
+        elif class_ == 'actinopterygii' or class_ == 'elasmobranchii' or class_ == 'holocephali':
+            resp += ' <strong>Seakeys species page.</strong>'
+        elif class_ == 'insecta':
+            order_rank = taxa_models.Rank.objects.get(name='Order')
+            order = assessment.taxon.get_ancestors().get(rank=order_rank).name.lower()
+            if order == 'lepidoptera':
+                resp += ' <strong>In Mecenero, S., Ball, J.B., Edge, D.A., Hamer, M.L., Henning, G.A., Kruger, M., Pringle, E.L., Terblanche, R.F. & Williams, M.C. (eds). 2013. Conservation assessment of butterflies of South Africa, Lesothos and Swaziland: Red List and atlas. Saftronics (Pty) Ltd., Johannesburg & Animal Demography Unit, Cape Town.</strong>'
+            elif order == 'odonata':
+                resp += ' <strong>SAMWAYS, M.J. & SIMAIKA, J.P. 2016. Manual of Freshwater Assessment for South Africa: Dragonfly Biotic Index. Suricata 2. South African National Biodiversity Institute, Pretoria.</strong>'
         return Response(resp, status=status.HTTP_202_ACCEPTED)
 
 
@@ -84,7 +93,7 @@ def redlist_statistics(request):
     """
     if request.method == 'GET':
         class_rank = taxa_models.Rank.objects.get(name='Class')
-        class_nodes = taxa_models.Taxon.objects.exclude(name='Insecta').filter(rank=class_rank)
+        class_nodes = taxa_models.Taxon.objects.exclude(name__in=['Insecta', 'Holocephali', 'Elasmobranchii']).filter(rank=class_rank)
         statuses = models.Assessment.REDLIST_CATEGORY_CHOICES
         data = {}
         node_names = [t.name for t in class_nodes]

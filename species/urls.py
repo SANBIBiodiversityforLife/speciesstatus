@@ -18,6 +18,8 @@ from django.contrib import admin
 from website import views as website_views
 from imports import views as imports_views
 from people import views as people_views
+from django.views.decorators.clickjacking import xframe_options_exempt
+
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -37,7 +39,7 @@ urlpatterns = [
     url(r'^api/people/', people_views.PeopleList.as_view(), name='api_people'),
 
     # Index
-    url(r'^$', website_views.IndexView.as_view(), name='index'),
+    url(r'^$', xframe_options_exempt(website_views.IndexView.as_view()), name='index'),
     url(r'^about/$', website_views.AboutView.as_view(), name='about'),
     url(r'^map/$', website_views.MapView.as_view(), name='map'),
 ]

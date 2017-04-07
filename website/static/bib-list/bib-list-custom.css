@@ -7,3 +7,6 @@
 .fragment .fragment-divider:last-of-type {
     display: none;
 }
+span.undefined {
+	display: none;	
+}

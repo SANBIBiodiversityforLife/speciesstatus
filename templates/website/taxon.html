@@ -80,22 +80,20 @@
     </section>
     {% endif %}
     <section id="species-info">
-    {% if info.trophic %}
-    <article><h2 id="trophic_narrativeAnchor">Trophic</h2>{{ info.trophic|safe }}</article>
-    {% endif %}
-    {% if info.diagnostics %}
-    <article><h2 id="diagnostics_narrativeAnchor">Diagnostics</h2>{{ info.diagnostics|safe }}</article>
-    {% endif %}
-    {% if info.habitat_narrative %}
-    <article><h2 id="habitat_narrativeAnchor">Habitat</h2>{{ info.habitat_narrative|safe }}</article>
-    {% endif %}
+      {% with 'morphology diagnostics trophic movement migration_patterns reproduction habitat_narrative generational_length_narrative ' as list %}
+        {% for key, value in info.items %}
+          {% if key in list and value %}
+            <article><h2 id="{{ key }}Anchor">{{ key }}</h2>{{ value|safe }}</article>
+          {% endif %}
+        {% endfor %}
+      {% endwith %}
     </section>
   </div>
   <div class="col-md-4"><div class="scanty-info">
     <h3>Not much information here?</h3>
     <p>SANBI is currently in the process of adding more information about species to this database. </p>
     <hr>
-    <p><a class="search-eol" href="http://eol.org/search?q=Chirindia+occidentalis&search=Go">Search for this species on <img src="http://cdn8.openculture.com/wp-content/uploads/2013/09/eol_logo_globe.jpg" style="width: 200px; background-color: white; padding: 10px; border-radius: 10px;"></a></p>
+    <p><a class="search-eol" href="http://eol.org/search?q=">Search for this species on <img src="http://cdn8.openculture.com/wp-content/uploads/2013/09/eol_logo_globe.jpg" style="width: 200px; background-color: white; padding: 10px; border-radius: 10px;"></a></p>
   </div><!--<ul id="species-side-nav" class="nav nav-pills nav-stacked" data-spy="affix" data-offset-top="20" data-offset-bottom="200">
       {% for key, item in info.items %}{% if item %}
       <li><a href="#{{ key }}Anchor">{{ key }}</a></li>

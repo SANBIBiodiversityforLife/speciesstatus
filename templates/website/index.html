@@ -55,17 +55,7 @@
 	<div id="news" class="col-md-4">
 		<h2 id="frontpage-news">Latest news <small>from <a href="http://www.sanbi.org/news">sanbi.org</a></small></h2>
 		<hr>
-		<article>
-			<h3><a href="http://www.sanbi.org/news/new-free-state-biodiversity-plan-available-bgis" title="New Free State Biodiversity Plan available on BGIS'">New Free State Biodiversity Plan available on BGIS</a> <small>13 September 2016</small></h3>
-			<p>News article on BGIS updates The following information is now available on the BGIS website:
-			2015 Free State Biodiversity Plan Interactive Map
-			Veldfire Risk Classification
-			2015 Free State...</p>
-		</article>
-		<article>
-			<h3><a href="http://www.sanbi.org/news/south-african-nie-approves-first-four-small-grants-0" title="South African NIE approves first four small grants'">South African NIE approves first four small grants</a> <small>15 June 2016</small></h3>
-			<p>The South African National Biodiversity Institute (SANBI) as the National Implementing Entity (NIE) and its partners, Executing Entity (SouthSouthNorth) and locally based Facilitating Agencies (Conservation...</p>
-		</article>
+		<div id="rss-feed"></div>
 		<p class="rss-footer">Read more news on <a href="http://www.sanbi.org/news">sanbi.org</a></p>
 	</div>
 </div>
@@ -101,6 +91,31 @@ $(document).ready(function() {
 		}
 	});
 });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+<script src="{% static 'jquery.rss.min.js' %}"></script>
+<script>
+jQuery(function($) {
+  $("#rss-feed").rss("http://www.sanbi.org/news/science/feed", {
+    layoutTemplate: "{entries}",
+    tokens: {
+      "rukayaBody": function(entry, tokens) {
+        mytext = tokens.body.replace('<img src="/sites', '<img src="http://www.sanbi.org/sites');
+        mytext = mytext.replace('<div class="field field-type-text field-field-description">', '');
+        mytext = mytext.replace('<div class="field-items">', '');
+        mytext = mytext.replace('<div class="field-item odd">', '');
+        mytext = mytext.replace('</div>', '');
+        mytext = mytext.replace('<p>', '');
+        mytext = mytext.replace('</p>', '');
+
+        mytext = mytext.split('<h2>Comments')[0];
+        return '<p>' + mytext.substring(0, 500) + '...</p>';
+      }
+    },
+    // inner template for each entry
+    entryTemplate: '<article><h4><a href="{url}">{title}</a> <small>{date}</small></h4><p>{rukayaBody}</p></article>'
+  })
+})
 </script>
 {% endblock js %}
 
