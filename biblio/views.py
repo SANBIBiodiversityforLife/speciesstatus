@@ -20,7 +20,6 @@ class RefList(generics.ListCreateAPIView):
 
     # Overriding super method to use .get_or_create() instead of .save()
     def create(self, request, *args, **kwargs):
-        import pdb; pdb.set_trace()
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(): # raise_exception=True
             instance, created = serializer.get_or_create()

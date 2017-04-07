@@ -6,9 +6,8 @@
   /*text-align: center;*/
   font-size: 1.1em;
 }
-#breadcrumb { margin-top: 10px; margin-bottom: 5px; }
-#taxon-heading .container>div { height: 280px; }
-#taxon-heading .container>div>div { padding-top: 30px; }
+#breadcrumb { margin-bottom: 5px; }
+#taxon-heading .container>div { height: 200px; }
 
 #taxon-img-container {
   width: 1px;
@@ -53,7 +52,8 @@
 #taxon-heading h1 {
   text-shadow:1px 1px 10px rgba(0, 0, 0, 0.8);
   font-weight: bold;
-  font-size: 3.5em;
+  font-size: 3em;
+  line-height: 0.8em;
   padding-bottom: 10px;
   border-bottom: 1px solid white;
   margin-bottom: 0;
@@ -156,14 +156,10 @@ nav.redlist .small-pill {
 .contributor {
     padding: 5px;
 }
-.contribution-assessor .contributor { background-color: #e6ef86; }
-.contribution-reviewer .contributor { background-color: #efc786; }
-.contribution-contributor .contributor { background-color: #efde86; }
-.contribution-facilitator .contributor { background-color: #efa986; }
-.contribution-assessor .contributor:hover { background-color: #e7af86; }
-.contribution-reviewer .contributor:hover { background-color: #efff86; }
-.contribution-contributor .contributor:hover { background-color: #eff786; }
-.contribution-facilitator .contributor:hover { background-color: #efd986; }
+.contribution-assessor .contributor { background-color: #fff7b6; }
+.contribution-reviewer .contributor { background-color: #fff7b6; }
+.contribution-contributor .contributor { background-color: #fff7b6; }
+.contribution-facilitator .contributor { background-color: #fff7b6; }
 #redlist-summary {
     border-bottom: 1px solid #ddd;
     padding-bottom: 15px;
@@ -219,4 +215,30 @@ article h3 {
 
 #distribution span {
     padding: 5px;
+}
+.assessment-aside {
+  border-left: 0px solid #ddd;
+  margin-top: 20px;
+}
+.assessment-aside img {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+}
+.assessment-aside h4 {
+  margin-top: 15px;
+  margin-bottom: 10px;
+  border-top: 1px solid #ddd;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-align: center;
+  background-color: rgba(255, 255, 0, 0.2);
+}
+
+.howtocite {
+  margin-top: 50px;
+  padding: 10px 0;
+  background-color: rgba(255, 255, 0, 0.2);
 }

@@ -25,6 +25,7 @@ from django.conf import settings
 from django.contrib.gis.geos import Point, Polygon
 from django.contrib.gis.geos import GEOSGeometry
 import re
+import datetime
 
 def create_authors(author_string):
     """
@@ -226,26 +227,71 @@ def import_phylums(request):
     sis_import.import_phylums()
 
 
+# SIS: Amphibian, Mammals, Dragonflies, Reptiles, Freshwater Fish
 def sis(request):
     sis_import.import_sis()
 
+
+# Butterflies
 def sarca(request):
     sarca_sabca.import_sql()
 
+
+# Reptiles - going to move to SIS though
 def sabca_r(request):
     sabca.import_sabca_sql()
 
 
+# Legacy data - we're not importing this
 def spstatus(request):
     spstatus_import.import_spstatus()
 
+
+# Linefish
 def seakeys(request):
     seakeys_import.import_seakeys()
 
 
-def insert_bird_distrib_data(request):
+def create_point_distribution(row):
+    """Used by the import distribution functions"""
+    if 'species' not in row or 'genus' not in row or 'long' not in row or 'lat' not in row:
+        return False
+
+    name = row['genus'].strip() + ' ' + row['species'].strip()
+    if 'subspecies' in row:
+        name += ' ' + row['subspecies'].strip()
+    try:
+        taxon = models.Taxon.objects.get(name=name)
+    except models.Taxon.DoesNotExist:
+        print('could not find ' + name)
+        return False
+
+    pt = models.PointDistribution(taxon=taxon, point=Point(float(row['long']), float(row['lat'])))
+    optional_fields = ['precision', 'origin_code', 'qds']
+    for optional_field in optional_fields:
+        if optional_field in row:
+            setattr(pt, optional_field, row[optional_field])
+
+    #if 'collector' in row:
+    #    pt.
+
+    if 'year' in row and row['year'] > 0:
+        month = int(float(str(row['month']).strip())) if 'month' in row else 1
+        month = month if month > 0 and month < 13 else 1
+        day = int(float(str(row['day']).strip())) if 'day' in row else 1
+        day = day if day > 0 and day < 31 else 1
+        try:
+            pt.date = datetime.date(year=int(float(str(row['year']).strip())), month=month, day=day)
+        except ValueError:
+            import pdb; pdb.set_trace()
+    pt.save()
+    return pt
+
+
+# Note: Birds are run from the other django app
+def bird_distribs(request):
     pwd = os.path.abspath(os.path.dirname(__file__))
-    dir = os.path.join(pwd, '..', 'data-sources', 'bird_redlist_distribs')
+    dir = os.path.join(pwd, '..', 'data-sources', 'bird_distribs')
 
     bird_parent_node = models.Taxon.objects.get(name='Aves')
     species_rank = models.Rank.objects.get(name='Species')
@@ -269,69 +315,132 @@ def insert_bird_distrib_data(request):
                 distrib.save()
 
 
-def download_missing_images(request):
-    # Could also try
-    # gbif
-    # http://api.gbif.org/v1/species?name=Acanthocercus%20atricollis
-    # http://api.gbif.org/v1/species/5225997/media
-    # bold
-    # http://www.boldsystems.org/index.php/API_Tax/TaxonSearch?taxName=Diplura
-    # http://www.boldsystems.org/index.php/API_Tax/TaxonData?taxId=88899&dataTypes=images
-    # arkive
-    # https://www.arkive.org/api/docs?ReturnUrl=%2fapi%2fdocs%2fembed%2fgenerate
-    # inaturalist
-    # https://www.inaturalist.org/pages/api+reference#get-observations
+def convert_all_criteria_strings(request):
+    needs_fixing = redlist_models.Assessment.objects.filter(redlist_criteria__contains='|')
 
-    eol_search_sp_url = 'http://eol.org/api/search/1.0.json?q={0}&page=1&exact=true&filter_by_taxon_concept_id=&filter_by_hierarchy_entry_id=&filter_by_string=&cache_ttl='
-    eol_img_url = 'http://eol.org/api/pages/1.0.json?batch=false&id={0}&images_per_page=1&images_page=1&videos_per_page=0&videos_page=0&sounds_per_page'
-
-    species_rank = models.Rank.objects.get(name='Species')
-    subspecies_rank = models.Rank.objects.get(name='Subspecies')
-    taxa =  models.Taxon.objects.filter(rank__in=[species_rank, subspecies_rank]).order_by('name').values_list('name', flat=True)
-
-    for taxon in taxa:
-        file_name = taxon.replace(' ', '_') + '.jpg'
-        if not os.path.exists(os.path.join(settings.BASE_DIR, 'website', 'static', 'sp_img', file_name)):
-            eol_sp_search = requests.get(eol_search_sp_url.format(taxon.replace(' ', '+')))
-            results = eol_sp_search.json()['results']
-            if len(results) == 0:
-                print('No sp found ' + taxon)
-                continue
-            id = results[0]['id']
-            eol_img_search = requests.get(eol_img_url.format(id))
-            imgs = eol_img_search.json()['dataObjects']
-            found = False
-            for img in imgs:
-                if img['dataType'] == 'http://purl.org/dc/dcmitype/StillImage':
-                    if 'license' in img and 'mimeType' in img and 'eolMediaURL' in img:
-                        print('FOUND ' + taxon)
-                        found = True
-            if not found:
-                print('NOT FOUND ' + taxon)
-                # print(imgs)
+    for assessment in needs_fixing:
+        try:
+            assessment.redlist_criteria = convert_criteria_string(assessment.redlist_criteria)
+        except IndexError:
+            import pdb; pdb.set_trace()
+        assessment.save()
 
 
-def load_dragonfly_distribs(request):
-    # Load all other things as well
-    # spstatus_import.import_spstatus()
-    # sis_import.import_sis()
+def convert_criteria_string(string):
+    # Construct a load of nested dictionaries with all of the individual components
+    cons = {}
+    for item in string.split('|'):
+        # B
+        letter = item[0].upper()
+        if letter not in cons:
+            cons[letter] = {}
 
-    dir = 'C:\\Users\\JohaadienR\\Documents\\Projects\\python-sites\\species\\data-sources\\dragonflies_distrib\\'
-    df = pd.read_csv(dir + 'simple.csv')
+        # B1, sometimes you just have D with no number
+        if len(item) > 1:
+            number = item[1]
+            if number not in cons[letter]:
+                cons[letter][number] = {}
+
+            # B1a or B1b_iii, sometimes you just have D1 with no letter
+            if len(item) > 2:
+                small_letter = item[2].lower()
+                if small_letter not in cons[letter][number]:
+                    cons[letter][number][small_letter] = []
+
+                if '_' in item:
+                    roman_numerals = item.split('_')[1]
+                    if roman_numerals not in cons[letter][number][small_letter]:
+                        cons[letter][number][small_letter].append(roman_numerals)
+
+    # Following is not used, just an example of what we're constructing
+    # output_example = {'A': {'2': {'a': [], 'b': []}}, 'B': {'1': {'a': [], 'b': ['i', 'ii', 'iii']}}}
+
+    # Join those dictionaries together, we also need to do some sorting once they are lists
+    letter_strings = []
+    for letter, number_dict in cons.items():
+        number_strings = []
+
+        for number, small_letter_dict in number_dict.items():
+            small_letter_strings = []
+
+            for small_letter, roman_numerals_list in small_letter_dict.items():
+                small_letter_string = small_letter
+                if roman_numerals_list:
+                    small_letter_string += '(' + ','.join(roman_numerals_list) + ')'
+                small_letter_strings.append(small_letter_string)
+
+            # small_letter_string now looks like this: 'ab(i,ii,iii)'
+            number_strings.append(number + ''.join(sorted(small_letter_strings)))
+
+        # number_strings now looks like this ['2ab(i,ii,iii)', '1a']
+        letter_strings.append(letter + '+'.join(sorted(number_strings)))
+
+    # letter_strings now looks like this ['A2ab(i,ii,iii)', 'C1a']
+
+    return '; '.join(sorted(letter_strings))
+
+
+def reptile_distribs(request):
+    pwd = os.path.abspath(os.path.dirname(__file__))
+    dir = os.path.join(pwd, '..', 'data-sources', 'reptile_distribs')
+    df = pd.read_csv(os.path.join(dir, 'simple.csv'), encoding='latin-1')
+    mapping = {'decimalLat': 'lat',
+               'decimalLon': 'long',
+               'institution_code': 'Institutio',
+               'year_colle': 'year',
+               'month_coll': 'month',
+               'day_collec': 'day'}
     for index, row in df.iterrows():
         row = {k.lower(): v for k, v in row.items() if pd.notnull(v)}
-        if 'species' not in row or 'genus' not in row or 'decimal_longitude' not in row or 'decimal_latitude' not in row:
-            continue
-        try:
-            taxon = models.Taxon.objects.get(name=row['genus'].strip() + ' ' + row['species'].strip())
-        except:
-            print('could not find ' + row['genus'].strip() + ' ' + row['species'].strip())
-            continue
-
-        print('found ' + row['genus'].strip() + ' ' + row['species'].strip())
-        pt = models.PointDistribution.objects.create(taxon=taxon, point=Point(float(row['decimal_longitude']), float(row['decimal_latitude'])))
+        for key in mapping:
+            if key in row:
+                row[mapping[key]] = row[key]
+                del row[key]
+        pt = create_point_distribution(row)
 
 
+def dragonfly_distribs(request):
+    pwd = os.path.abspath(os.path.dirname(__file__))
+    dir = os.path.join(pwd, '..', 'data-sources', 'dragonfly_distribs')
+    df = pd.read_csv(os.path.join(dir, 'simple.csv'))
+    mapping = {'decimal_latitude': 'lat',
+               'decimal_longitude': 'long',
+               'institution_code': 'origin_code',
+               'coordinate_uncertainty_in_meters': 'precision',
+               'year_collected': 'year',
+               'month_collected': 'month',
+               'day_collected': 'day'}
+    for index, row in df.iterrows():
+        row = {k.lower(): v for k, v in row.items() if pd.notnull(v)}
+        for key in mapping:
+            if key in row:
+                row[mapping[key]] = row[key]
+                del row[key]
+        pt = create_point_distribution(row)
+
+
+def mammal_distribs(request):
+    pwd = os.path.abspath(os.path.dirname(__file__))
+    dir = os.path.join(pwd, '..', 'data-sources', 'mammal_distribs')
+    mapping = {'decimallatitude': 'lat',
+               'decimallongitude': 'long',
+               'institutioncode': 'origin_code',
+               'coordinateuncertaintyinmeters': 'precision',
+               'specificepithet': 'species'}
+    for file in os.listdir(dir):
+        df = pd.read_excel(os.path.join(dir, file))
+        for index, row in df.iterrows():
+            row = {k.lower(): v for k, v in row.items() if pd.notnull(v)}
+            for key in mapping:
+                if key in row:
+                    row[mapping[key]] = row[key]
+                    del row[key]
+            pt = create_point_distribution(row)
+            if pt:
+                import pdb; pdb.set_trace()
+
+
+# Run after all of the imports have gone through
 def populate_higher_level_common_names(request):
     ranks = models.Rank.objects.filter(name__in=['Genus', 'Family', 'Order', 'Phylum', 'Class'])
     taxa = models.Taxon.objects.filter(rank__in=ranks, common_names__isnull=True)
@@ -352,7 +461,7 @@ def populate_higher_level_common_names(request):
         if taxon_name in common_names:
             common_name = models.CommonName.objects.get_or_create(name=common_names[taxon_name], taxon=taxon, language=english)
             continue
-        
+
         # Otherwise search GBIF
         r = requests.get('http://api.gbif.org/v1/species/search?q=' + taxon.name.lower() + '&rank=' + str(taxon.rank))
         gbif = r.json()

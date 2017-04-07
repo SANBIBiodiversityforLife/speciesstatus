@@ -1,4 +1,11 @@
 $(document).ready(function() {
+  // Find/replace all the underscores
+  function replaceFunction(index, html) {
+    return html.replace(/_(narrative)?/g, '');
+  }
+  $('#species-info').html(replaceFunction);
+  $('#redlist-summary').html(replaceFunction);
+
   // Retrieve species image if possible
   $.ajax({
     url: '/taxa/get-images/' + id + '/?format=json',
@@ -64,9 +71,13 @@ $(document).ready(function() {
           $('#breadcrumb').append(' <a href="' + lineage_url.replace('0', ancestor.id) + '" type="button" class="btn btn-warning btn-sm">View tree</a>')
           $('h1').append(ancestor.get_full_name);
         }
+
       });
     }
   }).done(function() {
+    // Insert the logos into the page. We have to have this in here because this is how we find out the ancestors of a page
+    if($('#redlist-summary').length) { insertLogos(); }
+
     $.ajax({
       url: common_names_url,
       success: function(data, textStatus, jqXHR) {

@@ -307,7 +307,7 @@ def import_seakeys():
                 assessment.references.add(ref)
 
         if row['Images'].strip():
-            image_counter = 0
+            image_counter = 1
             for img in row['Images'].split(','):
                 img_nid = img.strip()
                 if img_nid:

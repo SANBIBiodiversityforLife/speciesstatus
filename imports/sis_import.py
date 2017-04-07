@@ -44,29 +44,29 @@ def import_sis():
     dir = 'C:\\Users\\JohaadienR\\Documents\\Projects\\python-sites\\species\\data-sources\\'
 
     # Amphibians
-    animal_dirs = ['Amphibians_SIS\\Amphibians\\', 'Dragonflies_SIS\\new\\', 'Mammals_SIS\\']
-    animal_dirs = ['Mammals_SIS\\']
+    animal_dirs = ['SIS_Amphibians\\Amphibians\\', 'SIS_Dragonflies\\new\\', 'SIS_Mammals\\', 'SIS_Reptiles\\']
+    # animal_dirs = ['Reptiles_SIS\\']
     for animal_dir in animal_dirs:
         animal_dir = dir + animal_dir
-        af = pd.read_csv(animal_dir + 'allfields.csv', encoding='iso-8859-1')
-        t = pd.read_csv(animal_dir + 'taxonomy.csv', encoding='iso-8859-1')
-        cn = pd.read_csv(animal_dir + 'commonnames.csv', encoding='UTF-8')
-        assess = pd.read_csv(animal_dir + 'assessments.csv', encoding='iso-8859-1')
-        cons_actions = pd.read_csv(animal_dir + 'conservationneeded.csv', encoding='iso-8859-1')
-        habitats = pd.read_csv(animal_dir + 'habitats.csv', encoding='iso-8859-1')
-        threats = pd.read_csv(animal_dir + 'threats.csv', encoding='iso-8859-1')
+        af = pd.read_csv(animal_dir + 'allfields.csv', encoding='UTF-8') # iso-8859-1
+        t = pd.read_csv(animal_dir + 'taxonomy.csv', encoding='UTF-8')
+        cn = pd.read_csv(animal_dir + 'commonnames.csv', encoding='UTF-8') # UTF-8
+        assess = pd.read_csv(animal_dir + 'assessments.csv', encoding='UTF-8')
+        cons_actions = pd.read_csv(animal_dir + 'conservationneeded.csv', encoding='UTF-8')
+        habitats = pd.read_csv(animal_dir + 'habitats.csv', encoding='UTF-8')
+        threats = pd.read_csv(animal_dir + 'threats.csv', encoding='UTF-8')
         biblio = pd.read_csv(animal_dir + 'references.csv')
-        research = pd.read_csv(animal_dir + 'researchneeded.csv', encoding='iso-8859-1')
+        research = pd.read_csv(animal_dir + 'researchneeded.csv', encoding='UTF-8')
 
         # I bet they did this just to annoy all future developers
         ppl = pd.read_csv(animal_dir + 'credits.csv')
         ppl_old = pd.read_csv(animal_dir + 'credits_old.csv')
 
         # Lookups
-        research_lookup = pd.read_csv(dir + 'research_lookup.csv', encoding='iso-8859-1')
-        threats_lookup = pd.read_csv(dir + 'threat_lookup.csv', encoding='iso-8859-1')
-        habitats_lookup = pd.read_csv(dir + 'habitat_lookup.csv', encoding='iso-8859-1')
-        cons_actions_lookup = pd.read_csv(dir + 'cons_actions_lookup.csv', encoding='iso-8859-1')
+        research_lookup = pd.read_csv(dir + 'research_lookup.csv', encoding='UTF-8')
+        threats_lookup = pd.read_csv(dir + 'threat_lookup.csv', encoding='UTF-8')
+        habitats_lookup = pd.read_csv(dir + 'habitat_lookup.csv', encoding='UTF-8')
+        cons_actions_lookup = pd.read_csv(dir + 'cons_actions_lookup.csv', encoding='UTF-8')
 
         # These lists we use below as we iterate over all the assessments
         exclude_from_assessment = [
@@ -117,13 +117,20 @@ def import_sis():
             # Remove all row columns which do not contain info
             row = {k: v for k, v in row.items() if pd.notnull(v)}
 
+            # Ignore all species which don't have an assessment
+            assess_row = assess.loc[assess['internal_taxon_id'] == row['internal_taxon_id']]
+            if len(assess_row) == 0:
+                continue
+
             # Retrieve the taxon info and the assessment we're on
             taxon_row = t.loc[t['internal_taxon_id'] == row['internal_taxon_id']]
             taxon_row = taxon_row.iloc[0]
+            if 'Exclude' in taxon_row:
+                if taxon_row['Exclude'] == 1:
+                    continue
             species, species_was_created = create_taxon_from_sis(taxon_row, mendeley_session)
 
             # The iloc is used because you have to refer to the items via the index e.g. v[0] for row 1, v[1] for row 2, etc
-            assess_row = assess.loc[assess['internal_taxon_id'] == row['internal_taxon_id']]
             assess_row = {k: v.iloc[0] for k, v in assess_row.items() if pd.notnull(v.iloc[0])}
 
             if species_was_created:
@@ -138,14 +145,19 @@ def import_sis():
                 info = models.Info(taxon=species)
 
                 # Add any info we can find to the info object, note that a lot of these are missing
-                if 'AvgAnnualFecundity.fecundity' in row:
-                    info.average_fecundity = Decimal(row['AvgAnnualFecundity.fecundity'])
-                if 'BirthSize.size' in row:
-                    info.birth_size = Decimal(row['BirthSize.size'])
-                    info.size_units = models.Info.CM
-                if 'MaxSize.size' in row:
-                    info.max_size = Decimal(row['MaxSize.size'])
-                    info.size_units = models.Info.CM
+                #if 'AvgAnnualFecundity.fecundity' in row:
+                #    info.average_fecundity = Decimal(row['AvgAnnualFecundity.fecundity'])
+                #if 'BirthSize.size' in row:
+                #    try:
+                #        info.birth_size = Decimal(row['BirthSize.size'])
+                #        info.size_units = models.Info.CM
+                #    except:
+                #        continue
+                #if 'MaxSize.size' in row:
+                #    info.max_size = Decimal(row['MaxSize.size'])
+                #    info.size_units = models.Info.CM
+                #if 'ElevationLower.limit' in row and 'ElevationUpper.limit' in row:
+                #    info.altitude_or_depth_range = (int(row['ElevationLower.limit']), int(row['ElevationUpper.limit']))
                 if 'Congregatory.value' in row:
                     info.congregatory = [models.Info.CONGREGATORY,
                                          models.Info.DISPERSIVE]  # These all seem to be the same
@@ -157,8 +169,7 @@ def import_sis():
                 if 'FreeLivingLarvae.hasStage' in row:
                     if row['FreeLivingLarvae.hasStage'] == 'Yes':
                         info.reproductive_type = [models.Info.FREE_LIVING_LARVAE]
-                if 'ElevationLower.limit' in row and 'ElevationUpper.limit' in row:
-                    info.altitude_or_depth_range = (int(row['ElevationLower.limit']), int(row['ElevationUpper.limit']))
+
                 # Get the taxon info stuff from the assessment csv
                 info.habitat_narrative = ''
                 if 'System.value' in assess_row:
@@ -184,7 +195,10 @@ def import_sis():
                 info.save()
 
             # Create an assessment object and add any necessary info to it
-            assess_date = datetime.strptime(assess_row['RedListAssessmentDate.value'], '%d/%m/%Y') # 01/08/1996
+            try:
+                assess_date = datetime.strptime(assess_row['RedListAssessmentDate.value'], '%d/%m/%Y') # 01/08/1996
+            except:
+                assess_date = datetime.strptime('01/12/2016', '%d/%m/%Y')
             a = redlist_models.Assessment(
                 taxon=species, date=assess_date
             )
@@ -204,9 +218,9 @@ def import_sis():
                     'Non-breeding Range': 'AOODetails.nonbreedingRangeJustification',
                     'Locations': 'LocationsNumber.justification',
                     'Range protection': 'InPlaceLandWaterProtectionInPA.note'}
-            for key, value in temp.items():
-                if value in row:
-                    a.distribution_narrative += '<h3>' + key + '</h3><div>' + row[value] + '</div>'
+            #for key, value in temp.items():
+            #    if value in row:
+            #        a.distribution_narrative += '<h3>' + key + '</h3><div>' + row[value] + '</div>'
 
             # Distribution/population/habitat decline
             temp = ['AOOContinuingDecline.justification', 'AOOExtremeFluctuation.justification', 'AreaRestricted.justification', 'EOOContinuingDecline.justification', 'EOOExtremeFluctuation.justification', 'HabitatContinuingDecline.justification', 'LocationContinuingDecline.justification', 'LocationExtremeFluctuation.justification', 'SevereFragmentation.justification']
@@ -227,13 +241,13 @@ def import_sis():
                 if value in assess_row:
                     a.population_trend_narrative += '<h3>' + key + '</h3><div>' + assess_row[value] + '</div>'
 
-            temp = ['ExtinctionProbabilityGenerations3.justification', 'ExtinctionProbabilityGenerations5.justification', 'ExtinctionProbabilityYears100.justification', 'GenerationLength.justification', 'PopulationDeclineGenerations1.justification', 'PopulationDeclineGenerations2.justification', 'PopulationDeclineGenerations3.justification', 'PopulationReductionFuture.justification', 'PopulationReductionPast.justification', 'PopulationReductionPastandFuture.justification', 'SubpopulationContinuingDecline.justification', 'SubpopulationExtremeFluctuation.justification', 'SubpopulationNumber.justification']
-            texts = [row[t] for t in temp if t in row]
-            if texts:
-                a.population_trend_narrative += '<h3>Decline</h3><p>' + '</p><p>'.join(texts) + '</p>'
+            #temp = ['ExtinctionProbabilityGenerations3.justification', 'ExtinctionProbabilityGenerations5.justification', 'ExtinctionProbabilityYears100.justification', 'GenerationLength.justification', 'PopulationDeclineGenerations1.justification', 'PopulationDeclineGenerations2.justification', 'PopulationDeclineGenerations3.justification', 'PopulationReductionFuture.justification', 'PopulationReductionPast.justification', 'PopulationReductionPastandFuture.justification', 'SubpopulationContinuingDecline.justification', 'SubpopulationExtremeFluctuation.justification', 'SubpopulationNumber.justification']
+            #texts = [row[t] for t in temp if t in row]
+            #if texts:
+            #    a.population_trend_narrative += '<h3>Decline</h3><p>' + '</p><p>'.join(texts) + '</p>'
 
-            if 'PopulationTrend.value' in assess_row:
-                a.population_trend = assess_row['PopulationTrend.value']
+            #if 'PopulationTrend.value' in assess_row:
+            #    a.population_trend = assess_row['PopulationTrend.value']
 
             if 'ConservationActionsDocumentation.narrative' in assess_row:
                 a.conservation_narrative = assess_row['ConservationActionsDocumentation.narrative']
@@ -282,8 +296,6 @@ def import_sis():
                     print(r['year'])
                     continue
 
-
-
                 # For the year you sometimes have 1981b for example, so just get first 4 chars
                 bibtex_dict = {'title': r['title'],
                                'author': author_string}
@@ -295,7 +307,7 @@ def import_sis():
                 except ValueError:
                     bibtex_dict['year'] = str(r['year'])
 
-                # Fuck I don't understand why people try to make bibliographic data relational, it's a headache
+                # I don't understand why people try to make bibliographic data relational, it's a headache
                 # When there's a perfectly good language designed to hold and express it - bibtex
                 # I am sticking it all in a dictionary apart from title, year and authors, and use bibtexparser to convert
                 # Now I have to add this and that depending on type. FML. Going to get rid of all empty stuff first
@@ -355,12 +367,12 @@ def import_sis():
                     if 'publisher' in r:
                         bibtex_dict['publisher'] = r['publisher']
                 elif r['type'] == 'report':
+                    bibtex_dict['ENTRYTYPE'] = 'techreport'
                     if 'publisher' in r:
                         bibtex_dict['institution'] = r['publisher']
                     if 'place_published' in r:
                         bibtex_dict['address'] = r['place_published']
                 else:
-                    print(r)
                     import pdb; pdb.set_trace() # It's some type we haven't thought of yet
 
                 # from bibtexparser.bwriter import BibTexWriter; from bibtexparser.bibdatabase import BibDatabase
@@ -484,14 +496,16 @@ def create_taxon_from_sis(row, mendeley_session):
 
     # Finally add the species to the taxa hierarchy
     rank = models.Rank.objects.get(name='Species')
-    species_name = parent.name + ' ' + row['species'].strip().capitalize()
+    species_name = parent.name + ' ' + row['species'].strip().lower()
     species, created = models.Taxon.objects.get_or_create(parent=parent, name=species_name, rank=rank)
 
     # Subspecies
-    if row['infra_name'].strip() != '':
+    if isinstance(row['infra_name'], str):
+        print('subspecies')
+        # import pdb; pdb.set_trace()
         rank = models.Rank.objects.get(name='Subspecies')
-        subspecies_name = species_name + ' ' + row['infra_name']
-        species, created = models.Taxon.objects.get_or_create(parent=parent, name=species_name, rank=rank)
+        subspecies_name = species_name + ' ' + row['infra_name'].strip().lower()
+        species, created = models.Taxon.objects.get_or_create(parent=species, name=subspecies_name, rank=rank)
 
     if not created:
         print('species already exists in db')

@@ -37,6 +37,28 @@ class ThreatNatureSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('severity', 'threat', 'timing')
 
 
+class AssessmentSimpleSerializer(serializers.ModelSerializer):
+    scope = serializers.CharField(source='get_scope_display')
+    redlist_category_display = serializers.CharField(source='get_redlist_category_display')
+    taxon = serializers.StringRelatedField(read_only=True)
+    taxon_id = serializers.PrimaryKeyRelatedField(read_only=True)
+    date = serializers.DateField(format='%b %Y')
+
+    class Meta:
+        model = Assessment
+        fields = ('id',
+                  'contribution_set',
+                  'taxon',
+                  'taxon_id',
+                  'scope',
+                  'rationale',
+                  'change_rationale',
+                  'date',
+                  'redlist_category',
+                  'redlist_category_display',
+                  'redlist_criteria')
+
+
 class AssessmentSerializer(serializers.ModelSerializer):
     # Fields for overwriting the default serializer classes
     scope = serializers.CharField(source='get_scope_display')

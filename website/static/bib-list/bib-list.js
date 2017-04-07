@@ -2514,8 +2514,10 @@ var bibtexify = (function($) {
         authors2html: function(authorData) {
             var authorsStr = '';
             for (var index = 0; index < authorData.length; index++) {
+                authorsStr = authorsStr.trim(); // Added by Rukaya
                 if (index > 0) { authorsStr += ", "; }
-                authorsStr += authorData[index].last;
+                //authorsStr += authorData[index].last;
+                authorsStr += authorData[index].last + ' ' + authorData[index].first.trim();
             }
             return htmlify(authorsStr);
         },
@@ -2585,10 +2587,9 @@ var bibtexify = (function($) {
         },
         article: function(entryData) {
             return this.authors2html(entryData.author) + " (" + entryData.year + "). " +
-                entryData.title + ". <em>" + entryData.journal + ", " + entryData.volume +
-                ((entryData.number)?"(" + entryData.number + ")":"")+ ", " +
-                "pp. " + entryData.pages + ". " +
-                ((entryData.address)?entryData.address + ".":"") + "<\/em>";
+                entryData.title + ". <em>" + entryData.journal + "<\/em>" + ((entryData.volume)?", " + entryData.volume:"") + //entryData.title + ". <em>" + entryData.journal + ", " + entryData.volume +
+                ((entryData.number)?"(" + entryData.number + ")":"")+ ((entryData.pages)?": " + entryData.pages:"") + '.' + // "pp. " + entryData.pages + ". " +
+                ((entryData.address)?entryData.address + ".":""); // ((entryData.address)?entryData.address + ".":"") + "<\/em>";
         },
         misc: function(entryData) {
             return this.authors2html(entryData.author) + " (" + entryData.year + "). " +
@@ -2616,7 +2617,7 @@ var bibtexify = (function($) {
             return this.authors2html(entryData.author) + " (" + entryData.year + "). " +
                 entryData.chapter + " in <em>" + entryData.title + "<\/em>, " +
                 ((entryData.editor)?" Edited by " + entryData.editor + ", ":"") +
-                entryData.publisher + ", pp. " + entryData.pages + "" +
+                entryData.publisher + ": " + entryData.pages + "" +
                 ((entryData.series)?", <em>" + entryData.series + "<\/em>":"") +
                 ((entryData.volume)?", Vol. " + entryData.volume + "":"") +
                 ((entryData.issn)?", ISBN: " + entryData.issn + "":"") +

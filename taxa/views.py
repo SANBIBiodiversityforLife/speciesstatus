@@ -34,11 +34,17 @@ def api_root(request, format=None):
 
 @api_view(['GET'])
 def get_images_for_species(request, pk):
-    taxon = models.Taxon.objects.values_list('name', flat=True).get(pk=pk)
-    taxon = taxon.lower()
+    taxon = models.Taxon.objects.get(pk=pk)
+    class_rank = models.Rank.objects.get(name='Class')
+    folder = taxon.get_ancestors().get(rank=class_rank).name.lower()
+    if folder == 'actinopterygii' or folder == 'elasmobranchii' or folder == 'holocephali':
+        folder = 'fish'
+    if folder == 'insecta':
+        order_rank = models.Rank.objects.get(name='Order')
+        folder = taxon.get_ancestors().get(rank=order_rank).name.lower()
+    taxon = taxon.name.lower()
     file_name_template = taxon.replace(' ', '_')
-    file_location = os.path.join(settings.BASE_DIR, 'website', 'static', 'sp-imgs', file_name_template)
-
+    file_location = os.path.join(settings.BASE_DIR, 'website', 'static', 'sp-imgs', folder, file_name_template)
     # Check the file exists, and then extract the IPTC information embedded in the image for attribution & copyright
     # 'thumb': 'sp-imgs/' + taxon.replace(' ', '_') + '__thumb.jpg' - might need to do this later
     i = 1
@@ -47,9 +53,10 @@ def get_images_for_species(request, pk):
     while(os.path.isfile(file_location + '_' + str(i) + '.jpg')):
         file_name = file_name_template + '_' + str(i) + '.jpg'
         info = p.get_json(file_location + '_' + str(i) + '.jpg')
-        return_data = {'file': 'sp-imgs/' + file_name}
+        return_data = {'file': 'sp-imgs/' + folder + '/' + file_name}
         return_data['author'] = 'Unknown' if 'IPTC:By-line' not in info[0] else info[0]['IPTC:By-line']
         return_data['copyright'] = '[None given]' if 'IPTC:CopyrightNotice' not in info[0] else info[0]['IPTC:CopyrightNotice']
+        return_data['source'] = '' if 'IPTC:Source' not in info[0] else info[0]['IPTC:Source']
         file_info.append(return_data)
         i += 1
 
