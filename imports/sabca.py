@@ -523,8 +523,9 @@ def create_taxon_from_sarca_sabca(row):
     # Finally add the species to the taxa hierarchy - sometimes this thing only goes go genus level so put it in an if
     if 'scientific_name' in row:
         rank = models.Rank.objects.get(name='Species')
-        species_name = row['scientific_name'].strip()
+        species_name = row['genus'].strip() + ' ' + row['species'].strip()
         species, created = models.Taxon.objects.get_or_create(parent=parent, name=species_name, rank=rank)
+        parent = species
     else:
         species = parent
 
