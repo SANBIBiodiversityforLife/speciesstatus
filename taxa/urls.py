@@ -22,8 +22,9 @@ urlpatterns = [
 
     url(r'^api/alphabetical-genera/(?P<class>[A-Za-z]+)/(?P<letter>[A-Z])/$', views.AlphabeticalGeneraList.as_view(), name='api_genera_list_default'),
 
-    url(r'^api/category-list/$', views.CategoryList.as_view(), name='api_category_list_default'),
-    url(r'^api/category-list/(?P<category>[A-Z][A-Z])/$', views.CategoryList.as_view(), name='api_category_list'),
+    url(r'^api/category-list/(?P<category>[A-Z][A-Z])/$', views.CategoryList.as_view(), name='api_category_list_default'),
+    # url(r'^api/category-list/(?P<category>[A-Z][A-Z])/$', views.CategoryList.as_view(), name='api_category_list'),
+
     url(r'^api/description-format-write/$', views.create_taxon_authority, name='api_descrip_write'),
     url(r'^api/get-taxa-group-list/$', views.get_taxa_group_list, name='api_get_taxa_group_list'),
     url(r'^api/get-distributions/$', views.get_distributions_from_polygon, name='api_get_taxa_in_polygon'),

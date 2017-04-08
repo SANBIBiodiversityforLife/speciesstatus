@@ -19,11 +19,7 @@ function populate_categories(category_url) {
     url: category_url,
     success: function(data, textStatus, jqXHR) {
       var page_no = data['count']/10;
-      var pagination = '<nav aria-label="Page navigation"><ul class="pagination">';
-      for(i = 1; i < page_no; i++) {
-        pagination += '<li><a href="#">' + i + '</a></li>';
-      }
-      pagination += '</ul></nav>';
+      var pagination = generatePagination(page_no, category_url)
 
       if(data['results'].length == 0){
         $('#redlistcat').append('<p><em>No results</em></p>');
@@ -41,6 +37,10 @@ function populate_categories(category_url) {
           content += '</p>';
         });
         $('#redlistcat').append(content + '<hr>' + pagination);
+
+        $('#redlistcat .pagination a').click(function() {
+          populate_categories($(this).attr('data-letter-href'));
+        });
       }
     }
   });

@@ -106,16 +106,6 @@ class CategoryList(generics.ListCreateAPIView):
         return models.Taxon.objects.filter(assessment__redlist_category=category, rank__in=[species_rank, subspecies_rank]).order_by('name')
 
 
-@api_view(['GET'])
-def alphabetical_genera(request, letter='A'):
-    """An alphabetical listing of genera request.data['letter']"""
-    species_rank = models.Rank.objects.get(name='Species')
-    subspecies_rank = models.Rank.objects.get(name='Subspecies')
-    taxa = models.Taxon.objects.filter(name__startswith=letter, rank__in=[species_rank, subspecies_rank]).order_by('name')
-    taxa = serializers.TaxonBasicSerializerWithRank(taxa, many=True)
-    return Response(taxa.data, status=status.HTTP_202_ACCEPTED)
-
-
 @api_view(['GET', 'POST'])
 def create_taxon_authority(request):
     """

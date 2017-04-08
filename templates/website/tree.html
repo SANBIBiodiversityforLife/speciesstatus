@@ -46,7 +46,7 @@
 var searchAutoCompleteUrl = "{% url 'search_autocomplete' %}";
 var searchRedirectUrl = "{% url 'lineage_pk' 0 %}";
 var generaAZUrl = "{% url 'api_genera_list_default' 'Aves' 'A' %}?format=json";
-var categoryListUrl = "{% url 'api_category_list' 'LC' %}?format=json";
+var categoryListUrl = "{% url 'api_category_list_default' 'LC' %}?format=json";
 var taxaGroupList = "{% url 'api_get_taxa_group_list'%}?format=json";
 </script>
 <script src="{% static 'search.js' %}"></script>
@@ -55,6 +55,23 @@ var taxaGroupList = "{% url 'api_get_taxa_group_list'%}?format=json";
 var getChildrenUrl = "{% url 'api_lineage' 0 %}";
 var taxaDetailUrl = "{% url 'last_assessment_detail' 0 %}";
 var current_pk = {{ pk }};
+
+function generatePagination(page_no, pagination_url) {
+	var pagination = '<nav aria-label="Page navigation"><ul class="pagination">';
+	if(page_no > 1) {
+		for(i = 1; i <= page_no; i++) {
+			if(pagination_url.indexOf('page=') >= 0) {
+				pagination_url = pagination_url.replace(/page=\d/, 'page=' + i);
+			} else {
+				pagination_url += '&page=' + i;
+			}
+			pagination += '<li><a href="#" data-letter-href="' + pagination_url + '">' + i + '</a></li>';
+		}
+	}
+	pagination += '</ul></nav>';
+	return pagination;
+}
+
 </script>
 <script src="{% static 'tree.js' %}"></script>
 <script src="{% static 'genera-az.js' %}"></script>

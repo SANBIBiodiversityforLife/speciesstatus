@@ -49,26 +49,12 @@ $.ajax({
   }
 });
 
-
-
 function populate_genera(letter_url) {
   $.ajax({
     url: letter_url,
     success: function(data, textStatus, jqXHR) {
       var page_no = Math.ceil(data['count']/20);
-      var pagination = '<nav aria-label="Page navigation"><ul class="pagination">';
-      if(page_no > 1) {
-        for(i = 1; i <= page_no; i++) {
-          var pagination_url = letter_url;
-          if(pagination_url.indexOf('page=') >= 0) {
-            pagination_url = pagination_url.replace(/page=\d/, 'page=' + i);
-          } else {
-            pagination_url += '&page=' + i;
-          }
-          pagination += '<li><a href="#" data-letter-href="' + pagination_url + '">' + i + '</a></li>';
-        }
-      }
-      pagination += '</ul></nav>';
+      var pagination = generatePagination(page_no, letter_url)
 
       if(data['results'].length == 0){
         $('#generaResults').html('<p><em>No results</em></p>');
@@ -87,7 +73,7 @@ function populate_genera(letter_url) {
         });
         $('#generaResults').html(content + '<hr>' + pagination);
 
-        $('.pagination a').click(function() {
+        $('#azgenera .pagination a').click(function() {
           populate_genera($(this).attr('data-letter-href'));
         });
       }
