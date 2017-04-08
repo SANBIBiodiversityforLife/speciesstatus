@@ -1,8 +1,17 @@
 var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXY'.split('');
 var alphabet_html = [];
 $.each(alphabet, function(index, value) {
-  alphabet_html.push('<a href="#" data-letter-href="' + generaAZUrl.replace('A', value) + '">' + value + '</a>');
+  alphabet_html.push('<a href="#" data-letter-href="' + change_url_letter(generaAZUrl, value) + '">' + value + '</a>');
 });
+
+function change_url_letter(url, new_letter) {
+  var urlParts = url.split('/');
+  // Sanity check
+  if(urlParts[urlParts.length - 2].length == 1) {
+    urlParts[urlParts.length - 2] = new_letter;
+  }
+  return urlParts.join('/');
+}
 
 $.ajax({
   url: taxaGroupList,
@@ -23,14 +32,12 @@ $.ajax({
       var val = $(this).html();
       $('#generaAZList a').attr('data-letter-href', function() {
         var parts = $(this).attr('data-letter-href').split('/')
-        var previous = parts.pop();
-        var previous = parts.pop();
+        var previous = parts[parts.length - 3];
         return $(this).attr('data-letter-href').replace(previous, val);
       });
       $(this).parent().children('a').removeClass('btn-warning');
       $(this).addClass('btn-warning');
       populate_genera($('#generaAZList a').first().attr('data-letter-href'));
-      //$('#generaAZList a').attr('data-taxa', val);
     });
 
     // Print out the other HTML
@@ -40,7 +47,7 @@ $.ajax({
     });
     $('#azgenera').append('<div id="generaResults"></div>');
   }
-  });
+});
 
 
 
@@ -48,10 +55,18 @@ function populate_genera(letter_url) {
   $.ajax({
     url: letter_url,
     success: function(data, textStatus, jqXHR) {
-      var page_no = data['count']/10;
+      var page_no = Math.ceil(data['count']/20);
       var pagination = '<nav aria-label="Page navigation"><ul class="pagination">';
-      for(i = 1; i < page_no; i++) {
-        pagination += '<li><a href="#">' + i + '</a></li>';
+      if(page_no > 1) {
+        for(i = 1; i <= page_no; i++) {
+          var pagination_url = letter_url;
+          if(pagination_url.indexOf('page=') >= 0) {
+            pagination_url = pagination_url.replace(/page=\d/, 'page=' + i);
+          } else {
+            pagination_url += '&page=' + i;
+          }
+          pagination += '<li><a href="#" data-letter-href="' + pagination_url + '">' + i + '</a></li>';
+        }
       }
       pagination += '</ul></nav>';
 
@@ -71,6 +86,10 @@ function populate_genera(letter_url) {
           content += '</p>';
         });
         $('#generaResults').html(content + '<hr>' + pagination);
+
+        $('.pagination a').click(function() {
+          populate_genera($(this).attr('data-letter-href'));
+        });
       }
     }
   });

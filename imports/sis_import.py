@@ -1,20 +1,12 @@
-from django.shortcuts import render
-from taxa import models
+from taxa import models, helpers
 from biblio import models as biblio_models
 from people import models as people_models
 from redlist import models as redlist_models
-import csv
-from suds.client import Client
-import requests
 from mendeley import Mendeley
-import re
-from django.db.models import Count
 from django.http import HttpResponse
 import pandas as pd
 from psycopg2.extras import NumericRange
-from imports import views as imports_views
 from datetime import datetime
-from decimal import Decimal
 
 
 def import_phylums():
@@ -287,7 +279,7 @@ def import_sis():
             # References for the redlist assessment - nightmarish
             ref_rows = biblio.loc[biblio['internal_taxon_id'] == row['internal_taxon_id']]
             for i, r in ref_rows.iterrows():
-                authors = imports_views.create_authors(r['author'])
+                authors = helpers.create_authors(r['author'])
                 author_string = [x.surname + " " + x.initials for x in authors]
                 author_string = ' and '.join(author_string)
 
@@ -341,7 +333,7 @@ def import_sis():
                             bibtex_dict['title'] = r['secondary_title'] # This is the chapter's title. ARGH.
                         bibtex_dict['booktitle'] = r['title']
                         if 'secondary_author' in r:
-                            chapter_authors = imports_views.create_authors(r['secondary_author'])
+                            chapter_authors = helpers.create_authors(r['secondary_author'])
                             chapter_author_string = ' and '.join([x.surname + " " + x.initials for x in chapter_authors])
                             authors = chapter_authors
                             bibtex_dict['editor'] = author_string
@@ -459,7 +451,7 @@ def import_sis():
             people_rows = ppl_old.loc[ppl_old['internal_taxon_id'] == row['internal_taxon_id']]
             for i, p in people_rows.iterrows():
                 if p['text'] and not pd.isnull(p['text']) and p['text'].strip() != '':
-                    ps = imports_views.create_authors(p['text'])
+                    ps = helpers.create_authors(p['text'])
                     for i, person in enumerate(ps):
                         c = redlist_models.Contribution(person=person, assessment=a, weight=i,
                                                         type=contribution_type_lookup[p['credit_type']])
@@ -518,6 +510,6 @@ def create_taxon_from_sis(row, mendeley_session):
             species.save()
 
         # Create a description and set of references
-        imports_views.create_taxon_description(row['taxonomicAuthority'], species, mendeley_session)
+        helpers.create_taxon_description(row['taxonomicAuthority'], species, mendeley_session)
 
     return species, created

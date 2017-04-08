@@ -45,7 +45,7 @@
 <script>
 var searchAutoCompleteUrl = "{% url 'search_autocomplete' %}";
 var searchRedirectUrl = "{% url 'lineage_pk' 0 %}";
-var generaAZUrl = "{% url 'api_genera_list' 'A' 'Aves' %}?format=json";
+var generaAZUrl = "{% url 'api_genera_list_default' 'Aves' 'A' %}?format=json";
 var categoryListUrl = "{% url 'api_category_list' 'LC' %}?format=json";
 var taxaGroupList = "{% url 'api_get_taxa_group_list'%}?format=json";
 </script>

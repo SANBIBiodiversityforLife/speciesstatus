@@ -1,6 +1,5 @@
 from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
-from django.utils import formats
 from django.contrib.postgres.fields import IntegerRangeField, ArrayField, DateRangeField
 from mptt.models import MPTTModel, TreeForeignKey
 from biblio.models import Reference

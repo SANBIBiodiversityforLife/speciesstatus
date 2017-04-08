@@ -1,6 +1,5 @@
-from taxa import models
+from taxa import models, helpers
 from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
-from rest_framework.views import APIView
 from taxa import serializers
 from rest_framework.decorators import api_view
 from rest_framework.reverse import reverse
@@ -8,14 +7,10 @@ from rest_framework import status
 from rest_framework import generics, pagination
 from rest_framework.response import Response
 from rest_framework import filters
-from rest_framework import mixins
 from mptt.utils import drilldown_tree_for_node
-from imports import views as imports_views
 import os
 from django.conf import settings
 import pyexifinfo as p
-
-
 
 
 @api_view(['GET'])
@@ -66,14 +61,13 @@ def get_images_for_species(request, pk):
         return Response(False, status=status.HTTP_202_ACCEPTED)
 
 
-
 @api_view(['POST'])
 def get_distributions_from_polygon(request):
     import pdb; pdb.set_trace()
 
 
 class LargePagination(pagination.PageNumberPagination):
-    page_size = 30
+    page_size = 20
 
 
 @api_view(['GET'])
@@ -86,9 +80,9 @@ def get_taxa_group_list(request):
 
 
 class AlphabeticalGeneraList(generics.ListCreateAPIView):
-    """An alphabetical listing of genera"""
+    """An alphabetical listing of genera, used in the explore tab"""
     serializer_class = serializers.TaxonBasicSerializerWithRank
-    pagination_class=LargePagination
+    pagination_class = LargePagination
 
     def get_queryset(self):
         letter = 'A' if 'letter' not in self.kwargs else self.kwargs['letter']
@@ -98,11 +92,10 @@ class AlphabeticalGeneraList(generics.ListCreateAPIView):
         species_rank = models.Rank.objects.get(name='Species')
         subspecies_rank = models.Rank.objects.get(name='Subspecies')
         return class_node.get_descendants().filter(name__startswith=letter, rank__in=[species_rank, subspecies_rank]).order_by('name')
-        #return models.Taxon.objects.filter(name__startswith=letter, rank__in=[species_rank, subspecies_rank]).order_by('name')
 
 
 class CategoryList(generics.ListCreateAPIView):
-    """A list of species by redlist category"""
+    """A list of species by redlist category, used in the explore tab"""
     serializer_class = serializers.TaxonBasicSerializerWithRank
     pagination_class=LargePagination
 
@@ -131,14 +124,14 @@ def create_taxon_authority(request):
     if request.method == 'POST':
         taxon = models.Taxon.objects.get(pk=request.data['taxon_pk'])
         a_s = request.data['author_string']
-        desc, created = imports_views.create_taxon_description(authority=str(request.data['author_string']), taxon=taxon)
+        desc, created = helpers.create_taxon_description(authority=str(request.data['author_string']), taxon=taxon)
         desc_s = serializers.DescriptionWriteSerializer(desc)
         if created:
             return Response(desc_s.data, status=status.HTTP_202_ACCEPTED)
         else:
             return Response(desc_s.data, status=status.HTTP_201_CREATED)
 
-    #imports_views.create_taxon_description(request['data'],
+    #helpers.create_taxon_description(request['data'],
 
 
 class RankList(generics.ListCreateAPIView):

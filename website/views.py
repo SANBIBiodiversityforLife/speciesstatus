@@ -1,21 +1,4 @@
-from django.shortcuts import render
-from rest_framework.renderers import TemplateHTMLRenderer
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.decorators import api_view, permission_classes
-from mptt.templatetags.mptt_tags import cache_tree_children
-from taxa import models as taxa_models
-from taxa import serializers as taxa_serializers
-import json
-from rest_framework.renderers import JSONRenderer
-from mptt.utils import drilldown_tree_for_node
-
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework.reverse import reverse
 from django.views.generic.base import TemplateView
-#import feedparser
-#feeds = feedparser.parse('http://johnsmallman.wordpress.com/author/johnsmallman/feed/')
 
 
 class IndexView(TemplateView):
@@ -25,6 +8,26 @@ class IndexView(TemplateView):
 class AboutView(TemplateView):
     template_name = 'website/about.html'
 
-class MapView(TemplateView):
+
+class SearchView(TemplateView):
     template_name = 'website/main_map.html'
 
+
+class ExploreView(TemplateView):
+    template_name = 'website/tree.html'
+
+
+class TaxonView(TemplateView):
+    template_name = 'website/taxon.html'
+
+
+class AssessmentView(TemplateView):
+    template_name = 'website/assessment.html'
+
+
+class DistributionView(TemplateView):
+    template_name = 'website/distribution.html'
+
+
+#class MapSearchView(TemplateView):
+#    template_name = 'website/main_map.html'

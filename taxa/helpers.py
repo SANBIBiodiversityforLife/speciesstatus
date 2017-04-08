@@ -45,54 +45,6 @@ def create_point_distribution(row):
     return pt
 
 
-# Run after all of the imports have gone through
-def populate_higher_level_common_names(request):
-    ranks = models.Rank.objects.filter(name__in=['Genus', 'Family', 'Order', 'Phylum', 'Class'])
-    taxa = models.Taxon.objects.filter(rank__in=ranks, common_names__isnull=True)
-    english = models.Language.objects.get(name='English')
-
-    # Manually found some nodes common names
-    pwd = os.path.abspath(os.path.dirname(__file__))
-    common_names = {}
-    with open(os.path.join(pwd, '..', 'data-sources', 'common_names.csv')) as csv_file:
-        reader = csv.reader(csv_file)
-        for row in reader:
-            common_names[row[0]] = row[1]
-
-    for taxon in taxa:
-        taxon_name = taxon.name.lower()
-
-        # Try and get it in my list first
-        if taxon_name in common_names:
-            common_name = models.CommonName.objects.get_or_create(name=common_names[taxon_name], taxon=taxon, language=english)
-            continue
-
-        # Otherwise search GBIF
-        r = requests.get('http://api.gbif.org/v1/species/search?q=' + taxon.name.lower() + '&rank=' + str(taxon.rank))
-        gbif = r.json()
-        print('-----')
-        try:
-            print(taxon.name.lower())
-        except:
-            print('could not print')
-        #import pdb; pdb.set_trace()
-        try:
-            for result in gbif['results']:
-                if 'vernacularNames' in result and len(result['vernacularNames']) > 0:
-                    for vn in result['vernacularNames']:
-                        if vn['language'].lower() == '' or vn['language'].lower() == 'english':
-                            common_name_text = vn['vernacularName'] # Reasonable to assume english?
-                            common_name = models.CommonName.objects.get_or_create(name=common_name_text, taxon=taxon, language=english)
-                            print('GBIF ' + taxon.name.lower() + ' : ' + common_name_text)
-                            break
-        except (KeyError, IndexError, UnicodeDecodeError, UnicodeEncodeError):
-            import pdb; pdb.set_trace()
-        # common_name.save()
-
-    #r = requests.get('http://api.gbif.org/v1/species?' + )
-    #r.json()
-
-
 def create_authors(author_string):
     """
     Splits up an author string formatted as e.g. Braack, H.H., Bishop, P.J. and Knoepfer, D.

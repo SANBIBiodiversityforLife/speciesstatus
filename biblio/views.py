@@ -2,16 +2,11 @@ from biblio import models, serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from pybib import utils
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view
 import re
 import requests
 import bibtexparser
-import pybtex
-from io import StringIO
 from rest_framework import generics
-import pybtex.database.input.bibtex
-
 
 
 class RefList(generics.ListCreateAPIView):

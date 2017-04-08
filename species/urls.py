@@ -27,10 +27,7 @@ urlpatterns = [
     # Include login URLs for the browsable API
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
-    #url(r'^api/', website_views.api_root, name='api_root'),
-
     # Import of content
-    # url(r'^taxa/import-seakeys$', taxa_views.import_seakeys, name='import_seakeys'),
     url(r'^import/', include('imports.urls')),
 
     url(r'^taxa/', include('taxa.urls')),
@@ -41,5 +38,4 @@ urlpatterns = [
     # Index
     url(r'^$', xframe_options_exempt(website_views.IndexView.as_view()), name='index'),
     url(r'^about/$', website_views.AboutView.as_view(), name='about'),
-    url(r'^map/$', website_views.MapView.as_view(), name='map'),
 ]

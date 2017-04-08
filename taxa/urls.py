@@ -19,8 +19,9 @@ urlpatterns = [
     url(r'^api/info-write/$', views.InfoWrite.as_view(renderer_classes=(BrowsableAPIRenderer, JSONRenderer)), name='api_info_write'),
     url(r'^api/cn-write/$', views.CommonNameWrite.as_view(renderer_classes=(BrowsableAPIRenderer, JSONRenderer)), name='api_cn_write'),
     url(r'^api/rank-list/$', views.RankList.as_view(renderer_classes=(BrowsableAPIRenderer, JSONRenderer)), name='api_rank_list'),
-    url(r'^api/alphabetical_genera/$', views.AlphabeticalGeneraList.as_view(), name='api_genera_list_default'),
-    url(r'^api/alphabetical_genera/(?P<letter>[A-Z])/(?P<class>[A-Za-z]+)/$', views.AlphabeticalGeneraList.as_view(), name='api_genera_list'),
+
+    url(r'^api/alphabetical-genera/(?P<class>[A-Za-z]+)/(?P<letter>[A-Z])/$', views.AlphabeticalGeneraList.as_view(), name='api_genera_list_default'),
+
     url(r'^api/category-list/$', views.CategoryList.as_view(), name='api_category_list_default'),
     url(r'^api/category-list/(?P<category>[A-Z][A-Z])/$', views.CategoryList.as_view(), name='api_category_list'),
     url(r'^api/description-format-write/$', views.create_taxon_authority, name='api_descrip_write'),

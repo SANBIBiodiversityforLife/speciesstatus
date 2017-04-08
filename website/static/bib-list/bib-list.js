@@ -2513,11 +2513,13 @@ var bibtexify = (function($) {
         // converts the given author data into HTML
         authors2html: function(authorData) {
             var authorsStr = '';
-            for (var index = 0; index < authorData.length; index++) {
-                authorsStr = authorsStr.trim(); // Added by Rukaya
-                if (index > 0) { authorsStr += ", "; }
-                //authorsStr += authorData[index].last;
-                authorsStr += authorData[index].last + ' ' + authorData[index].first.trim();
+            if(authorData) {
+              for (var index = 0; index < authorData.length; index++) {
+                  authorsStr = authorsStr.trim(); // Added by Rukaya
+                  if (index > 0) { authorsStr += ", "; }
+                  //authorsStr += authorData[index].last;
+                  authorsStr += authorData[index].last + ' ' + authorData[index].first.trim();
+              }
             }
             return htmlify(authorsStr);
         },

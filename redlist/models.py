@@ -2,7 +2,7 @@ from django.contrib.gis.db import models
 from taxa.models import Taxon
 from people.models import Person
 from biblio.models import Reference
-from django.contrib.postgres.fields import IntegerRangeField, ArrayField, DateRangeField, HStoreField
+from django.contrib.postgres.fields import IntegerRangeField, HStoreField
 
 
 class Threat(models.Model):

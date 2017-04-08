@@ -1,17 +1,10 @@
-
-from django.shortcuts import render
 from taxa import models
 from biblio import models as biblio_models
 from people import models as people_models
 from redlist import models as redlist_models
-from suds.client import Client
-import requests
 from mendeley import Mendeley
-import re
-from django.db.models import Count
 from django.http import HttpResponse
 import pandas as pd
-import pypyodbc
 import pymysql
 from psycopg2.extras import NumericRange
 from imports import views as imports_views

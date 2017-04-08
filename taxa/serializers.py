@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from taxa.models import Taxon, Info, CommonName, GeneralDistribution, Description, PointDistribution
-from rest_framework_recursive.fields import RecursiveField
 from biblio.serializers import ReferenceDOISerializer
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 

@@ -1,19 +1,11 @@
-
-from django.shortcuts import render
-from taxa import models
+from taxa import models, helpers
 from biblio import models as biblio_models
 from people import models as people_models
 from redlist import models as redlist_models
-from suds.client import Client
-import requests
-from mendeley import Mendeley
-import re
-from django.db.models import Count
 from django.http import HttpResponse
 import pandas as pd
 import pypyodbc
 from psycopg2.extras import NumericRange
-from imports import views as imports_views
 import datetime
 from django.contrib.gis.geos import Point
 import re
@@ -309,7 +301,7 @@ FROM vm_data;"""
 
             ref_rows = biblio.loc[biblio['sp_code'] == row['sp_code']]
             for i, r in ref_rows.iterrows():
-                authors = imports_views.create_authors(r['authors'])
+                authors = helpers.create_authors(r['authors'])
                 author_string = [x.surname + " " + x.initials for x in authors]
                 author_string = ' and '.join(author_string)
 
@@ -476,7 +468,7 @@ FROM vm_data;"""
                             point.date = datetime.date(int(occur['year']), (int(month)+1), 1)
                     # if 'collector' in occur:
                     #     import pdb; pdb.set_trace()
-                    #     person = imports_views.create_authors(occur['collector'])[0]
+                    #     person = helpers.create_authors(occur['collector'])[0]
                     #     point.collector = person
                     if 'locus' in occur:
                         point.qds = occur['locus']
@@ -547,6 +539,6 @@ def create_taxon_from_sarca_sabca(row):
 
         # Create a description and set of references
         if 'taxonomic_authority' in row:
-            imports_views.create_taxon_description(row['taxonomic_authority'], species)
+            helpers.create_taxon_description(row['taxonomic_authority'], species)
 
     return species, created

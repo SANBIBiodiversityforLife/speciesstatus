@@ -14,7 +14,10 @@
   $(document).ready(function() {
     bibtexify("#bibtex", "pubTable");
 
-    console.log({% url 'redlist_citation' id %});
+    $.ajax({
+      url: "{% url 'redlist_citation' id %}?format=json",
+      success: function(citation, textStatus, jqXHR) { $('.howtocite').children('p').html(citation); },
+    });
 
     // References
     $('.references').hide();

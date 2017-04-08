@@ -1,20 +1,13 @@
-from django.shortcuts import render
 from taxa import models
 from biblio import models as biblio_models
 from people import models as people_models
 from redlist import models as redlist_models
 import csv
 from suds.client import Client
-import requests
 from mendeley import Mendeley
 import re
-from django.db.models import Count
-from django.http import HttpResponse
-import pandas as pd
-from psycopg2.extras import NumericRange
 from imports import views as imports_views
 import os
-from urllib.request import urlopen
 import shutil
 from django.conf import settings
 import subprocess
