@@ -7,42 +7,46 @@ import requests
 import os
 from django.contrib.gis.geos import Point, Polygon
 import re
-import datetime
 
-def create_point_distribution(row):
-    """Used by the import distribution functions"""
-    if 'species' not in row or 'genus' not in row or 'long' not in row or 'lat' not in row:
-        return False
 
-    name = row['genus'].strip() + ' ' + row['species'].strip()
-    if 'subspecies' in row:
-        name += ' ' + row['subspecies'].strip()
-    try:
-        taxon = models.Taxon.objects.get(name=name)
-    except models.Taxon.DoesNotExist:
-        print('could not find ' + name)
-        return False
+def create_authors_from_bibtex_string(author_string):
+    """
+    creates authors from a string formatted in the bibtex style
+    :param author_string: Firstname Surname separated by ands
+    :return: array of Person objects
+    """
+    author_list = author_string.split(' and ')
+    people = []
+    for author in author_list:
+        name_parts = author.split(',')
+        if len(name_parts) != 2:
+            surname = name_parts[0].strip()
+            initials = ''
+        else:
+            surname = name_parts[0].strip()
+            initials = name_parts[1].strip()
 
-    pt = models.PointDistribution(taxon=taxon, point=Point(float(row['long']), float(row['lat'])))
-    optional_fields = ['precision', 'origin_code', 'qds']
-    for optional_field in optional_fields:
-        if optional_field in row:
-            setattr(pt, optional_field, row[optional_field])
+        person = get_or_create_person(surname=surname, initials=initials)
+        people.append(person)
+    return people
 
-    #if 'collector' in row:
-    #    pt.
 
-    if 'year' in row and row['year'] > 0:
-        month = int(float(str(row['month']).strip())) if 'month' in row else 1
-        month = month if month > 0 and month < 13 else 1
-        day = int(float(str(row['day']).strip())) if 'day' in row else 1
-        day = day if day > 0 and day < 31 else 1
-        try:
-            pt.date = datetime.date(year=int(float(str(row['year']).strip())), month=month, day=day)
-        except ValueError:
-            import pdb; pdb.set_trace()
-    pt.save()
-    return pt
+def get_or_create_person(surname, initials):
+    # Try and get all possible people in the database first
+    p = models.Person.objects.filter(surname=surname, initials=initials).first()
+
+    # If there's nobody there then try get same surname and no initials, it's probably the same person
+    # Someone can split it out later manually if it's not
+    if p is None:
+        p = models.Person.objects.filter(surname=surname, initials__isnull=True, initials__exact='').first()
+        if p is None:
+            # Otherwise if we can't find anyone with the same surname make a new person
+            p = models.Person(surname=surname, initials=initials)
+        else:
+            p.initials = initials
+        p.save()
+
+    return p
 
 
 def create_authors(author_string):
@@ -63,22 +67,8 @@ def create_authors(author_string):
     for m in matches:
         surname = m[0]
         initials = m[1]
-
-        # Try and get all possible people in the database first
-        p = people_models.Person.objects.filter(surname=surname, initials=initials).first()
-
-        # If there's nobody there then try get same surname and no initials, it's probably the same person
-        # Someone can split it out later manually if it's not
-        if p is None:
-            p = people_models.Person.objects.filter(surname=surname, initials__isnull=True, initials__exact='').first()
-            if p is None:
-                # Otherwise if we can't find anyone with the same surname make a new person
-                p = people_models.Person(surname=surname, initials=initials)
-            else:
-                p.initials = initials
-            p.save()
-
-        people.append(p)
+        person = get_or_create_person(surname=surname, initials=initials)
+        people.append(person)
     return people
 
 

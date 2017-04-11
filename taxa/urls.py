@@ -23,7 +23,6 @@ urlpatterns = [
     url(r'^api/alphabetical-genera/(?P<class>[A-Za-z]+)/(?P<letter>[A-Z])/$', views.AlphabeticalGeneraList.as_view(), name='api_genera_list_default'),
 
     url(r'^api/category-list/(?P<category>[A-Z][A-Z])/$', views.CategoryList.as_view(), name='api_category_list_default'),
-    # url(r'^api/category-list/(?P<category>[A-Z][A-Z])/$', views.CategoryList.as_view(), name='api_category_list'),
 
     url(r'^api/description-format-write/$', views.create_taxon_authority, name='api_descrip_write'),
     url(r'^api/get-taxa-group-list/$', views.get_taxa_group_list, name='api_get_taxa_group_list'),
@@ -31,7 +30,7 @@ urlpatterns = [
     url(r'^get-images/(?P<pk>\d*)/$', views.get_images_for_species, name='api_get_images'),
 
     # HTML template views
-    url(r'^detail/(?P<pk>[0-9]+)/$', views.TaxonDetail.as_view(renderer_classes=(TemplateHTMLRenderer,)), name='taxa_detail'),
+    url(r'^detail/(?P<pk>[0-9]+)/$', views.TaxonDetail.as_view(renderer_classes=(TemplateHTMLRenderer, JSONRenderer)), name='taxa_detail'),
     url(r'^list/$', views.TaxonListView.as_view(renderer_classes=(TemplateHTMLRenderer, JSONRenderer, BrowsableAPIRenderer)), name='search_autocomplete'),
     url(r'^lineage/(?P<pk>\d*)/$', views.LineageView.as_view(renderer_classes=(TemplateHTMLRenderer,)), name='lineage_pk'),
     url(r'^distribution/(?P<pk>\d*)/$', views.DistributionList.as_view(renderer_classes=(TemplateHTMLRenderer, JSONRenderer)), name='distribution_list_polygon'),

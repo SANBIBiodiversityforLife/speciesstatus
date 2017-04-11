@@ -7,6 +7,7 @@ from django.http import HttpResponse
 import pandas as pd
 from psycopg2.extras import NumericRange
 from datetime import datetime
+import os
 
 
 def import_phylums():
@@ -33,32 +34,34 @@ def import_sis():
     mendeley_session = mendeley.start_client_credentials_flow().authenticate()
 
     # All of the IUCN SIS data are presented in CSV form
-    dir = 'C:\\Users\\JohaadienR\\Documents\\Projects\\python-sites\\species\\data-sources\\'
+    pwd = os.path.abspath(os.path.dirname(__file__))
+    pwd = os.path.join(pwd, '..', 'data-sources')
 
     # Amphibians
-    animal_dirs = ['SIS_Amphibians\\Amphibians\\', 'SIS_Dragonflies\\new\\', 'SIS_Mammals\\', 'SIS_Reptiles\\']
+    animal_dirs = [os.path.join('SIS_Amphibians', 'draft'), os.path.join('Amphibians', 'published'),
+                   'SIS_Dragonflies', 'SIS_Mammals', 'SIS_Reptiles']
     # animal_dirs = ['Reptiles_SIS\\']
     for animal_dir in animal_dirs:
-        animal_dir = dir + animal_dir
-        af = pd.read_csv(animal_dir + 'allfields.csv', encoding='UTF-8') # iso-8859-1
-        t = pd.read_csv(animal_dir + 'taxonomy.csv', encoding='UTF-8')
-        cn = pd.read_csv(animal_dir + 'commonnames.csv', encoding='UTF-8') # UTF-8
-        assess = pd.read_csv(animal_dir + 'assessments.csv', encoding='UTF-8')
-        cons_actions = pd.read_csv(animal_dir + 'conservationneeded.csv', encoding='UTF-8')
-        habitats = pd.read_csv(animal_dir + 'habitats.csv', encoding='UTF-8')
-        threats = pd.read_csv(animal_dir + 'threats.csv', encoding='UTF-8')
-        biblio = pd.read_csv(animal_dir + 'references.csv')
-        research = pd.read_csv(animal_dir + 'researchneeded.csv', encoding='UTF-8')
+        animal_dir = os.path.join(pwd, animal_dir)
+        af = pd.read_csv(os.path.join(animal_dir, 'allfields.csv'), encoding='UTF-8') # iso-8859-1
+        t = pd.read_csv(os.path.join(animal_dir, 'taxonomy.csv'), encoding='UTF-8')
+        cn = pd.read_csv(os.path.join(animal_dir, 'commonnames.csv'), encoding='UTF-8') # UTF-8
+        assess = pd.read_csv(os.path.join(animal_dir, 'assessments.csv'), encoding='UTF-8')
+        cons_actions = pd.read_csv(os.path.join(animal_dir, 'conservationneeded.csv'), encoding='UTF-8')
+        habitats = pd.read_csv(os.path.join(animal_dir, 'habitats.csv'), encoding='UTF-8')
+        threats = pd.read_csv(os.path.join(animal_dir, 'threats.csv'), encoding='UTF-8')
+        biblio = pd.read_csv(os.path.join(animal_dir, 'references.csv'))
+        research = pd.read_csv(os.path.join(animal_dir, 'researchneeded.csv'), encoding='UTF-8')
 
         # I bet they did this just to annoy all future developers
-        ppl = pd.read_csv(animal_dir + 'credits.csv')
-        ppl_old = pd.read_csv(animal_dir + 'credits_old.csv')
+        ppl = pd.read_csv(os.path.join(animal_dir, 'credits.csv'))
+        ppl_old = pd.read_csv(os.path.join(animal_dir, 'credits_old.csv'))
 
         # Lookups
-        research_lookup = pd.read_csv(dir + 'research_lookup.csv', encoding='UTF-8')
-        threats_lookup = pd.read_csv(dir + 'threat_lookup.csv', encoding='UTF-8')
-        habitats_lookup = pd.read_csv(dir + 'habitat_lookup.csv', encoding='UTF-8')
-        cons_actions_lookup = pd.read_csv(dir + 'cons_actions_lookup.csv', encoding='UTF-8')
+        research_lookup = pd.read_csv(os.path.join(pwd, 'research_lookup.csv'), encoding='UTF-8')
+        threats_lookup = pd.read_csv(os.path.join(pwd, 'threat_lookup.csv'), encoding='UTF-8')
+        habitats_lookup = pd.read_csv(os.path.join(pwd, 'habitat_lookup.csv'), encoding='UTF-8')
+        cons_actions_lookup = pd.read_csv(os.path.join(pwd, 'cons_actions_lookup.csv'), encoding='UTF-8')
 
         # These lists we use below as we iterate over all the assessments
         exclude_from_assessment = [
@@ -373,8 +376,7 @@ def import_sis():
                 bibtex_dict['ID'] = row['internal_taxon_id']
 
                 # Create and save the reference object
-                ref = biblio_models.Reference(title=bibtex_dict['title'],
-                                              bibtex=bibtex_dict)
+                ref = biblio_models.Reference(title=bibtex_dict['title'], bibtex=bibtex_dict)
 
                 try:
                     ref.year = int(bibtex_dict['year'])

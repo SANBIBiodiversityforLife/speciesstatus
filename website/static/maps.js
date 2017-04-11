@@ -5,9 +5,10 @@ function init_map(point_data, poly_data) {
   map.options.maxZoom = 7;
   map.fire('zoomend');
 
-
+  // This lets people measure area and so on
   var measureControl = new L.Control.Measure();
   measureControl.addTo(map);
+
   // Add the baselayers and vegmap overlay
   var vegmapSheet = L.esri.dynamicMapLayer({ url: 'http://bgismaps.sanbi.org/arcgis/rest/services/2012VegMap/MapServer', useCors: false, opacity: 0.5 });
   toggleLayers = { 'Vegmap sheet': vegmapSheet }
@@ -33,9 +34,8 @@ function init_map(point_data, poly_data) {
     polys.resetStyle(e.target);
   }
 
- console.log(poly_data['results']);
+  // Create a layer for the 'expert opinion' type polygons
   var polys = new L.geoJson(poly_data['results'], {
-
     onEachFeature: function (feature, layer) {
       area = Math.round((L.GeometryUtil.geodesicArea(layer.getLatLngs()[0]))/1000000);
       popup = ' / Extent of occurrence: ' + area + ' km<sup>2</sup>'
@@ -63,31 +63,29 @@ function init_map(point_data, poly_data) {
      //$('#places > tbody:last-child').append(item);
     },
   });
-  polys.addTo(map);
-  // map.fitBounds(polys.getBounds());
-  toggleLayers['Expert opinion'] = polys;
+  if(poly_data['results']['features'].length) {
+    polys.addTo(map);
+    map.fitBounds(polys.getBounds());
+    toggleLayers['Expert opinion'] = polys;
+  }
 
   // Add geojson layer and create a coords list from that for the heatmap
-  coords = []
+  var coords = []
   institutionCodes=[]
   var pts = new L.geoJson(point_data, {
     onEachFeature: function (feature, layer) {
       coords.push([feature.geometry.coordinates[1], feature.geometry.coordinates[0]]);
       var actualCode = feature.properties.origin_code.split('|')[0];
-      if(institutionCodes.includes(actualCode)) { console.log('already in ' + actualCode) }
-      else {
+      if(!institutionCodes.includes(actualCode)) {
         institutionCodes.push(actualCode);
       }
     },
   });
   $('#distribution').html('<span>' + institutionCodes.join('</span><span>') + '</span>');
 
-
-
-  //s.addTo(map);
   // Add heatmap
   heat = L.heatLayer(coords, {
-    radius: 20,
+    radius: 15,
     minOpacity: 0.3,
   }).addTo(map);
   toggleLayers['Heatmap'] = heat;

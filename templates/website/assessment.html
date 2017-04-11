@@ -12,21 +12,36 @@
 <script src="{% static 'bib-list/bib-list.js' %}"></script>
 <script type="text/javascript">
   $(document).ready(function() {
+    // Format the references
     bibtexify("#bibtex", "pubTable");
 
+    // Fill in "how to cite"
     $.ajax({
       url: "{% url 'redlist_citation' id %}?format=json",
-      success: function(citation, textStatus, jqXHR) { $('.howtocite').children('p').html(citation); },
+      success: function(citation, textStatus, jqXHR) { $('p.howtocite').html(citation); },
     });
 
-    // References
+    // Insert the habitat info
+    $('#habitatNarrative').hide();
+    $.ajax({
+      url: "{% url 'taxa_detail' 0 %}".replace('0', id) + "?format=json",
+      success: function(data, textStatus, jqXHR) {
+        if(data['info']['habitat_narrative'].length) {
+          $('#habitatNarrative').show();
+          $('#habitatNarrative div').html(data['info']['habitat_narrative']);
+          $('#habitatNarrative a').attr('href', "{% url 'taxa_detail' 0 %}".replace('0', id));
+        }
+      }
+    });
+
+    // Make the references clickable
     $('.references').hide();
     $('.glyphicon-chevron-down').hide();
     $('#referencesLink').click(function(event) {
       event.preventDefault();
       $('.references').toggle();
-    $('.glyphicon-chevron-down').toggle();
-    $('.glyphicon-chevron-up').toggle();
+      $('.glyphicon-chevron-down').toggle();
+      $('.glyphicon-chevron-up').toggle();
     });
   });
 </script>
@@ -61,11 +76,13 @@
 
 <div class="row">
   <div class="col-md-10">
+    {% if rationale %}
     <section id="species-info">
       <article><h2>Rationale{% if change_rationale %}
         <small>(Changed due to {{ change_rationale|safe }})</small>{% endif %}</h2> {{ rationale|safe }}
       </article>
       {% if distribution_narrative %}<article><h2>Distribution</h2>{{ distribution_narrative|safe }}</article>{% endif %}
+      <!-- See js --><article id="habitatNarrative"><h2>Habitat <small><a href="">View more species info</a></small></h2><div></div></article>
       {% if population_narrative %}<article><h2>Population</h2>{{ population_narrative|safe }}</article>{% endif %}
       {% if population_trend_narrative %}<article id="poptrend">
         <h2>Population trend {% if population_trend_nature %} <small>{{ population_trend_nature }}</small>{% endif %}</h2>
@@ -77,19 +94,23 @@
       {% if research_narrative %}<article><h2>Research</h2>{{ research_narrative|safe }}</article>{% endif %}
       {% if conservation_actions %}<article><h2>Conservation and research actions</h2>{{ conservation_actions|safe }}</article>{% endif %}
     </section>
-    <section>
-      <article style="margin-top: 50px;">
+    <section class="species-footer">
+      <article>
         <h2 id="{{ key }}Anchor"><a href="#" id="referencesLink" style="background-color: #d1ecff; padding: 5px 10px; border-radius: 5px; margin-top: 30px;"><span>References</span> <span class="glyphicon glyphicon-chevron-up" aria-hidden="true" style="font-size: 0.7em;"></span><span style="font-size: 0.7em;" class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a></h2>
         <div class="item-info references">
           <table id="pubTable" class="display table"></table>
           <pre id="bibtex">[{% for a in references %}{{ a }},{% endfor %}]</pre>
         </div>
       </article>
-      <article class="howtocite">
+      <article>
         <h2>How to cite this assessment</h2>
-        <p>Relton C. 2016. A conservation assessment of Balaenoptera acutorostrata subsp. In Child MF, Roxburgh L, Do Linh San E, Raimondo D, Davies-Mostert HT, editors. The Red List of Mammals of South Africa, Swaziland and Lesotho. South African National Biodiversity Institute and Endangered Wildlife Trust, South Africa.</p>
+        <p class="howtocite">Relton C. 2016. A conservation assessment of Balaenoptera acutorostrata subsp. In Child MF, Roxburgh L, Do Linh San E, Raimondo D, Davies-Mostert HT, editors. The Red List of Mammals of South Africa, Swaziland and Lesotho. South African National Biodiversity Institute and Endangered Wildlife Trust, South Africa.</p>
       </article>
     </section>
+    {% else %}
+      <h2>No information currently available</h2>
+      <p>The detail of this assessment is still under preparation.</p>
+    {% endif %}
   </div>
   <div class="col-md-2 assessment-aside">
     <h4 class="lead">Lead agencies</h4>

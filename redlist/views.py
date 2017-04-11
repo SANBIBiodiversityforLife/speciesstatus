@@ -6,6 +6,7 @@ from rest_framework.reverse import reverse
 from rest_framework import generics, pagination
 from rest_framework.response import Response
 from rest_framework import status
+from datetime import datetime
 
 
 @api_view(['GET'])
@@ -70,10 +71,12 @@ def redlist_citation(request, pk):
         if class_ == 'mammalia':
             resp += ' <strong>In Child MF, Roxburgh L, Do Linh San E, Raimondo D, Davies-Mostert HT, editors. The Red List of Mammals of South Africa, Swaziland and Lesotho. South African National Biodiversity Institute and Endangered Wildlife Trust, South Africa.</strong>'
         elif class_ == 'reptilia':
-            resp += ' <strong>In SAMWAYS, M.J. & SIMAIKA, J.P. 2016. Manual of Freshwater Assessment for South Africa: Dragonfly Biotic Index. Suricata 2. South African National Biodiversity Institute, Pretoria.</strong>'
+            resp += ' <strong>In M.F. Bate, W.R. Branch, A.M. Bauer, M. Burger, J. Marias, G.J. Alexander & M.S. de Villiers (eds), Atlas and Red List of Reptiles of South Africa, Lesothos and Swaziland. Suricata 1. South African National Biodiversity Institute, Pretoria.</strong>'
         elif class_ == 'aves':
-            if not assessment.rationale:
+            if assessment.rationale:
                 resp += ' <strong>In The Eskom Red Data Book of Birds of South Africa, Lesotho and Swaziland. Taylor, MR, Peacock F, Wanless RW (eds). BirdLife South Africa, Johannesburg, South Africa.</strong>'
+            else:
+                resp += ' <strong>In xxx</strong>'
         elif class_ == 'actinopterygii' or class_ == 'elasmobranchii' or class_ == 'holocephali':
             resp += ' <strong>Seakeys species page.</strong>'
         elif class_ == 'insecta':
@@ -83,6 +86,9 @@ def redlist_citation(request, pk):
                 resp += ' <strong>In Mecenero, S., Ball, J.B., Edge, D.A., Hamer, M.L., Henning, G.A., Kruger, M., Pringle, E.L., Terblanche, R.F. & Williams, M.C. (eds). 2013. Conservation assessment of butterflies of South Africa, Lesothos and Swaziland: Red List and atlas. Saftronics (Pty) Ltd., Johannesburg & Animal Demography Unit, Cape Town.</strong>'
             elif order == 'odonata':
                 resp += ' <strong>SAMWAYS, M.J. & SIMAIKA, J.P. 2016. Manual of Freshwater Assessment for South Africa: Dragonfly Biotic Index. Suricata 2. South African National Biodiversity Institute, Pretoria.</strong>'
+
+        resp += ' National Assessment: Red List of South Africa version 2017.1 from Species Status &amp; Information. Accessed on ' + datetime.now().strftime("%Y/%m/%d") + '.'
+
         return Response(resp, status=status.HTTP_202_ACCEPTED)
 
 
