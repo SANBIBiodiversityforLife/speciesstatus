@@ -223,7 +223,7 @@ class TaxonListView(generics.ListAPIView):
     def get_queryset(self):
         species_rank = models.Rank.objects.get(name='Species')
         subspecies_rank = models.Rank.objects.get(name='Subspecies')
-        return models.Taxon.objects.filter(rank__in=[species_rank, subspecies_rank])
+        return models.Taxon.objects.filter(rank__in=[species_rank, subspecies_rank], assessment__isnull=False)
 
     serializer_class = serializers.TaxonBasicSerializerWithRank
     filter_backends = (filters.SearchFilter,)

@@ -3,10 +3,10 @@ $(document).ready(function() {
     "Extinct (EX)": '#000',
     "Extinct in the Wild (EW)": '#cd4444',
     "Critically Endangered (CR)": '#cd5844',
-    "Endangered (EN)": '#cd7e44',
+    "Endangered (EN)": '#ff7f00', // cd7e44
     "Vulnerable (VU)": '#cdb244',
-    "Near Threatened (NT)": '#bad267',
-    "Least Concern (LC)": '#d0efcc',
+    "Near Threatened (NT)": '#bce400', // bad267
+    "Least Concern (LC)": '#d1ecff',
     "Data Deficient (DD)": '#b4b4b4',
     "Not Evaluated (NE)": '#b4b4b4'
   }
@@ -17,7 +17,6 @@ $(document).ready(function() {
       keys = data['names'];
 
       // Doing something to statistics?
-      console.log(data['statistics']);
       $.each(data['statistics'], function(index, d) {
         var status = Object.keys(d)[0];
         var data_array = [];
@@ -25,7 +24,7 @@ $(document).ready(function() {
         keys.forEach(function(key){
             data_array.push(d[status][key]);
         });
-        stats.push({label: status, data: data_array, backgroundColor: colorMapping[status]});
+        stats.push({label: status, data: data_array, backgroundColor: colorMapping[status], hoverBackgroundColor: colorMapping[status]});
       });
       var label_names = [];
       $.each(data['common_names'], function(index, cn){
@@ -62,7 +61,6 @@ $(document).ready(function() {
               }
           }
       });
-
 		}
 	});
 });

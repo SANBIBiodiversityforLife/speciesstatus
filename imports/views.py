@@ -6,6 +6,7 @@ from imports import sis_import, spstatus_import
 from imports import seakeys as seakeys_import
 import json
 import os
+import datetime
 from django.contrib.gis.geos import Point, Polygon
 
 
@@ -89,7 +90,7 @@ def seakeys(request):
 # Note: Birds are run from the other django app
 def bird_distribs(request):
     pwd = os.path.abspath(os.path.dirname(__file__))
-    dir = os.path.join(pwd, '..', 'data-sources', 'bird_distribs')
+    dir = os.path.join(pwd, '..', 'data-sources', 'distribs_bird')
 
     bird_parent_node = models.Taxon.objects.get(name='Aves')
     species_rank = models.Rank.objects.get(name='Species')
@@ -113,6 +114,34 @@ def bird_distribs(request):
                 distrib.save()
 
 
+# Note: Birds are run from the other django app
+def frog_distribs(request):
+    pwd = os.path.abspath(os.path.dirname(__file__))
+    dir = os.path.join(pwd, '..', 'data-sources', 'distribs_frog')
+
+    parent_node = models.Taxon.objects.get(name='Amphibia')
+    species_rank = models.Rank.objects.get(name='Species')
+    subspecies_rank = models.Rank.objects.get(name='Subspecies')
+    nodes = parent_node.get_descendants().filter(rank__in=[species_rank, subspecies_rank])
+
+    for node in nodes:
+        node_file = os.path.join(dir, node.name.replace(' ', '_') + '.json')
+        if not os.path.exists(node_file):
+            continue
+        print('found ' + node_file)
+        with open(node_file) as data_file:
+            distributions = json.load(data_file)
+
+            for distribution in distributions['features']:
+                polygon_points = []
+                for ring in distribution['geometry']['rings'][0]:
+                    polygon_points.append((ring[0], ring[1]))
+                polygon_tuple = tuple(polygon_points)
+                polygon = Polygon(polygon_tuple, srid=4326)
+                distrib = models.GeneralDistribution(taxon=node, distribution_polygon=polygon)
+                distrib.save()
+
+
 # Gets all the butterfly 'broken' criteria strings and fix them
 def convert_all_criteria_strings(request):
     needs_fixing = redlist_models.Assessment.objects.filter(redlist_criteria__contains='|')
@@ -133,13 +162,13 @@ def convert_criteria_string(string):
         # B
         letter = item[0].upper()
         if letter not in cons:
-            cons[letter] = {}
+            cons[letter] = {} # cons = {'B' => {}}
 
         # B1, sometimes you just have D with no number
         if len(item) > 1:
             number = item[1]
             if number not in cons[letter]:
-                cons[letter][number] = {}
+                cons[letter][number] = {} #  cons = {'B' => {}}
 
             # B1a or B1b_iii, sometimes you just have D1 with no letter
             if len(item) > 2:
@@ -180,23 +209,64 @@ def convert_criteria_string(string):
     return '; '.join(sorted(letter_strings))
 
 
+def create_point_distribution(row):
+    """Used by the import distribution functions"""
+    if 'species' not in row or 'genus' not in row or 'long' not in row or 'lat' not in row:
+        import pdb; pdb.set_trace()
+        return False
+    name = row['genus'].strip() + ' ' + row['species'].strip()
+    if 'subspecies' in row and row['subspecies'] != 0 and pd.isnull(row['subspecies']) == False:
+        print(row['subspecies'])
+        try:
+            name += ' ' + row['subspecies'].strip()
+        except:
+            import pdb; pdb.set_trace()
+
+    try:
+        taxon = models.Taxon.objects.get(name=name)
+        print('found ' + name)
+    except models.Taxon.DoesNotExist:
+        print('could not find ' + name)
+        return False
+
+    pt = models.PointDistribution(taxon=taxon, point=Point(float(row['long']), float(row['lat'])))
+    optional_fields = ['precision', 'origin_code', 'qds']
+    for optional_field in optional_fields:
+        if optional_field in row:
+            setattr(pt, optional_field, row[optional_field])
+
+    #if 'collector' in row:
+    #    pt.
+
+    if 'year' in row and row['year'] > 0:
+        month = int(float(str(row['month']).strip())) if 'month' in row else 1
+        month = month if month > 0 and month < 13 else 1
+        day = int(float(str(row['day']).strip())) if 'day' in row else 1
+        day = day if day > 0 and day < 31 else 1
+        try:
+            pt.date = datetime.date(year=int(float(str(row['year']).strip())), month=month, day=day)
+        except ValueError:
+            import pdb; pdb.set_trace()
+    pt.save()
+    return pt
+
+
 def reptile_distribs(request):
     pwd = os.path.abspath(os.path.dirname(__file__))
     dir = os.path.join(pwd, '..', 'data-sources', 'reptile_distribs')
     df = pd.read_csv(os.path.join(dir, 'simple.csv'), encoding='latin-1')
-    mapping = {'decimalLat': 'lat',
-               'decimalLon': 'long',
-               'institution_code': 'Institutio',
+    mapping = {'decimallat': 'lat',
+               'decimallon': 'long',
+               'institutio': 'origin_code',
                'year_colle': 'year',
                'month_coll': 'month',
                'day_collec': 'day'}
+    df.columns = map(str.lower, df.columns)
+    df.rename(columns=mapping, inplace=True)
+    print('renamed columns')
     for index, row in df.iterrows():
-        row = {k.lower(): v for k, v in row.items() if pd.notnull(v)}
-        for key in mapping:
-            if key in row:
-                row[mapping[key]] = row[key]
-                del row[key]
-        pt = helpers.create_point_distribution(row)
+        print(index)
+        pt = create_point_distribution(row)
 
 
 def dragonfly_distribs(request):
@@ -216,7 +286,7 @@ def dragonfly_distribs(request):
             if key in row:
                 row[mapping[key]] = row[key]
                 del row[key]
-        pt = helpers.create_point_distribution(row)
+        pt = create_point_distribution(row)
 
 
 def mammal_distribs(request):
@@ -235,7 +305,7 @@ def mammal_distribs(request):
                 if key in row:
                     row[mapping[key]] = row[key]
                     del row[key]
-            pt = helpers.create_point_distribution(row)
+            pt = create_point_distribution(row)
             if pt:
                 import pdb; pdb.set_trace()
 

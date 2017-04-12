@@ -17,7 +17,7 @@ $(document).ready(function() {
         $('#taxon-img-container a').attr('href', '/static/' + data['file']);
 
         // Add all of the data attributes which will show up on the slideshow
-        $('#taxon-img-container a').attr('data-title', 'Photographer: ' + data['author']);
+        $('#taxon-img-container a').attr('data-title', 'Photographer: ' + data['author'] + ' ( - Image 1 of ' + (all_data.length + 1) + ')');
         if(data['source']) {
           $('#taxon-img-container a').attr('data-footer', '&copy; ' + data['copyright'] + ' - Source: ' + data['source']);
         } else {
@@ -30,13 +30,13 @@ $(document).ready(function() {
 
         // Next expand the image container (seeing as the img exists), we can't show/hide bcos it screws up the automatically generated triangular pattern
         $('#taxon-img-container').css('width', '200px');
-        $('#taxon-img-container img').hover(function() { $('#taxon-img-container div').show('fast'); },
-                                            function() { $('#taxon-img-container div').hide('fast'); });
+        //$('#taxon-img-container img').hover(function() { $('#taxon-img-container div').show('fast'); $('#taxon-img-container p').hide('fast'); },
+        //                                    function() { $('#taxon-img-container div').hide('fast'); $('#taxon-img-container p').show('fast'); });
 
         // Loop over the other images and add them to the hidden image gallery div so people can scroll through them
         $.each(all_data, function(index, data) {
           var html = '<a href="/static/' + data['file'] + '" data-toggle="lightbox" data-gallery="species-gallery" ';
-          html += 'data-title="Photographer: ' + data['author'] + '" ';
+          html += 'data-title="Photographer: ' + data['author'] + ' ( - Image ' + (index + 2) + ' of ' + (all_data.length + 1) + ') "';
           if(data['source']) {
             html += 'data-footer="&copy; ' + data['copyright'] + ' - Source: ' + data['source'] + '">';
           } else {
@@ -48,8 +48,6 @@ $(document).ready(function() {
       } else {
         $('#taxon-img-container').hide();
       }
-      console.log(all_data);
-      console.log(textStatus);
     }
   });
 

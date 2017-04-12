@@ -1,4 +1,5 @@
 from biblio import models, serializers
+from redlist import models as redlist_models
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -6,6 +7,7 @@ from rest_framework.decorators import api_view
 import re
 import requests
 import bibtexparser
+from taxa import helpers
 from rest_framework import generics
 
 
@@ -47,6 +49,29 @@ def get_bibtex_from_doi(doi):
 
     return r.status_code
 
+
+import bibtexparser
+@api_view(['POST'])
+def post_bibtex(request):
+    assessment = redlist_models.Assessment.objects.get(id=request.data['assessment_id'])
+    bibtex = request.data['bibtex']
+    db = bibtexparser.loads(bibtex)
+    for entry in db.entries:
+        bibtex_dict = entry
+        ref = models.Reference(title=bibtex_dict['title'], bibtex=bibtex_dict)
+        try:
+            ref.year = int(bibtex_dict['year'])
+        except ValueError:
+            pass
+        ref.save()
+
+        # Add the authors
+        if 'author' in bibtex_dict:
+            authors = helpers.create_authors_from_bibtex_string(bibtex_dict['author'])
+            models.assign_multiple_authors(authors, ref)
+
+        assessment.references.add(ref)
+    return Response({'Reference added'}, status=status.HTTP_201_CREATED)
 
 @api_view(['GET'])
 def get_bibtex(request, doi):
