@@ -238,3 +238,43 @@ def mammal_distribs(request):
             pt = helpers.create_point_distribution(row)
             if pt:
                 import pdb; pdb.set_trace()
+
+
+def st_process(request):
+    pwd = os.path.abspath(os.path.dirname(__file__))
+    dir = os.path.join(pwd, '..', 'website', 'static')
+    #dir = "C:\\projects\\fhatani\\redlist\\gis\\"
+
+
+    oceans = os.path.join(dir, 'oceans.json')
+    with open(oceans) as data_file:
+        distributions = json.load(data_file)
+
+    for distribution in distributions['features']:
+
+        polygons = []
+        for ring in distribution['geometry']['rings']:
+            polygon_points = []
+            for point in ring:
+                polygon_points.append((point[0], point[1]))
+            polygon_tuple = tuple(polygon_points)
+            polygons.append(Polygon(polygon_tuple, srid=4326))
+
+    # get first polygon
+    polygon_union = polygons[0]
+
+    # update list
+    polygons = polygons[1:]
+
+    # loop through list of polygons
+    for poly in polygons:
+        polygon_union = polygon_union.union(poly)
+
+    points_for_deleting = models.PointDistribution.objects.filter(point__within=polygon_union)
+    import pdb; pdb.set_trace()
+    #points_for_deleting.delete()
+    #print (points_for_deleting.query)
+
+    #print (points_for_deleting, len(points_for_deleting))
+    for points in points_for_deleting:
+        print(points.point)
