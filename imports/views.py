@@ -253,7 +253,7 @@ def create_point_distribution(row):
 
 def reptile_distribs(request):
     pwd = os.path.abspath(os.path.dirname(__file__))
-    dir = os.path.join(pwd, '..', 'data-sources', 'reptile_distribs')
+    dir = os.path.join(pwd, '..', 'data-sources', 'distribs_reptile')
     df = pd.read_csv(os.path.join(dir, 'simple.csv'), encoding='latin-1')
     mapping = {'decimallat': 'lat',
                'decimallon': 'long',

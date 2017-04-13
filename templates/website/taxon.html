@@ -80,7 +80,8 @@
     </section>
     {% endif %}
     <section id="species-info">
-      {% with 'morphology diagnostics trophic movement migration_patterns reproduction habitat_narrative generational_length_narrative ' as list %}
+      {% if notes %}<article><h2 id="notesAnchor">Notes</h2>{{ notes|safe }}</article>{% endif %}
+      {% with 'morphology diagnostics trophic movement migration_patterns reproduction habitat_narrative generational_length_narrative' as list %}
         {% for key, value in info.items %}
           {% if key in list and value %}
             <article><h2 id="{{ key }}Anchor">{{ key }}</h2>{{ value|safe }}</article>

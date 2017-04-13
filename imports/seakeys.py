@@ -321,7 +321,7 @@ def import_seakeys():
                     remote_img_path = os.path.join(pwd, 'seakey-images', file_name)
                     if os.path.exists(remote_img_path):
                         shutil.copy(remote_img_path, img_directory)
-                        os.rename(os.path.join(img_directory, file_name), os.path.join(img_directory, new_file_name))
+                        os.rename(os.path.join(img_directory, file_name), local_img_path)
                     else:
                         import pdb; pdb.set_trace()
                     # path = 'http://seakeys.sanbi.org/sites/default/files/seakey-images/'

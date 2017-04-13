@@ -38,13 +38,13 @@ def import_sis():
     pwd = os.path.join(pwd, '..', 'data-sources')
 
     # Amphibians
-    animal_dirs = [os.path.join('SIS_Amphibians', 'draft'), os.path.join('Amphibians', 'published'),
-                   'SIS_Dragonflies', 'SIS_Mammals', 'SIS_Reptiles']
+    animal_dirs = ['SIS_Reptiles', os.path.join('SIS_Amphibians', 'draft'), os.path.join('SIS_Amphibians', 'published'),
+                   'SIS_Dragonflies', 'SIS_Mammals']
     # animal_dirs = ['Reptiles_SIS\\']
-    for animal_dir in animal_dirs:
-        animal_dir = os.path.join(pwd, animal_dir)
+    for animal_dir_name in animal_dirs:
+        animal_dir = os.path.join(pwd, animal_dir_name)
         af = pd.read_csv(os.path.join(animal_dir, 'allfields.csv'), encoding='UTF-8') # iso-8859-1
-        t = pd.read_csv(os.path.join(animal_dir, 'taxonomy.csv'), encoding='UTF-8')
+        tx = pd.read_csv(os.path.join(animal_dir, 'taxonomy.csv'), encoding='iso-8859-1')
         cn = pd.read_csv(os.path.join(animal_dir, 'commonnames.csv'), encoding='UTF-8') # UTF-8
         assess = pd.read_csv(os.path.join(animal_dir, 'assessments.csv'), encoding='UTF-8')
         cons_actions = pd.read_csv(os.path.join(animal_dir, 'conservationneeded.csv'), encoding='UTF-8')
@@ -102,28 +102,50 @@ def import_sis():
             'Unknown': redlist_models.ThreatNature.UNKNOWN
         }
 
-        # Iterate through the allfields table, 1 row represents 1 assessment for a taxon
-        for index, row in af.iterrows():
+        # Iterate through the taxa table, 1 row represents 1 assessment for a taxon
+        for index, taxon_row in tx.iterrows():
+        # for index, row in af.iterrows():
+
             print('----------------------------------------------------------')
             print('row: ' + str(index))
             #if index != 95:
             #    continue
 
+            # Retrieve the taxon info and the assessment we're on
+            # taxon_row = t.loc[t['internal_taxon_id'] == row['internal_taxon_id']]
+            # taxon_row = taxon_row.iloc[0]
+            if 'Exclude' in taxon_row:
+                if taxon_row['Exclude'] == 1:
+                    print('skipping ' + taxon_row['genus'] + ' ' + taxon_row['species'])
+                    continue
+            species, species_was_created = create_taxon_from_sis(taxon_row, mendeley_session)
+
+            if 'Exclude' in taxon_row:
+                if taxon_row['Exclude'] > 1:
+                    print('Excluding species ' + species.name)
+                    if 'eptile' in animal_dir_name:
+                        a = redlist_models.Assessment(taxon=species, date=datetime.strptime('16/05/2016', '%d/%m/%Y'),
+                            redlist_category=taxon_row['status_only'])
+                        a.save()
+                    continue
+
+            # Replacing this. Should be a one to one mapping between allfields and and taxa anyway
+            row = af.loc[af['internal_taxon_id'] == taxon_row['internal_taxon_id']]
+            try:
+                row = row.iloc[0]
+            except IndexError:
+                print('Cannot find row in allfields table')
+                import pdb; pdb.set_trace()
+                continue
             # Remove all row columns which do not contain info
             row = {k: v for k, v in row.items() if pd.notnull(v)}
 
-            # Ignore all species which don't have an assessment
+            # Ignore all species which don't have an assessment. But there's something wrong if we've got one here...
             assess_row = assess.loc[assess['internal_taxon_id'] == row['internal_taxon_id']]
             if len(assess_row) == 0:
+                print('No assessment for ' + taxon_row['genus'] + ' ' +  taxon_row['species'])
+                import pdb; pdb.set_trace()
                 continue
-
-            # Retrieve the taxon info and the assessment we're on
-            taxon_row = t.loc[t['internal_taxon_id'] == row['internal_taxon_id']]
-            taxon_row = taxon_row.iloc[0]
-            if 'Exclude' in taxon_row:
-                if taxon_row['Exclude'] == 1:
-                    continue
-            species, species_was_created = create_taxon_from_sis(taxon_row, mendeley_session)
 
             # The iloc is used because you have to refer to the items via the index e.g. v[0] for row 1, v[1] for row 2, etc
             assess_row = {k: v.iloc[0] for k, v in assess_row.items() if pd.notnull(v.iloc[0])}
@@ -167,8 +189,8 @@ def import_sis():
 
                 # Get the taxon info stuff from the assessment csv
                 info.habitat_narrative = ''
-                if 'System.value' in assess_row:
-                    info.habitat_narrative = '<p class="system">' + assess_row['System.value'] + '</p>'
+                #if 'System.value' in assess_row:
+                #    info.habitat_narrative = '<p class="system">' + assess_row['System.value'] + '</p>'
                 if 'HabitatDocumentation.narrative' in assess_row:
                     info.habitat_narrative += assess_row['HabitatDocumentation.narrative']
 
@@ -282,7 +304,10 @@ def import_sis():
             # References for the redlist assessment - nightmarish
             ref_rows = biblio.loc[biblio['internal_taxon_id'] == row['internal_taxon_id']]
             for i, r in ref_rows.iterrows():
-                authors = helpers.create_authors(r['author'])
+                try:
+                    authors = helpers.create_authors(r['author'])
+                except:
+                    import pdb; pdb.set_trace()
                 author_string = [x.surname + " " + x.initials for x in authors]
                 author_string = ' and '.join(author_string)
 
@@ -368,7 +393,8 @@ def import_sis():
                     if 'place_published' in r:
                         bibtex_dict['address'] = r['place_published']
                 else:
-                    import pdb; pdb.set_trace() # It's some type we haven't thought of yet
+                    continue
+                    # import pdb; pdb.set_trace() # It's some type we haven't thought of yet
 
                 # from bibtexparser.bwriter import BibTexWriter; from bibtexparser.bibdatabase import BibDatabase
                 # db = BibDatabase(); db.entries = [bibtex_dict]; writer = BibTexWriter(); writer.write(db)
@@ -442,7 +468,10 @@ def import_sis():
             # Get a list of all contributors/assessors/whatevers for the assessment
             people_rows = ppl.loc[ppl['internal_taxon_id'] == row['internal_taxon_id']]
             for i, p in people_rows.iterrows():
-                person, created = people_models.Person.objects.get_or_create(first=p['firstName'], surname=p['lastName'])
+                if pd.isnull(p['firstName']):
+                    person, created = people_models.Person.objects.get_or_create(surname=p['lastName'])
+                else:
+                    person, created = people_models.Person.objects.get_or_create(first=p['firstName'], surname=p['lastName'])
                 if created:
                     person.email = [p['email']]
                     person.initials = p['initials']
@@ -458,7 +487,6 @@ def import_sis():
                         c = redlist_models.Contribution(person=person, assessment=a, weight=i,
                                                         type=contribution_type_lookup[p['credit_type']])
                         c.save()
-
 
     import pdb; pdb.set_trace()
     print('done')
@@ -512,6 +540,7 @@ def create_taxon_from_sis(row, mendeley_session):
             species.save()
 
         # Create a description and set of references
-        helpers.create_taxon_description(row['taxonomicAuthority'], species, mendeley_session)
+        if not pd.isnull(row['taxonomicAuthority']):
+            helpers.create_taxon_description(row['taxonomicAuthority'], species, mendeley_session)
 
     return species, created

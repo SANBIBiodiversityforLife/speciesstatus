@@ -121,7 +121,7 @@ class TaxonInfoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Taxon
-        fields = ('id', 'info')
+        fields = ('id', 'notes', 'info')
 
 class TaxonSearchSerializer(serializers.ModelSerializer):
     children = ChildrenInfoField(required=False, many=True, read_only=True)

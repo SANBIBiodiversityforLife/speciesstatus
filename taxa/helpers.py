@@ -41,7 +41,8 @@ def get_or_create_person(surname, initials):
         p = models.Person.objects.filter(surname=surname, initials__isnull=True, initials__exact='').first()
         if p is None:
             # Otherwise if we can't find anyone with the same surname make a new person
-            p = models.Person(surname=surname, initials=initials)
+            p, created = models.Person.objects.get_or_create(surname=surname, initials=initials)
+            # p = models.Person(surname=surname, initials=initials)
         else:
             p.initials = initials
         p.save()
