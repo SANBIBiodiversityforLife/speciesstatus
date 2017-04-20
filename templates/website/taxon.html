@@ -15,12 +15,12 @@
 {% block heading %}
 	<section id="taxon-heading" class="triangles banner">
 		<div class="container">
-      <div class="row"><div class="col-md-12">
+      <div class="row taxon-header-row"><div class="col-md-12">
         <!-- Hierarchical path - Gets filled in with javascript -->
         <div id="breadcrumb"></div>
 
         <!-- Image gallery with only initial image showing -->
-        <div id="taxon-img-container">
+        <div id="taxon-img-container"><div>
            <a href="#" data-toggle="lightbox" data-gallery="species-gallery"><img src=""></a>
            <!--<span class="glyphicon camera" aria-hidden="true"></span>-->
            <p>Open image gallery <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></p>
@@ -28,7 +28,7 @@
              Photographer: <br>
              <span id="imgphotographer"></span> <br><br> &copy; <span id="imgcopyright"></span>
            </div>
-        </div>
+        </div></div>
         <div id="img-gallery" style="display: none;"></div>
 
         <!-- Name and rank -->
@@ -47,7 +47,7 @@
           <a href="{% url 'distribution_list' 0 %}">Distribution map</a>
         </li>
         <li role="presentation"{% if request.resolver_match.url_name == 'taxa_detail' %} class="active"{% endif %}>
-          <a href="{% url 'taxa_detail' 0 %}">Species information</a>
+          <a href="{% url 'taxa_detail' 0 %}">Ecological information</a>
         </li>
       </ul>
     </div>
@@ -60,7 +60,7 @@
 <div class="row">
   <div class="col-md-8">
     {% if info.reproductive_type or info.habitats or info.congregatory or info.max_size or info.average_fecundity %}
-    <section id="facts"><h2>Factsheet</h2>
+    <!--<section id="facts"><h2>Factsheet</h2>
       <dl class="dl-horizontal">
         {% if info.reproductive_type %}
         <dt>Reproductive strategy</dt>
@@ -77,7 +77,7 @@
         {% if info.max_size and info.size_units %}<dt>Max size</dt><dd>{{ info.max_size }} {{ info.size_units }}</dd>{% endif %}
         {% if info.average_fecundity %}<dt>Fecundity<dd>{{ info.average_fecundity }} (yearly average)</dd>{% endif %}
       </dl>
-    </section>
+    </section>-->
     {% endif %}
     <section id="species-info">
       {% if notes %}<article><h2 id="notesAnchor">Notes</h2>{{ notes|safe }}</article>{% endif %}
@@ -107,7 +107,6 @@
 {% endblock content %}
 
 {% block js %}
-<script src="//cdn.rawgit.com/noelboss/featherlight/1.7.1/release/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/trianglify/1.0.1/trianglify.min.js"></script>
 <script src="{% static 'bibtex-js-master/src/bibtex_js.js' %}"></script>
@@ -129,7 +128,6 @@ $(document).on('click', '[data-toggle="lightbox"]', function(event) {
     $(this).ekkoLightbox();
 });
 $(document).ready(function() {
-
   $(function () {
     $('[data-toggle="tooltip"]').tooltip()
   })

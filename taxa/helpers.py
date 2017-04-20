@@ -166,6 +166,8 @@ def create_taxon_description(authority, taxon, mendeley_session=None):
             # Kind of embarrassing but i can't work out how to get len(rs.iter())
             for r in rs.iter():
                 cits.append(r)
+                break
+
         except:
             import pdb;
             pdb.set_trace()
@@ -184,6 +186,7 @@ def create_taxon_description(authority, taxon, mendeley_session=None):
         reference = biblio_models.Reference.objects.filter(authors__in=author_list, year=cit.year,
                                                            title__iexact=cit.title).annotate(num_tags=Count('authors')) \
             .filter(num_tags=len(author_list))
+        print('in db already?')
 
         # Hmm maybe we can just assume if title and year are the same it's all good? Let's try...
         reference = biblio_models.Reference.objects.filter(year=cit.year, title__iexact=cit.title)

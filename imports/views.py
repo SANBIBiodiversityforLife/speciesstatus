@@ -7,6 +7,8 @@ from imports import seakeys as seakeys_import
 import json
 import os
 import datetime
+import csv
+import requests
 from django.contrib.gis.geos import Point, Polygon
 
 
@@ -87,11 +89,51 @@ def seakeys(request):
     seakeys_import.import_seakeys()
 
 
+def lc_birds(request):
+    pwd = os.path.abspath(os.path.dirname(__file__))
+    dir = os.path.join(pwd, '..', 'data-sources')
+    birds = pd.read_csv(os.path.join(dir, 'birds.csv'), encoding='iso-8859-1')
+
+    # Get the least concern birds and add genus
+    lc_birds = birds.loc[birds['Regional Red List Status_2015'] == 'LC']
+    lc_birds['genus'] = lc_birds['Scientific Name'].str.split(' ').apply(lambda x: x[0])
+
+    # Fix columns so they're lowercase with no spaces
+    lc_birds.columns = map(lambda x: x.lower().replace(' ', ''), lc_birds.columns)
+
+    # Get some of the db objects used in the for loop
+    aves = models.Taxon.objects.get(name='Aves')
+    english = models.Language.objects.get(name='English')
+    subspecies_rank = models.Rank.objects.get(name='Subspecies')
+    species_rank = models.Rank.objects.get(name='Species')
+    genus_rank = models.Rank.objects.get(name='Genus')
+    family_rank = models.Rank.objects.get(name='Family')
+    order_rank = models.Rank.objects.get(name='Order')
+
+    # Iterate over all LC birds and create taxa & redlist objects for them
+    for index, bird in lc_birds.iterrows():
+        print('doing ' + bird['scientificname'])
+        name_parts = bird['scientificname'].split(' ')
+        genus = name_parts[0]
+        order, created = models.Taxon.objects.get_or_create(name=bird['odr'], rank=order_rank, parent=aves)
+        family, created = models.Taxon.objects.get_or_create(name=bird['family'], rank=family_rank, parent=order)
+        parent, created = models.Taxon.objects.get_or_create(name=genus, rank=genus_rank, parent=family)
+
+        # Special case for subspecies
+        if len(name_parts) > 2:
+            species = models.Taxon.objects.create(name=name_parts[0] + ' ' + name_parts[1], rank=species_rank, parent=parent)
+            node = models.Taxon.objects.create(name=' '.join(name_parts), rank=subspecies_rank, parent=species)
+        else:
+            node = models.Taxon.objects.create(name=' '.join(name_parts), rank=species_rank, parent=parent)
+
+        models.CommonName.objects.create(language=english, name=bird['fullname'], taxon=node)
+        redlist_models.Assessment.objects.create(taxon=node, date=datetime.date(year=2015, month=1, day=1), redlist_category=redlist_models.Assessment.LEAST_CONCERN)
+
+
 # Note: Birds are run from the other django app
 def bird_distribs(request):
     pwd = os.path.abspath(os.path.dirname(__file__))
     dir = os.path.join(pwd, '..', 'data-sources', 'distribs_bird')
-
     bird_parent_node = models.Taxon.objects.get(name='Aves')
     species_rank = models.Rank.objects.get(name='Species')
     subspecies_rank = models.Rank.objects.get(name='Subspecies')
@@ -214,7 +256,12 @@ def create_point_distribution(row):
     if 'species' not in row or 'genus' not in row or 'long' not in row or 'lat' not in row:
         import pdb; pdb.set_trace()
         return False
-    name = row['genus'].strip() + ' ' + row['species'].strip()
+
+    try:
+        name = row['genus'].strip() + ' ' + row['species'].strip()
+    except:
+        return False
+
     if 'subspecies' in row and row['subspecies'] != 0 and pd.isnull(row['subspecies']) == False:
         print(row['subspecies'])
         try:
@@ -228,26 +275,32 @@ def create_point_distribution(row):
     except models.Taxon.DoesNotExist:
         print('could not find ' + name)
         return False
+    except models.Taxon.MultipleObjectsReturned:
+        import pdb; pdb.set_trace()
 
-    pt = models.PointDistribution(taxon=taxon, point=Point(float(row['long']), float(row['lat'])))
-    optional_fields = ['precision', 'origin_code', 'qds']
-    for optional_field in optional_fields:
-        if optional_field in row:
-            setattr(pt, optional_field, row[optional_field])
+    try:
+        pt = models.PointDistribution(taxon=taxon, point=Point(float(row['long']), float(row['lat'])))
+        optional_fields = ['precision', 'origin_code', 'qds']
+        for optional_field in optional_fields:
+            if optional_field in row:
+                setattr(pt, optional_field, row[optional_field])
 
-    #if 'collector' in row:
-    #    pt.
+        #if 'collector' in row:
+        #    pt.
 
-    if 'year' in row and row['year'] > 0:
-        month = int(float(str(row['month']).strip())) if 'month' in row else 1
-        month = month if month > 0 and month < 13 else 1
-        day = int(float(str(row['day']).strip())) if 'day' in row else 1
-        day = day if day > 0 and day < 31 else 1
-        try:
-            pt.date = datetime.date(year=int(float(str(row['year']).strip())), month=month, day=day)
-        except ValueError:
-            import pdb; pdb.set_trace()
-    pt.save()
+        if 'year' in row and row['year'] > 0:
+            month = int(float(str(row['month']).strip())) if 'month' in row else 1
+            month = month if month > 0 and month < 13 else 1
+            day = int(float(str(row['day']).strip())) if 'day' in row else 1
+            day = day if day > 0 and day < 31 else 1
+            try:
+                pt.date = datetime.date(year=int(float(str(row['year']).strip())), month=month, day=day)
+            except ValueError:
+                import pdb; pdb.set_trace()
+        pt.save()
+    except:
+        return False
+
     return pt
 
 
@@ -271,7 +324,7 @@ def reptile_distribs(request):
 
 def dragonfly_distribs(request):
     pwd = os.path.abspath(os.path.dirname(__file__))
-    dir = os.path.join(pwd, '..', 'data-sources', 'dragonfly_distribs')
+    dir = os.path.join(pwd, '..', 'data-sources', 'distribs_dragonfly')
     df = pd.read_csv(os.path.join(dir, 'simple.csv'))
     mapping = {'decimal_latitude': 'lat',
                'decimal_longitude': 'long',
@@ -280,48 +333,41 @@ def dragonfly_distribs(request):
                'year_collected': 'year',
                'month_collected': 'month',
                'day_collected': 'day'}
+    df.columns = map(str.lower, df.columns)
+    df.rename(columns=mapping, inplace=True)
     for index, row in df.iterrows():
-        row = {k.lower(): v for k, v in row.items() if pd.notnull(v)}
-        for key in mapping:
-            if key in row:
-                row[mapping[key]] = row[key]
-                del row[key]
+        print(index)
         pt = create_point_distribution(row)
 
 
 def mammal_distribs(request):
     pwd = os.path.abspath(os.path.dirname(__file__))
-    dir = os.path.join(pwd, '..', 'data-sources', 'mammal_distribs')
+    dir = os.path.join(pwd, '..', 'data-sources', 'distribs_mammal')
     mapping = {'decimallatitude': 'lat',
                'decimallongitude': 'long',
                'institutioncode': 'origin_code',
                'coordinateuncertaintyinmeters': 'precision',
                'specificepithet': 'species'}
     for file in os.listdir(dir):
+        print(file)
         df = pd.read_excel(os.path.join(dir, file))
+        df.columns = map(str.lower, df.columns)
+        df.rename(columns=mapping, inplace=True)
         for index, row in df.iterrows():
-            row = {k.lower(): v for k, v in row.items() if pd.notnull(v)}
-            for key in mapping:
-                if key in row:
-                    row[mapping[key]] = row[key]
-                    del row[key]
+            print(index)
             pt = create_point_distribution(row)
-            if pt:
-                import pdb; pdb.set_trace()
 
 
 def st_process(request):
+    """Exclude all distribution points falling within an ocean (oceans.json contains polygons)"""
     pwd = os.path.abspath(os.path.dirname(__file__))
     dir = os.path.join(pwd, '..', 'website', 'static')
-    #dir = "C:\\projects\\fhatani\\redlist\\gis\\"
 
-
+    # Load the ocean polygons into a list of polygons
     oceans = os.path.join(dir, 'oceans.json')
     with open(oceans) as data_file:
         distributions = json.load(data_file)
-
     for distribution in distributions['features']:
-
         polygons = []
         for ring in distribution['geometry']['rings']:
             polygon_points = []
@@ -333,18 +379,14 @@ def st_process(request):
     # get first polygon
     polygon_union = polygons[0]
 
-    # update list
+    # update list to include all other polygons but the first
     polygons = polygons[1:]
 
-    # loop through list of polygons
+    # loop through list of polygons and union them together
     for poly in polygons:
         polygon_union = polygon_union.union(poly)
 
+    # Retrieve a list of points falling within the oceans and delete them
     points_for_deleting = models.PointDistribution.objects.filter(point__within=polygon_union)
     import pdb; pdb.set_trace()
-    #points_for_deleting.delete()
-    #print (points_for_deleting.query)
-
-    #print (points_for_deleting, len(points_for_deleting))
-    for points in points_for_deleting:
-        print(points.point)
+    points_for_deleting.delete()

@@ -7,25 +7,34 @@
   font-size: 1.1em;
 }
 #breadcrumb { margin-bottom: 5px; }
+#breadcrumb a { font-weight: bold; font-size: 0.9em; }
+#breadcrumb span.glyphicon { font-size: 0.7em; }
 #taxon-heading .container>div { height: 200px; }
 
+.taxon-header-row {
+  margin-bottom: 10px;
+}
 #taxon-img-container {
-  width: 1px;
-  height: 155px;
-  float: left;
+  border: 0px solid white;
   background-color: white;
   border-radius: 3px;
+  float: left;
+  overflow: auto;
   margin-right: 15px;
-  margin-bottom: 20px;
+}
+#taxon-img-container div {
+  width: 1px;
+  height: 140px;
   overflow: hidden;
   /*position: relative;*/
 }
+.img-container-width { width: 180px !important; }
 #taxon-img-container img {
   max-width: 180px;
-  margin-left: 10px;
-  margin-top: 10px;
+  /*margin-left: 10px;
+  margin-top: 10px;*/
 }
-#taxon-img-container div, #taxon-img-container p {
+#taxon-img-container div div, #taxon-img-container p {
   font-size: 0.7em;
   /*position: absolute;
   top: 13px;
@@ -34,8 +43,6 @@
   padding: 10px;
   display: block;
   margin-top: -105px; /* 135 */
-  margin-left: 10px;
-  margin-right: 10px;
   position: relative;
   pointer-events: none;
 }
@@ -45,7 +52,7 @@
 #taxon-img-container p {
   text-align: right;
 }
-#taxon-img-container div {
+#taxon-img-container div div {
   display: none;
 }
 #imgphotographer {

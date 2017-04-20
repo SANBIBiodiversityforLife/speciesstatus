@@ -1,30 +1,26 @@
 from rest_framework import serializers
 from redlist.models import Assessment, Contribution, Threat, ThreatNature
 from taxa.models import Taxon
-from bibtexparser.bwriter import BibTexWriter; from bibtexparser.bibdatabase import BibDatabase
+from people.serializers import PersonSerializer
+from taxa.serializers import TaxonBasicSerializerWithRank
+from bibtexparser.bwriter import BibTexWriter
+from bibtexparser.bibdatabase import BibDatabase
 
 
 class ContributionSerializer(serializers.ModelSerializer):
     type = serializers.CharField(source='get_type_display')
-    person = serializers.StringRelatedField()
+    person = serializers.StringRelatedField(read_only=True)
+    person_id = serializers.PrimaryKeyRelatedField(source='person', read_only=True)
+    # person = PersonSerializer()
 
     class Meta:
         model = Contribution
-        fields = ('type', 'person', 'weight')
+        fields = ('type', 'person', 'person_id', 'weight')
 
 
 class HstoreSerializer(serializers.CharField):
     def to_representation(self, value):
         return value
-
-
-class HstoreBibtexField(serializers.RelatedField):
-    """Returns bibtex version of json data using bibtexparser"""
-    def to_representation(self, value):
-        db = BibDatabase()
-        writer = BibTexWriter()
-        db.entries = [value.bibtex]
-        return writer.write(db)
 
 
 class ThreatNatureSerializer(serializers.HyperlinkedModelSerializer):
@@ -40,16 +36,17 @@ class ThreatNatureSerializer(serializers.HyperlinkedModelSerializer):
 class AssessmentSimpleSerializer(serializers.ModelSerializer):
     scope = serializers.CharField(source='get_scope_display')
     redlist_category_display = serializers.CharField(source='get_redlist_category_display')
-    taxon = serializers.StringRelatedField(read_only=True)
-    taxon_id = serializers.PrimaryKeyRelatedField(read_only=True)
+    taxon = TaxonBasicSerializerWithRank(read_only=True)
+    # taxon = serializers.StringRelatedField(read_only=True)
+    # taxon_id = serializers.PrimaryKeyRelatedField(read_only=True)
+    # taxon_common_name = serializers.PrimaryKeyRelatedField(read_only=True)
     date = serializers.DateField(format='%b %Y')
 
     class Meta:
         model = Assessment
         fields = ('id',
                   'contribution_set',
-                  'taxon',
-                  'taxon_id',
+                  'taxon',# 'taxon_id',
                   'scope',
                   'rationale',
                   'change_rationale',
@@ -57,6 +54,25 @@ class AssessmentSimpleSerializer(serializers.ModelSerializer):
                   'redlist_category',
                   'redlist_category_display',
                   'redlist_criteria')
+
+
+class ContributionAssessmentSerializer(serializers.ModelSerializer):
+    type = serializers.CharField(source='get_type_display')
+    person = serializers.StringRelatedField()
+    assessment = AssessmentSimpleSerializer(read_only=True)
+
+    class Meta:
+        model = Contribution
+        fields = ('type', 'person', 'weight', 'assessment')
+
+
+class HstoreBibtexField(serializers.RelatedField):
+    """Returns bibtex version of json data using bibtexparser"""
+    def to_representation(self, value):
+        db = BibDatabase()
+        writer = BibTexWriter()
+        db.entries = [value.bibtex]
+        return writer.write(db)
 
 
 class AssessmentSerializer(serializers.ModelSerializer):

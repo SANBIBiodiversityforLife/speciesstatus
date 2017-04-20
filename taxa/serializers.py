@@ -43,17 +43,6 @@ class TaxonChildrenSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'rank', 'children')
 
 
-class TaxonLineageSerializer(serializers.ModelSerializer):
-    children = ChildrenInfoField(required=False, many=True, read_only=True)
-    parent = serializers.StringRelatedField(required=False, read_only=True)
-    parent_id = serializers.PrimaryKeyRelatedField(required=False, read_only=True, source='parent')
-    rank = serializers.PrimaryKeyRelatedField(read_only=True)
-
-    class Meta:
-        model = Taxon
-        fields = ('id', 'name', 'parent', 'rank', 'children', 'parent_id')
-
-
 class CommonNameSerializer(serializers.ModelSerializer):
     reference = ReferenceDOISerializer()
     language = serializers.StringRelatedField()
@@ -61,14 +50,6 @@ class CommonNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = CommonName
         fields = ('name', 'language', 'reference')
-
-
-class AncestorSerializer(serializers.ModelSerializer):
-    rank = serializers.StringRelatedField(read_only=True)
-
-    class Meta:
-        model = Taxon
-        fields = ('id', 'name', 'rank')
 
 
 class ArrayChoiceFieldSerializer(serializers.ListSerializer):
@@ -121,48 +102,7 @@ class TaxonInfoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Taxon
-        fields = ('id', 'notes', 'info')
-
-class TaxonSearchSerializer(serializers.ModelSerializer):
-    children = ChildrenInfoField(required=False, many=True, read_only=True)
-    rank = serializers.StringRelatedField(read_only=True)
-    get_latest_assessment = serializers.PrimaryKeyRelatedField(read_only=True)
-    descriptions = serializers.StringRelatedField(read_only=True, many=True)
-    common_names = serializers.StringRelatedField(many=True)
-    synonyms = serializers.StringRelatedField(read_only=True, many=True)
-    images = serializers.StringRelatedField(many=True)
-
-    class Meta:
-        model = Taxon
-        fields = ('id',
-                  'name',
-                  'rank',
-                  'children',
-                  'descriptions',
-                  'images',
-                  'general_distributions',
-                  'get_full_name',
-                  'common_names',
-                  'get_top_common_name',
-                  'synonyms',
-                  'get_latest_assessment')
-
-
-class TaxonSuperBasicSerializer(serializers.ModelSerializer):
-    children = ChildrenInfoField(required=False, many=True, read_only=True)
-    rank = serializers.StringRelatedField(read_only=True)
-    common_names = serializers.StringRelatedField(many=True)
-    get_latest_assessment = serializers.PrimaryKeyRelatedField(read_only=True)
-
-    class Meta:
-        model = Taxon
-        fields = ('id',
-                  'name',
-                  'rank',
-                  'children',
-                  'get_full_name',
-                  'common_names',
-                  'get_latest_assessment')
+        fields = ('id', 'taxonomic_notes', 'info')
 
 
 class DistributionSerializer(GeoFeatureModelSerializer):
@@ -198,10 +138,11 @@ class CommonNameWriteSerializer(serializers.ModelSerializer):
         model = CommonName
         fields = ('name', 'language', 'taxon')
 
+
 class TaxonWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Taxon
-        fields = ('id', 'name', 'rank', 'parent', 'notes')
+        fields = ('id', 'name', 'rank', 'parent', 'taxonomic_notes')
 
 
 class DescriptionWriteSerializer(serializers.ModelSerializer):

@@ -73,10 +73,7 @@ def redlist_citation(request, pk):
         elif class_ == 'reptilia':
             resp += ' <strong>In M.F. Bate, W.R. Branch, A.M. Bauer, M. Burger, J. Marias, G.J. Alexander & M.S. de Villiers (eds), Atlas and Red List of Reptiles of South Africa, Lesothos and Swaziland. Suricata 1. South African National Biodiversity Institute, Pretoria.</strong>'
         elif class_ == 'aves':
-            if assessment.rationale:
-                resp += ' <strong>In The Eskom Red Data Book of Birds of South Africa, Lesotho and Swaziland. Taylor, MR, Peacock F, Wanless RW (eds). BirdLife South Africa, Johannesburg, South Africa.</strong>'
-            else:
-                resp += ' <strong>In xxx</strong>'
+            resp += ' <strong>In The Eskom Red Data Book of Birds of South Africa, Lesotho and Swaziland. Taylor, MR, Peacock F, Wanless RW (eds). BirdLife South Africa, Johannesburg, South Africa.</strong>'
         elif class_ == 'actinopterygii' or class_ == 'elasmobranchii' or class_ == 'holocephali':
             resp += ' <strong>Seakeys species page.</strong>'
         elif class_ == 'insecta':

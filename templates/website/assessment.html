@@ -12,6 +12,31 @@
 <script src="{% static 'bib-list/bib-list.js' %}"></script>
 <script type="text/javascript">
   $(document).ready(function() {
+    // Display IUCN details if we can get em - e.g. http://api.iucnredlist.org/index/species/ciconia-abdimii.js
+    var species = "{{ taxon }}".replace(/\s+/g,'-');
+    console.log(species);
+    $.ajax({
+      dataType: "jsonp",
+      url: 'http://api.iucnredlist.org/index/species/' + species + ".js",
+      success: function (row) {
+        if(row.length > 0) {
+          var txt = '<a href="http://www.iucnredlist.org/details/' + row[0].species_id + '">';
+          txt += '<span class="assessment assessment-' + row[0].category + '">' + row[0].category + ' (' + row[0].modified_year + ')</span>';
+          txt += ' on IUCN global redlist ';
+          txt += ' - View <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>';
+          $(".iucn-check").html(txt);
+        }
+        else {
+          var txt = '<a href="http://www.iucnredlist.org/">Not assessed on IUCN global redlist';
+          txt += ' - Search <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>';
+          $(".iucn-check").html(txt);
+        }
+      },
+      failure: function () {
+        // var txt = 'IUCN lookup service is temporarily down'; $(".iucn-check").html(txt);
+      }
+    });
+
     // Format the references
     bibtexify("#bibtex", "pubTable");
 
@@ -53,7 +78,9 @@
   <ul class="nav nav-pills">
     <li role="presentation" class="active"><a href="#"><strong>{{ date }}:</strong> {{ scope }}</a></li>
     <li role="presentation" class="disabled small-pill"><a href="#">No other assessments for this species</a></li>
-    <li role="presentation" class="iucn-check small-pill"><a href="http://www.iucnredlist.org/">Check IUCN global redlist <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a></li>
+    <li role="presentation" class="iucn-check small-pill">
+      <a href="http://www.iucnredlist.org/">Check IUCN global redlist <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
+    </li>
   </ul>
 </nav>
 
@@ -68,7 +95,7 @@
   {% if not forloop.first %}</div>{% endif %}
   <div class="contribution-type contribution-{{ item.type|lower }}"><strong>{{ item.type }}s:</strong>
   {% endifchanged %}
-  <span class="contributor">{{ item.person }}</span>
+    <span class="contributor"><a href="{% url 'person_detail' item.person_id %}">{{ item.person }}</a></span>
   {% if forloop.last %}</div>{% endif %}
   {% endfor %}
   </div>
@@ -82,7 +109,7 @@
         <small>(Changed due to {{ change_rationale|safe }})</small>{% endif %}</h2> {{ rationale|safe }}
       </article>
       {% if distribution_narrative %}<article><h2>Distribution</h2>{{ distribution_narrative|safe }}</article>{% endif %}
-      <!-- See js --><article id="habitatNarrative"><h2>Habitat <small><a href="">View more species info</a></small></h2><div></div></article>
+      <!-- See js --><article id="habitatNarrative"><h2>Habitat <small><a href="">View more ecological information <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a></small></h2><div></div></article>
       {% if population_narrative %}<article><h2>Population</h2>{{ population_narrative|safe }}</article>{% endif %}
       {% if population_trend_narrative %}<article id="poptrend">
         <h2>Population trend {% if population_trend_nature %} <small>{{ population_trend_nature }}</small>{% endif %}</h2>
@@ -108,8 +135,7 @@
       </article>
     </section>
     {% else %}
-      <h2>No information currently available</h2>
-      <p>The detail of this assessment is still under preparation.</p>
+      <h2>This assessment is still under preparation.</h2>
     {% endif %}
   </div>
   <div class="col-md-2 assessment-aside">

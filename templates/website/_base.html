@@ -36,15 +36,14 @@
             <span class="icon-bar"></span>
           </button>
           <!--<a class="navbar-brand" href="/">SANBI</a>-->
-          <a href="/" id="logo"><img src="{% static 'img/logo.png' %}" class="navbar-img" alt="Home" </a>
+          <a href="/" id="logo"><img src="{% static 'img/logo.png' %}" class="navbar-img" alt="Home"></a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-          <ul class="nav navbar-nav" id="primary-nav">
-            <li><a href="{% url 'lineage_pk' 4 %}">Explore species</a></li>
-          </ul>
+          <!-- <ul class="nav navbar-nav" id="primary-nav"></ul> -->
           <ul class="nav navbar-nav navbar-right">
+            <li><a href="{% url 'lineage_pk' 4 %}">Explore species</a></li>
             <li><a href="{% url 'about' %}"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> About</a></li>
           </ul>
         </div><!-- /.navbar-collapse -->

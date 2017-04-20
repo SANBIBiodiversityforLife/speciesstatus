@@ -29,7 +29,9 @@ $(document).ready(function() {
         $('#imgcopyright').append(data['copyright']);
 
         // Next expand the image container (seeing as the img exists), we can't show/hide bcos it screws up the automatically generated triangular pattern
-        $('#taxon-img-container').css('width', '200px');
+        //$('#taxon-img-container div').css('width', '200px');
+        $('#taxon-img-container div').addClass('img-container-width');
+        $('#taxon-img-container').css('border-width', '10px');
         //$('#taxon-img-container img').hover(function() { $('#taxon-img-container div').show('fast'); $('#taxon-img-container p').hide('fast'); },
         //                                    function() { $('#taxon-img-container div').hide('fast'); $('#taxon-img-container p').show('fast'); });
 
@@ -60,7 +62,11 @@ $(document).ready(function() {
     url: ancestors_url,
     success: function(data, textStatus, jqXHR) {
       $.each(data, function(index, ancestor) {
-        if(index != 0) {
+        var start_index = 2;
+        if(index < start_index) {
+          return true; // Note this is the same as continue in python
+        }
+        if(index != start_index) {
           $('#breadcrumb').append(' <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span> ');
         }
         $('#breadcrumb').append('<a href="' + lineage_url.replace('0', ancestor.id) + '" data-toggle="tooltip" data-placement="top" title="' + ancestor.rank.name + '">' + ancestor.name + '</a>');

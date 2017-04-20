@@ -81,8 +81,12 @@ $(document).ready(function() {
 			rs = data['results'];
 			html = '';
 			$.each(rs, function(index, value) {
-				redir_url = searchRedirectUrl.replace('0', value['taxon_id']);
-				html += '<article><div class="ass-image"></div><h3><a href="' + redir_url + '">' + value['taxon'] + '</a></h3>';
+				redir_url = searchRedirectUrl.replace('0', value['taxon']['id']);
+				html += '<article><div class="ass-image"></div><h3><a href="' + redir_url + '">' + value['taxon']['name'] + '</a>';
+				if(value['taxon']['get_top_common_name'] != '') {
+					html += ' <small>' + value['taxon']['get_top_common_name'] + '</small>';
+				}
+				html += '</h3>';
 				html += '<h4><span class="assessment-cat assessment-' + value['redlist_category'] + '">' + value['redlist_category_display'] + '</span>';
 				html += ' <small>Scope: ' + value['scope'] + ' on ' + value['date'] + '</small></h4>';
 				html += value['rationale'] + '</article>';

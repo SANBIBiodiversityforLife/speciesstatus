@@ -1,0 +1,51 @@
+{% extends "website/_base.html" %}
+{% load static %}
+{% load mptt_tags %}
+{% load rest_framework %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'bib-list/bib-publication-list.css' %}" type="text/css" />
+<link rel="stylesheet" href="{% static 'bib-list/bib-list-custom.css' %}" type="text/css" />
+{% endblock css %}
+
+{% block heading %}
+	<section id="taxon-heading" class="triangles banner">
+		<div class="container">
+      <div class="row"><div class="col-md-12">
+        <h1>{{ person }}</h1>
+      </div></div>
+    </div>
+	</section>
+{% endblock %}
+
+{% block content %}
+  <div class="row"><div class="col-md-8 col-sm-12">
+  {% if contributions %}
+    <h2>Redlist assessments</h2>
+    {% for a in contributions %}
+    <a href="{{ a.assessment.id }}">{{ a.assessment.taxon.get_full_name|safe }} {{ a.assessment.taxon.get_top_common_name }}</a>
+      {{ a.assessment.redlist_category_display }} {{ a.assessment.date }} {{ a.assessment.rationale }}
+    <br>
+    <br>
+    {% endfor %}
+  {% endif %}
+    {% if references %}
+    <h2>Publications</h2>
+    <div class="item-info references">
+      <table id="pubTable" class="display table"></table>
+      <pre id="bibtex">[{% for a in references %}{{ a }},{% endfor %}]</pre>
+    </div>
+    {% endif %}
+  </div></div>
+{% endblock content %}
+
+{% block js %}
+<script src="{% static 'bib-list/bib-list.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/trianglify/1.0.1/trianglify.min.js"></script>
+<script>
+  $(document).ready(function() {
+    // Format the references
+    bibtexify("#bibtex", "pubTable");
+  });
+</script>
+{% endblock js %}

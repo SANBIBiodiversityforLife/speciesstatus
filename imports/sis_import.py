@@ -40,7 +40,6 @@ def import_sis():
     # Amphibians
     animal_dirs = ['SIS_Reptiles', os.path.join('SIS_Amphibians', 'draft'), os.path.join('SIS_Amphibians', 'published'),
                    'SIS_Dragonflies', 'SIS_Mammals']
-    # animal_dirs = ['Reptiles_SIS\\']
     for animal_dir_name in animal_dirs:
         animal_dir = os.path.join(pwd, animal_dir_name)
         af = pd.read_csv(os.path.join(animal_dir, 'allfields.csv'), encoding='UTF-8') # iso-8859-1
@@ -118,6 +117,7 @@ def import_sis():
                 if taxon_row['Exclude'] == 1:
                     print('skipping ' + taxon_row['genus'] + ' ' + taxon_row['species'])
                     continue
+
             species, species_was_created = create_taxon_from_sis(taxon_row, mendeley_session)
 
             if 'Exclude' in taxon_row:

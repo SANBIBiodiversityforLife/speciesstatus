@@ -1,4 +1,4 @@
-from taxa import models
+from taxa import models, helpers
 from biblio import models as biblio_models
 from people import models as people_models
 from redlist import models as redlist_models
@@ -31,7 +31,7 @@ def import_helper(item, rank_name, parent, mendeley_session):
     #    print('\n\n')
 
     if created and authority is not None:
-        imports_views.create_taxon_description(authority, taxon, mendeley_session)
+        helpers.create_taxon_description(authority, taxon, mendeley_session)
     return taxon
 
 
@@ -260,7 +260,7 @@ def import_seakeys():
                 author_string = [x.surname + " " + x.initials for x in authors]
                 author_string = ' and '.join(author_string)
                 bibtex_dict = {'year': str(reference['Year of Publication']),
-                               'title': imports_views.fix_case(reference['Title']),
+                               'title': helpers.fix_case(reference['Title']),
                                'author': author_string,
                                'ENTRYTYPE': type,
                                'ID': reference['Nid']}
@@ -277,7 +277,7 @@ def import_seakeys():
                 if 'Pagination' in reference and reference['Pagination'].strip() != '':
                     bibtex_dict['pages'] = reference['Pagination'].replace('–', '--').replace('-', '--').replace(' ', '')
                 if 'Secondary Title' in reference and reference['Secondary Title'].strip() != '':
-                    reference['Secondary Title'] = imports_views.fix_case(reference['Secondary Title'])
+                    reference['Secondary Title'] = helpers.fix_case(reference['Secondary Title'])
                     if type == 'article':
                         bibtex_dict['journal'] = reference['Secondary Title'].strip()
                     elif type == 'bookchapter':
@@ -304,7 +304,7 @@ def import_seakeys():
             for img in row['Images'].split(','):
                 img_nid = img.strip()
                 if img_nid:
-                    img_directory = os.path.join(settings.BASE_DIR, 'website', 'static', 'sp-imgs')
+                    img_directory = os.path.join(settings.BASE_DIR, 'website', 'static', 'sp-imgs', 'fish')
 
                     # Work out if the local file already exists on the server
                     new_file_name = parent.name.lower().replace(' ', '_') + '_' + str(image_counter) + '.jpg'

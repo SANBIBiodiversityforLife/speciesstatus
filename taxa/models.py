@@ -60,7 +60,7 @@ class Taxon(MPTTModel):
     slug = models.SlugField(max_length=200)
 
     # If a taxon is merged or split taxonomists often want to record why it happened, this can be entered here
-    notes = models.TextField(null=True)
+    taxonomic_notes = models.TextField(null=True)
 
     # Overrides the default save so that we can get a nice URL
     def save(self, *args, **kwargs):
@@ -175,8 +175,11 @@ class Taxon(MPTTModel):
         plants = Taxon.objects.get(name='Plantae')
         is_plant = self.is_descendant_of(plants)
 
+        # Sometimes there is no description at all
+        if descriptions_count == 0:
+            return '<em>{}</em>'.format(self.name)
         # If there's only one result or it's a plant then just return the description
-        if descriptions_count == 1 or is_plant:
+        elif descriptions_count == 1 or is_plant:
             return '<em>{}</em>, <span class="species-description">{}</span>'.format(self.name, str(last_description))
         # Otherwise it's an animal and there's more than 1 description
         else:

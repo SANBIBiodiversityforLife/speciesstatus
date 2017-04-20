@@ -38,7 +38,7 @@ function init_map(point_data, poly_data) {
   var polys = new L.geoJson(poly_data['results'], {
     onEachFeature: function (feature, layer) {
       area = Math.round((L.GeometryUtil.geodesicArea(layer.getLatLngs()[0]))/1000000);
-      popup = ' / Extent of occurrence: ' + area + ' km<sup>2</sup>'
+      popup = 'Extent of occurrence: ' + area + ' km<sup>2</sup>'
       if(feature.properties.residency_status) {
         popup = '<h4>' + feature.properties.residency_status  + '</h4>' + popup;
       }
@@ -72,6 +72,7 @@ function init_map(point_data, poly_data) {
   // Add geojson layer and create a coords list from that for the heatmap
   var coords = []
   institutionCodes=[]
+  var institutionCodesDict = {}
   var pts = new L.geoJson(point_data, {
     onEachFeature: function (feature, layer) {
       coords.push([feature.geometry.coordinates[1], feature.geometry.coordinates[0]]);
@@ -79,9 +80,41 @@ function init_map(point_data, poly_data) {
       if(!institutionCodes.includes(actualCode)) {
         institutionCodes.push(actualCode);
       }
+      if(actualCode != '') {
+        if(actualCode in institutionCodesDict) {
+          institutionCodesDict[actualCode] = institutionCodesDict[actualCode] + 1;
+        } else {
+          institutionCodesDict[actualCode] = 1;
+        }
+      }
     },
   });
-  $('#distribution').html('<span>' + institutionCodes.join('</span><span>') + '</span>');
+  //$('#distribution').html('<span>' + institutionCodes.join('</span><span>') + '</span>');
+
+  var chartData = $.map(institutionCodesDict, function(v) { return v; });
+  var chartLabels = $.map(institutionCodesDict, function(v, k) { return k; });
+  var colours = []
+  var colourIncrement = Math.floor(360/chartLabels.length);
+  for(i = 0; i < chartLabels.length; i++) {
+    colours.push('hsl(' + (colourIncrement * i) + ', 30%, 50%)');
+  }
+  var chartData = {
+    type: 'doughnut',
+    data: {
+      datasets: [{
+        data: chartData,
+        backgroundColor: colours,
+        label: 'Dataset 1'
+      }],
+      labels: chartLabels
+    },
+    options: {
+      legend: { position: 'left',
+              labels: { boxWidth: 10 } },
+    }
+  }
+  var ctx = document.getElementById("canvas").getContext("2d");
+  window.myDoughnut = new Chart(ctx, chartData);
 
   // Add heatmap
   heat = L.heatLayer(coords, {
