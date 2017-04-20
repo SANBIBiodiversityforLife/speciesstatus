@@ -11,3 +11,4 @@ class AuthorshipInline(admin.TabularInline):
     extra = 1
 
 
+admin.site.register(models.Authorship)

@@ -95,7 +95,7 @@
   {% if not forloop.first %}</div>{% endif %}
   <div class="contribution-type contribution-{{ item.type|lower }}"><strong>{{ item.type }}s:</strong>
   {% endifchanged %}
-    <span class="contributor"><a href="{% url 'person_detail' item.person_id %}">{{ item.person }}</a></span>
+    <a href="{% url 'person_detail' item.person_id %}" role="button" class="btn btn-sm btn-default" >{{ item.person }}</a>
   {% if forloop.last %}</div>{% endif %}
   {% endfor %}
   </div>

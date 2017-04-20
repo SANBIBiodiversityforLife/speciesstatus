@@ -170,7 +170,9 @@ nav.redlist .small-pill {
     padding: 5px 10px;
     margin: 5px 0;
     line-height: 2em;
+
 }
+.contribution-type a { margin-bottom: 3px; }
 .contributor {
     padding: 5px;
 }
@@ -182,14 +184,16 @@ nav.redlist .small-pill {
 .contribution-assessor .contributor { background-color: rgba(255, 255, 0, 0.2); }
 .contribution-reviewer .contributor { background-color: rgba(255, 255, 0, 0.2); }
 .contribution-contributor .contributor { background-color: rgba(255, 255, 0, 0.2); }
-.contribution-facilitator .contributor { background-color: rgba(255, 255, 0, 0.2); }*/
+.contribution-facilitator .contributor { background-color: rgba(255, 255, 0, 0.2); }
 .contribution-assessor .contributor, .contribution-reviewer .contributor,
-.contribution-contributor .contributor, .contribution-facilitator .contributor { background-color: #ede2b8;
+.contribution-contributor .contributor, .contribution-facilitator .contributor {
+  background-color: rgba(255, 255, 188, 0.57);
+  border: 1px solid
  border-radius: 5px;}
 .contribution-assessor .contributor:hover, .contribution-reviewer .contributor:hover,
 .contribution-contributor .contributor:hover, .contribution-facilitator .contributor:hover {
-  background-color: #fff7b7;
-}
+  background-color: rgba(255, 255, 188, 0.57);
+}*/
 #redlist-summary {
     border-bottom: 1px solid #ddd;
     padding-bottom: 15px;
@@ -233,12 +237,25 @@ span.ele {
 article h3 {
   font-size: 1.1em; font-weight: bold;
 }
+.scanty-info h3 {
+  font-size: 1.4em;
+}
 .scanty-info {
-  background-color: #ffffbc;
+  background-color: rgba(255, 255, 188, 0.57); /*#ffffbc;*/
   border-radius: 20px;
   padding: 10px 20px 20px 20px;
   text-align: center;
+  font-size: 0.9em;
 }
+
+.scanty-info img {
+  width: 100px;
+  background-color: #FFF;
+  padding: 10px;
+  border-radius: 10px;
+}
+/* rgb(220, 242, 255)*/
+
 
 
 
@@ -261,6 +278,7 @@ article h3 {
   padding-bottom: 10px;
   text-align: center;
   background-color: rgba(255, 255, 0, 0.2);
+  background-color: rgba(255, 255, 188, 0.57);
 }
 
 .howtocite {

@@ -40,9 +40,9 @@ class PeopleList(generics.ListCreateAPIView):
 
 @api_view(['GET'])
 @renderer_classes((TemplateHTMLRenderer, JSONRenderer, BrowsableAPIRenderer))
-def person(request, pk):
+def person(request, slug):
     if request.method == 'GET':
-        person = models.Person.objects.get(pk=pk)
+        person = models.Person.objects.get(slug=slug)
 
         # References
         references = biblio_models.Reference.objects.filter(authors=person, bibtex__isnull=False)

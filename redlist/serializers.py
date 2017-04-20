@@ -10,7 +10,8 @@ from bibtexparser.bibdatabase import BibDatabase
 class ContributionSerializer(serializers.ModelSerializer):
     type = serializers.CharField(source='get_type_display')
     person = serializers.StringRelatedField(read_only=True)
-    person_id = serializers.PrimaryKeyRelatedField(source='person', read_only=True)
+    # person_id = serializers.PrimaryKeyRelatedField(source='person', read_only=True)
+    person_id = serializers.SlugRelatedField(source='person', slug_field='slug', read_only=True)
     # person = PersonSerializer()
 
     class Meta:

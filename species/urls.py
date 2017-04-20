@@ -34,7 +34,8 @@ urlpatterns = [
     url(r'^biblio/', include('biblio.urls')),
     url(r'^assessment/', include('redlist.urls')),
     url(r'^api/people/', people_views.PeopleList.as_view(), name='api_people'),
-    url(r'^person/(?P<pk>\d*)/$', people_views.person, name='person_detail'),
+    #url(r'^person/(?P<pk>\d*)/$', people_views.person, name='person_detail'),
+    url(r'^person/(?P<slug>[\w-]+)/$', people_views.person, name='person_detail'),
 
     # Index
     url(r'^$', xframe_options_exempt(website_views.IndexView.as_view()), name='index'),

@@ -4,7 +4,7 @@
 {% load rest_framework %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'bib-list/bib-publication-list.css' %}" type="text/css" />
+
 <link rel="stylesheet" href="{% static 'bib-list/bib-list-custom.css' %}" type="text/css" />
 {% endblock css %}
 
@@ -13,27 +13,46 @@
 		<div class="container">
       <div class="row"><div class="col-md-12">
         <h1>{{ person }}</h1>
+        <hr>
       </div></div>
     </div>
 	</section>
 {% endblock %}
 
 {% block content %}
-  <div class="row"><div class="col-md-8 col-sm-12">
+  <div class="row"><div class="col-md-12 col-sm-12" id="assessments">
   {% if contributions %}
     <h2>Redlist assessments</h2>
+    <table class="table table-striped table-bordered table-hover">
+      <caption>Table lists all assessments that {{ person }} has participated in.</caption>
+      <thead><tr><th>Role</th><th>Scientific name</th><th>Common name</th><th style="width: 200px;">Status</th><th>Scope</th><th>Assessed on</th></tr></thead>
+      <tbody>
+      {% for a in contributions %}
+      <tr class="{% if a.type == 'Assessor' %}success{% endif %}">
+        <td>{{ a.type }}</td>
+        <td><a href="{% url 'last_assessment_detail' a.assessment.taxon.id %}">{{ a.assessment.taxon.get_full_name|safe }} <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a></td>
+        <td>{{ a.assessment.taxon.get_top_common_name }}</td>
+        <td><span class="assessment-cat assessment-{{ a.assessment.redlist_category}}">{{ a.assessment.redlist_category_display }}</span></td>
+        <td>{{ a.assessment.scope }}</td><td>{{ a.assessment.date }}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <!--
     {% for a in contributions %}
-    <a href="{{ a.assessment.id }}">{{ a.assessment.taxon.get_full_name|safe }} {{ a.assessment.taxon.get_top_common_name }}</a>
-      {{ a.assessment.redlist_category_display }} {{ a.assessment.date }} {{ a.assessment.rationale }}
-    <br>
-    <br>
+    <article>
+      <h3><a href="{% url 'last_assessment_detail' a.assessment.taxon.id %}">{{ a.assessment.taxon.get_full_name|safe }} <small>{{ a.assessment.taxon.get_top_common_name }}</small></a></h3>
+      <h4><span class="assessment-cat assessment-{{ a.assessment.redlist_category}}">{{ a.assessment.redlist_category_display }}</span> <small>Scope: {{ a.assessment.scope }} on {{ a.assessment.date }}</small></h4>
+      {{ a.assessment.rationale|safe }}
+    </article>
     {% endfor %}
+    -->
   {% endif %}
-    {% if references %}
+    {% if references %}<hr>
     <h2>Publications</h2>
     <div class="item-info references">
-      <table id="pubTable" class="display table"></table>
-      <pre id="bibtex">[{% for a in references %}{{ a }},{% endfor %}]</pre>
+      <table id="pubTable" class="table table-bordered table-hover"></table>
+      <pre id="bibtex">[{% for a in references %}{{ a.bibtex }},{% endfor %}]</pre>
     </div>
     {% endif %}
   </div></div>
@@ -46,6 +65,15 @@
   $(document).ready(function() {
     // Format the references
     bibtexify("#bibtex", "pubTable");
+
+    var params = {
+      height: $('.triangles').outerHeight(),
+      width: $('.triangles').outerWidth(),
+      x_colors: 'Blues',
+      y_colors: 'match_x'
+    };
+    var pattern = new Trianglify(params);
+    //$('.triangles').attr('style', 'background: url(' + pattern.png() + ') no-repeat center center');
   });
 </script>
 {% endblock js %}

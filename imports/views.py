@@ -388,5 +388,4 @@ def st_process(request):
 
     # Retrieve a list of points falling within the oceans and delete them
     points_for_deleting = models.PointDistribution.objects.filter(point__within=polygon_union)
-    import pdb; pdb.set_trace()
     points_for_deleting.delete()

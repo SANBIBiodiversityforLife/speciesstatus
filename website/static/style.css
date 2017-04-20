@@ -72,3 +72,31 @@ p { line-height: 1.8em; }
 }
 
 #taxon-heading .container>div>div { padding-top: 30px; }*/
+
+
+.ass-image {
+  float: left;
+  width: 100px;
+  height: 120px;
+  background-color: #DDD;
+  margin-right: 15px;
+}
+#assessments article {
+  clear: both;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  overflow: auto;
+}
+.assessment-cat {
+  padding: 5px;
+  border-radius: 5px;
+  color: white;
+}/*
+.triangles h1 {
+  margin-bottom: 40px;
+  margin-top: 50px;
+  color: white;
+  font-weight: bold;
+}*/
+#assessments h2 { margin-bottom: 20px; }
