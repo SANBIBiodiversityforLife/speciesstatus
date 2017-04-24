@@ -287,19 +287,26 @@ def import_seakeys():
                         bibtex_dict['series'] = reference['Secondary Title'].strip()
 
                 # Create and save the reference object
-                year = bibtex_dict['year'].strip() if bibtex_dict['year'].lower() != 'in press' else 2017
-                ref = biblio_models.Reference(year=int(year),
-                                              title=bibtex_dict['title'],
-                                              bibtex=bibtex_dict)
-                ref.save()
+                year = bibtex_dict['year'].strip() # if bibtex_dict['year'].lower() != 'in press' else 2017
 
-                # Assign authors to the reference
-                biblio_models.assign_multiple_authors(authors, ref)
+                # Try and find the reference pre-existing in the database
+                ref = biblio_models.Reference.objects.filter(title=bibtex_dict['title']).first()
+                if ref is None:
+                    ref = biblio_models.Reference(title=bibtex_dict['title'], bibtex=bibtex_dict)
+                    try:
+                        ref.year = int(year)
+                    except:
+                        pass
+                    ref.save()
+
+                    # Assign authors to the reference
+                    biblio_models.assign_multiple_authors(authors, ref)
 
                 # Associate with the assessment
                 assessment.references.add(ref)
 
         if row['Images'].strip():
+            continue
             image_counter = 1
             for img in row['Images'].split(','):
                 img_nid = img.strip()

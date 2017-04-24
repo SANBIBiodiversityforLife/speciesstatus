@@ -32,20 +32,32 @@ def create_authors_from_bibtex_string(author_string):
 
 
 def get_or_create_person(surname, initials):
+    surname = surname.strip()
+    initials = initials.strip()
     # Try and get all possible people in the database first
     p = models.Person.objects.filter(surname=surname, initials=initials).first()
 
-    # If there's nobody there then try get same surname and no initials, it's probably the same person
-    # Someone can split it out later manually if it's not
     if p is None:
-        p = models.Person.objects.filter(surname=surname, initials__isnull=True, initials__exact='').first()
-        if p is None:
-            # Otherwise if we can't find anyone with the same surname make a new person
-            p, created = models.Person.objects.get_or_create(surname=surname, initials=initials)
-            # p = models.Person(surname=surname, initials=initials)
+        # Try and find the person assuming the first initial is their first name
+        first_name_letter = initials[0]
+        if len(initials) > 1:
+            initials = initials[1:].strip()
         else:
-            p.initials = initials
-        p.save()
+            initials = ''
+
+        p = models.Person.objects.filter(surname=surname, initials=initials, first__startswith=first_name_letter).first()
+
+        if p is None:
+            # Try for same surname and no initials, can always be split out manually later
+            p = models.Person.objects.filter(surname=surname, initials__isnull=True, initials__exact='').first()
+
+            if p is None:
+                # Otherwise if we can't find anyone with the same surname make a new person
+                p, created = models.Person.objects.get_or_create(surname=surname, initials=initials, first=first_name_letter)
+                # p = models.Person(surname=surname, initials=initials)
+            else:
+                p.initials = initials
+            p.save()
 
     return p
 

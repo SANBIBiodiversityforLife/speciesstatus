@@ -72,7 +72,7 @@ function init_map(point_data, poly_data) {
   // Add geojson layer and create a coords list from that for the heatmap
   var coords = []
   institutionCodes=[]
-  var institutionCodesDict = {}
+  //var institutionCodesDict = {}
   var pts = new L.geoJson(point_data, {
     onEachFeature: function (feature, layer) {
       coords.push([feature.geometry.coordinates[1], feature.geometry.coordinates[0]]);
@@ -80,17 +80,17 @@ function init_map(point_data, poly_data) {
       if(!institutionCodes.includes(actualCode)) {
         institutionCodes.push(actualCode);
       }
-      if(actualCode != '') {
+      /*if(actualCode != '') {
         if(actualCode in institutionCodesDict) {
           institutionCodesDict[actualCode] = institutionCodesDict[actualCode] + 1;
         } else {
           institutionCodesDict[actualCode] = 1;
         }
-      }
+      }*/
     },
   });
-  //$('#distribution').html('<span>' + institutionCodes.join('</span><span>') + '</span>');
-
+  $('#distribution').html('<span>' + institutionCodes.join('</span><span>') + '</span>');
+  /*
   var chartData = $.map(institutionCodesDict, function(v) { return v; });
   var chartLabels = $.map(institutionCodesDict, function(v, k) { return k; });
   var colours = []
@@ -114,7 +114,7 @@ function init_map(point_data, poly_data) {
     }
   }
   var ctx = document.getElementById("canvas").getContext("2d");
-  window.myDoughnut = new Chart(ctx, chartData);
+  window.myDoughnut = new Chart(ctx, chartData);*/
 
   // Add heatmap
   heat = L.heatLayer(coords, {

@@ -1,4 +1,9 @@
 $(document).ready(function() {
+  // Fix the image width
+  $('#taxon-img-container img').addClass(function( index ) {
+    return (this.width/this.height > 1) ? 'img-wide' : 'img-tall';
+  })
+
   // Find/replace all the underscores
   function replaceFunction(index, html) {
     return html.replace(/_(narrative)?/g, '');

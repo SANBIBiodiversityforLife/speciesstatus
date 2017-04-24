@@ -401,17 +401,20 @@ def import_sis():
                 # Required for bibtexparser, just putting in a random number for now
                 bibtex_dict['ID'] = row['internal_taxon_id']
 
-                # Create and save the reference object
-                ref = biblio_models.Reference(title=bibtex_dict['title'], bibtex=bibtex_dict)
+                # Try and get any preexisting references from the db
+                ref = biblio_models.Reference.objects.filter(title=r['title'], year=bibtex_dict['year']).first()
+                if ref is None:
+                    # Create and save the reference object
+                    ref = biblio_models.Reference(title=bibtex_dict['title'], bibtex=bibtex_dict)
 
-                try:
-                    ref.year = int(bibtex_dict['year'])
-                except ValueError:
-                    pass
-                ref.save()
+                    try:
+                        ref.year = int(bibtex_dict['year'])
+                    except ValueError:
+                        pass
+                    ref.save()
 
-                # Assign authors to the reference
-                biblio_models.assign_multiple_authors(authors, ref)
+                    # Assign authors to the reference
+                    biblio_models.assign_multiple_authors(authors, ref)
 
                 # Associate with the assessment
                 a.references.add(ref)

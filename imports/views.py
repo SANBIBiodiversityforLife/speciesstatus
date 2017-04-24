@@ -33,7 +33,7 @@ def populate_higher_level_common_names(request):
         if taxon_name in common_names:
             common_name = models.CommonName.objects.get_or_create(name=common_names[taxon_name], taxon=taxon, language=english)
             continue
-
+        continue
         # Otherwise search GBIF
         r = requests.get('http://api.gbif.org/v1/species/search?q=' + taxon.name.lower() + '&rank=' + str(taxon.rank))
         gbif = r.json()
@@ -156,11 +156,29 @@ def bird_distribs(request):
                 distrib.save()
 
 
-# Note: Birds are run from the other django app
 def frog_distribs(request):
+    # Do the points first
     pwd = os.path.abspath(os.path.dirname(__file__))
-    dir = os.path.join(pwd, '..', 'data-sources', 'distribs_frog')
+    dir = os.path.join(pwd, '..', 'data-sources', 'distribs_frog_pts')
+    df = pd.read_csv(os.path.join(dir, 'simple.csv'), encoding='latin-1')
+    mapping = {'decimallatitude': 'lat',
+               'decimallongitude': 'long',
+               'institution source': 'origin_code',
+               'specificepithet': 'species'}
+    df.columns = map(str.lower, df.columns)
+    df.rename(columns=mapping, inplace=True)
+    df = df.loc[df['taxonrank'].isin(['species', 'Subspecies'])]
+    for index, row in df.iterrows():
+        name_parts = row['scientificname'].strip().split(' ')
+        row['species'] = name_parts[1]
+        if len(name_parts) > 2:
+            row['subspecies'] = name_parts[2]
+        pt = create_point_distribution(row)
 
+    import pdb; pdb.set_trace()
+
+    # Then the polygons
+    dir = os.path.join(pwd, '..', 'data-sources', 'distribs_frog')
     parent_node = models.Taxon.objects.get(name='Amphibia')
     species_rank = models.Rank.objects.get(name='Species')
     subspecies_rank = models.Rank.objects.get(name='Subspecies')

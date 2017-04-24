@@ -32,9 +32,27 @@ class PeopleList(generics.ListCreateAPIView):
                 person = serializers.PersonSerializer(person)
                 return Response(person.data, status=status.HTTP_202_ACCEPTED)
             except models.Person.DoesNotExist:
-                self.perform_create(serializer)
-                headers = self.get_success_headers(serializer.data)
-                return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+                # Try and get all possible people in the database first
+                if serializer.validated_data['initials']:
+                    person = models.Person.objects.filter(surname=serializer.validated_data['surname'].strip(),
+                                                          initials=serializer.validated_data['initials'].strip(),
+                                                          first__startswith=serializer.validated_data['first'][0].strip()).first()
+                    if person is None:
+                        person = models.Person.objects.filter(surname=serializer.validated_data['surname'].strip(),
+                                                              initials=serializer.validated_data['initials'].strip()).first()
+                else:
+                    person = models.Person.objects.filter(surname=serializer.validated_data['surname'].strip(),
+                                                          initials__isnull=True).first()
+
+                # If they cannot be found then create them
+                if person is None:
+                    self.perform_create(serializer)
+                    headers = self.get_success_headers(serializer.data)
+                    return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+                else:
+                    person = serializers.PersonSerializer(person)
+                    return Response(person.data, status=status.HTTP_202_ACCEPTED)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

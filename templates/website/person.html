@@ -12,7 +12,7 @@
 	<section id="taxon-heading" class="triangles banner">
 		<div class="container">
       <div class="row"><div class="col-md-12">
-        <h1>{{ person }}</h1>
+        <h1>Profile: {{ person }}</h1>
         <hr>
       </div></div>
     </div>
@@ -51,7 +51,7 @@
     {% if references %}<hr>
     <h2>Publications</h2>
     <div class="item-info references">
-      <table id="pubTable" class="table table-bordered table-hover"></table>
+      <table id="pubTable" class="table table-bordered table-hover"><caption>Table lists all publications cited on this website that {{ person }} has authored.</caption></table>
       <pre id="bibtex">[{% for a in references %}{{ a.bibtex }},{% endfor %}]</pre>
     </div>
     {% endif %}

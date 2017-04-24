@@ -58,17 +58,19 @@ def post_bibtex(request):
     db = bibtexparser.loads(bibtex)
     for entry in db.entries:
         bibtex_dict = entry
-        ref = models.Reference(title=bibtex_dict['title'], bibtex=bibtex_dict)
-        try:
-            ref.year = int(bibtex_dict['year'])
-        except ValueError:
-            pass
-        ref.save()
+        ref = models.Reference.objects.filter(bibtex=bibtex_dict).first()
+        if ref is None:
+            ref = models.Reference(title=bibtex_dict['title'], bibtex=bibtex_dict)
+            try:
+                ref.year = int(bibtex_dict['year'])
+            except ValueError:
+                pass
+            ref.save()
 
-        # Add the authors
-        if 'author' in bibtex_dict:
-            authors = helpers.create_authors_from_bibtex_string(bibtex_dict['author'])
-            models.assign_multiple_authors(authors, ref)
+            # Add the authors
+            if 'author' in bibtex_dict:
+                authors = helpers.create_authors_from_bibtex_string(bibtex_dict['author'])
+                models.assign_multiple_authors(authors, ref)
 
         assessment.references.add(ref)
     return Response({'Reference added'}, status=status.HTTP_201_CREATED)
