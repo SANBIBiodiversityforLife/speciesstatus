@@ -96,7 +96,7 @@ def redlist_statistics(request):
     """
     if request.method == 'GET':
         class_rank = taxa_models.Rank.objects.get(name='Class')
-        class_nodes = taxa_models.Taxon.objects.exclude(name__in=['Insecta', ]).filter(rank=class_rank) # , 'Elasmobranchii''Holocephali'
+        class_nodes = taxa_models.Taxon.objects.exclude(name__in=['Insecta', 'Holocephali']).filter(rank=class_rank) # , 'Elasmobranchii''Holocephali'
         statuses = models.Assessment.REDLIST_CATEGORY_CHOICES
         data = {}
         node_names = [t.name for t in class_nodes]

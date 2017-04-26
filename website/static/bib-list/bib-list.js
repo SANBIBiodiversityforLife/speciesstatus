@@ -2694,8 +2694,6 @@ var bibtexify = (function($) {
         for (var index = 0; index < len; index++) {
             var item = bibtex.data[index];
             var newObject = jQuery.extend(true, {}, item);
-
-            console.log(newObject);
             if (!item.year) {
               item.year = this.options.defaultYear || "To Appear";
             }

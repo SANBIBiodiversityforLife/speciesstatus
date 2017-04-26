@@ -312,7 +312,7 @@ def import_sis():
                 author_string = ' and '.join(author_string)
 
                 # Sometimes these idiots didn't enter a year, in which case I am throwing the whole reference out
-                if pd.isnull(r['year']):
+                if pd.isnull(r['year']) or pd.isnull(r['title']):
                     print(r['year'])
                     continue
 
@@ -402,22 +402,23 @@ def import_sis():
                 bibtex_dict['ID'] = row['internal_taxon_id']
 
                 # Try and get any preexisting references from the db
-                ref = biblio_models.Reference.objects.filter(title=r['title'], year=bibtex_dict['year']).first()
-                if ref is None:
-                    # Create and save the reference object
-                    ref = biblio_models.Reference(title=bibtex_dict['title'], bibtex=bibtex_dict)
+                if 'title' in bibtex_dict:
+                    ref = biblio_models.Reference.objects.filter(title=bibtex_dict['title']).first()
+                    if ref is None:
+                        # Create and save the reference object
+                        ref = biblio_models.Reference(title=bibtex_dict['title'], bibtex=bibtex_dict)
 
-                    try:
-                        ref.year = int(bibtex_dict['year'])
-                    except ValueError:
-                        pass
-                    ref.save()
+                        try:
+                            ref.year = int(bibtex_dict['year'])
+                        except ValueError:
+                            pass
+                        ref.save()
 
-                    # Assign authors to the reference
-                    biblio_models.assign_multiple_authors(authors, ref)
+                        # Assign authors to the reference
+                        biblio_models.assign_multiple_authors(authors, ref)
 
-                # Associate with the assessment
-                a.references.add(ref)
+                    # Associate with the assessment
+                    a.references.add(ref)
 
             # Add threats for the assessment by finding all relevant threats and then adding one by one
             threats_rows = threats.loc[threats['internal_taxon_id'] == row['internal_taxon_id']]

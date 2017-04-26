@@ -1,5 +1,6 @@
 from taxa import models, helpers
 from redlist import models as redlist_models
+from people import models as people_models
 import pandas as pd
 from imports import sis_import, spstatus_import, sarca_sabca, sabca
 from imports import sis_import, spstatus_import
@@ -10,6 +11,7 @@ import datetime
 import csv
 import requests
 from django.contrib.gis.geos import Point, Polygon
+from django.utils.text import slugify
 
 
 # Run after all of the imports have gone through
@@ -213,6 +215,11 @@ def convert_all_criteria_strings(request):
             import pdb; pdb.set_trace()
         assessment.save()
 
+    needs_fixing = people_models.Person.objects.all()
+    for person in needs_fixing:
+        person.slug = slugify(str(person))
+        person.save()
+
 
 # Used to fix the criteria string in the butterfly/sabca db imports
 def convert_criteria_string(string):
@@ -314,7 +321,7 @@ def create_point_distribution(row):
             try:
                 pt.date = datetime.date(year=int(float(str(row['year']).strip())), month=month, day=day)
             except ValueError:
-                import pdb; pdb.set_trace()
+                pass
         pt.save()
     except:
         return False
