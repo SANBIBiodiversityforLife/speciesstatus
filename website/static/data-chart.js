@@ -46,7 +46,6 @@ $(document).ready(function() {
                   mode: 'index',
                   intersect: false
               },
-              responsive: true,
               scales: {
                   xAxes: [{
                       stacked: true,
@@ -60,6 +59,123 @@ $(document).ready(function() {
                   }]
               }
           }
+      });
+
+
+      var ctx = document.getElementById('land').getContext('2d');
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: [
+                "South Africa",
+                "Rest of World",
+            ],
+            datasets: [
+                {
+                    data: [2, 98],
+                    backgroundColor: [
+                        "#888",
+                        "#DDD",
+                    ],
+                    hoverBackgroundColor: [
+                        "#888",
+                        "#DDD",
+                    ]
+                }]
+        },
+        options: {
+            animation:{
+                animateScale:true
+            },
+            legend: { display: false }
+        }
+      });
+
+      var ctx = document.getElementById('plant').getContext('2d');
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: [
+                "South Africa",
+                "Rest of World",
+            ],
+            datasets: [
+                {
+                    data: [10, 90],
+                    backgroundColor: [
+                        "#80c615",
+                        "#c8cec0",
+                    ],
+                    hoverBackgroundColor: [
+                        "#80c615",
+                        "#c8cec0",
+                    ]
+                }]
+        },
+        options: {
+            animation:{
+                animateScale:true
+            },
+            legend: { display: false }
+        }
+      });
+
+      var ctx = document.getElementById('terrestrial').getContext('2d');
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: [
+                "South Africa",
+                "Rest of World",
+            ],
+            datasets: [
+                {
+                    data: [7, 93],
+                    backgroundColor: [
+                        "#FF3158",
+                        "#dbc5c9",
+                    ],
+                    hoverBackgroundColor: [
+                        "#FF3158",
+                        "#dbc5c9",
+                    ]
+                }]
+        },
+        options: {
+            animation:{
+                animateScale:true
+            },
+            legend: { display: false }
+        }
+      });
+
+      var ctx = document.getElementById('marine').getContext('2d');
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: [
+                "South Africa",
+                "Rest of World",
+            ],
+            datasets: [
+                {
+                    data: [15, 85],
+                    backgroundColor: [
+                        "#3187F8",
+                        "#94afd3",
+                    ],
+                    hoverBackgroundColor: [
+                        "#3187F8",
+                        "#94afd3",
+                    ]
+                }]
+        },
+        options: {
+            animation:{
+                animateScale:true
+            },
+            legend: { display: false }
+        }
       });
 		}
 	});

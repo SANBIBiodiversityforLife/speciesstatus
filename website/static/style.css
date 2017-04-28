@@ -50,8 +50,7 @@ footer {
 }
 #logo img {
   padding: 10px 10px 5px 10px;
-  border: 1px solid #dadada;
-
+  /*border: 1px solid #dadada;*/
 }
 #primary-nav { margin-left: 410px; }
 .no-banner { padding-top: 80px; }
