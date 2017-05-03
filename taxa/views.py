@@ -21,8 +21,8 @@ def api_root(request, format=None):
         'taxon-write - Write taxa into the taxa tree': reverse('api_taxon_write', request=request, format=format),
         'info-write - Write non-taxonomic information': reverse('api_info_write', request=request, format=format),
         'common-name-write - Write common names information': reverse('api_cn_write', request=request, format=format),
-        'alphabetical list of species by genus': reverse('api_genera_list_default', request=request, format=format),
-        'alphabetical list of species by redlist category': reverse('api_category_list_default', request=request, format=format),
+        # 'alphabetical list of species by genus': reverse('api_genera_list_default', request=request, format=format),
+        # 'alphabetical list of species by redlist category': reverse('api_category_list_default', request=request, format=format),
         # 'distributions': reverse('distribution_list', request=request, format=format),
     })
 
