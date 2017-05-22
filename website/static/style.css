@@ -19,6 +19,7 @@ footer {
   margin-top: 50px;
   padding: 60px 0;
   background: linear-gradient(to bottom, #4b659e 0%,#005075 100%);
+  background: #222;
 }
 
 .assessment {
@@ -40,18 +41,6 @@ footer {
 #homebg, #carousel {
   width: 100%;
 }
-#logo {
-  position: absolute;
-  top: -10px;
-  z-index: 10;
-  background-color: white;
-  border: 1px solid #dadada;
-  padding: 3px;
-}
-#logo img {
-  padding: 10px 10px 5px 10px;
-  /*border: 1px solid #dadada;*/
-}
 #primary-nav { margin-left: 410px; }
 .no-banner { padding-top: 80px; }
 .search-form {
@@ -59,7 +48,6 @@ footer {
 }
 p { line-height: 1.8em; }
 .banner .container {
-  padding-top: 90px;
 }
 
 /*
@@ -99,3 +87,21 @@ p { line-height: 1.8em; }
   font-weight: bold;
 }*/
 #assessments h2 { margin-bottom: 20px; }
+
+header {
+  background: #000 url('/static/img/carousel/1.jpg') no-repeat right;
+  height: 180px;
+  padding: 0;
+}
+header h1 {
+  color: #CFCFCF;
+  margin-top: 2.1em;
+  text-transform: uppercase;
+  font-size: 2.3em;
+}
+header h1 span {
+  color: #FFF;
+  display: block;
+  text-transform: capitalize;
+  font-size: 1.3em;
+}

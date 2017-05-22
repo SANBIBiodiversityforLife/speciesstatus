@@ -180,10 +180,10 @@ class Taxon(MPTTModel):
             return '<em>{}</em>'.format(self.name)
         # If there's only one result or it's a plant then just return the description
         elif descriptions_count == 1 or is_plant:
-            return '<em>{}</em>, <span class="species-description">{}</span>'.format(self.name, str(last_description))
+            return '<em>{}</em> <span class="species-description">{}</span>'.format(self.name, str(last_description))
         # Otherwise it's an animal and there's more than 1 description
         else:
-            return '<em>{}</em>, <span class="species-description">({})</span>'.format(self.name, last_description)
+            return '<em>{}</em> <span class="species-description">({})</span>'.format(self.name, last_description)
 
     def get_top_common_name(self):
         top_common_name = CommonName.objects.filter(taxon=self.id).first()
