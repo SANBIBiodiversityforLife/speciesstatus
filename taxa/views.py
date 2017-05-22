@@ -9,8 +9,10 @@ from rest_framework.response import Response
 from rest_framework import filters
 from mptt.utils import drilldown_tree_for_node
 import os
+import json
 from django.conf import settings
 import pyexifinfo as p
+import subprocess as subp
 
 
 @api_view(['GET'])
@@ -44,10 +46,22 @@ def get_images_for_species(request, pk):
     # 'thumb': 'sp-imgs/' + taxon.replace(' ', '_') + '__thumb.jpg' - might need to do this later
     i = 1
     file_info = []
-
+    
+    
     while(os.path.isfile(file_location + '_' + str(i) + '.jpg')):
         file_name = file_name_template + '_' + str(i) + '.jpg'
-        info = p.get_json(file_location + '_' + str(i) + '.jpg')
+        
+        #info = p.get_json(file_location + '_' + str(i) + '.jpg')
+        # Replacing exiftool code as it doesn't work in IIS
+        sb = subp.Popen(['exiftool', '-G', '-j', '-sort', file_location + '_' + str(i) + '.jpg'], stdin=subp.PIPE, stdout=subp.PIPE, stderr=subp.STDOUT)
+        s = sb.stdout.read()
+        s = s.strip()
+        if s:
+            s = s.decode('utf-8').rstrip('\r\n')
+            info = json.loads(s)
+        else:
+            s = False
+        
         return_data = {'file': 'sp-imgs/' + folder + '/' + file_name}
         return_data['author'] = 'Unknown' if 'IPTC:By-line' not in info[0] else info[0]['IPTC:By-line']
         return_data['copyright'] = '[None given]' if 'IPTC:CopyrightNotice' not in info[0] else info[0]['IPTC:CopyrightNotice']
