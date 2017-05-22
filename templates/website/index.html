@@ -7,108 +7,28 @@
 {% endblock css %}
 
 {% block heading %}
-	<div id="main-carousel-text">
-		<div class="container"><div class="row">
-			<div class="col-md-12 text-center">
-				<h1>Search for species</h1>
-				<form action="{% url 'search_autocomplete' %}" class="navbar-form search-form" method="get">
-					<div class="input-group col-md-8">
-						<input name="search" id="search" type="text" class="search-query form-control input-lg" autocomplete="off" placeholder="Enter common name, ecological traits, scientific names, etc." data-provide="typeahead" data-items="4" data-source="">
-						<div class="input-group-btn">
-							<button type="submit" class="btn btn-info btn-lg">
-								Search
-								<span class="glyphicon glyphicon-search"></span>
-							</button>
-						</div>
-					</div>
-				</form>
-				<div class="secondary-button">
-					<span class="text">Alternatively,</span> <a href="{% url 'lineage_pk' 4 %}" class="btn btn-warning" role="button" id="explore">Explore species</a>
-				</div>
-			</div>
-		</div></div>
-	</div>
 
-	<!--<div id="homebg" height="400px" style="position: relative;">
-		<video playsinline autoplay muted loop poster="polina.jpg" id="bgvid"">
-			<source src="{% static 'bee.mp4' %}" type="video/mp4">
-		</video>
-	</div>-->
-
-	<div id="carousel" class="carousel slide" data-ride="carousel">
-	  <div class="carousel-inner" role="listbox">
-		<div class="item active">
-		  <img src="{% static 'img/carousel/1.jpg' %}" alt="...">
-		</div>
-	  </div>
-	</div>
 {% endblock %}
 
 {% block content %}
-<div class="row blue">
+<!--<div class="row">
 	<div class="col-md-12">
 		<div class="over-banner"><span style="font-weight: bold; font-size: 1.3em; margin-bottom: 11px; display: block;">The official Species Information and National Red List website</span>SANBI has partnered with Research Institutions and NGOs to document South Africa's species diversity and assess its threat status using the IUCN 3.1 Red List Categories and Criteria.
 			Find information on species - their descriptions, ecological requirements, distribution and threat assessments.
 			<a href="/about" role="button" class="btn btn-default btn-sm">Learn more <span class="glyphicon glyphicon-chevron-right"></span></a></div>
+	</div>
+</div>-->
+<p style="line-height: 1.2em; margin: 20px 0; color: #555; font-size: 0.9em; ">Welcome to South Africa's official site for Species Information and National Red Lists; here you will find information on South African animal species including their descriptions, their ecological requirements, their distributions and documentation linked to threat assessments. The South African Biodiversity Institute has worked in partnership with host research institutions, and conservation NGOs to document our species diversity and assess its threat status using the IUCN 3.1 Red List Categories and Criteria.</p>
 
-	</div>
-</div>
-<div class="row infographic blue">
-	<h2>South Africa is one of the top 5 biologically diverse countries in the world:</h2>
-	<hr>
-	<div class="col-md-3">
-		<div class="row">
-			<div class="col-sm-6" style="text-align: right; font-size: 2em;  line-height: 0.9em; padding-right: 0;">
-				<span style="font-size: 0.7em; font-weight: bold;">...<br>Only<br></span>2%
-				<img src="/static/img/earth-icon.svg" style="width: 35px; position: absolute; top: 50%; right: -40%; z-index: 1;">
-			</div>
-			<div class="col-sm-6" style="padding-left: 0;"><canvas id="land" height="200px"></canvas></div>
-		</div>
-		<p>of the world's land surface area</p>
-	</div>
-	<div class="col-md-3">
-		<div class="row">
-			<div class="col-sm-6" style="text-align: right; font-size: 3em;  line-height: 0.9em; padding-right: 0; font-weight: bold;">
-				<span style="font-size: 0.6em;">And yet<br></span>10%
-				<img src="/static/img/plant-icon.png" style="width: 40px; position: absolute; top: 50%; right: -40%; z-index: 1;">
-			</div>
-			<!--<div class="col-sm-6" style="text-align: right; font-size: 3em; padding-right: 0; padding-top: 10px;">10%</div>-->
-			<div class="col-sm-6" style="padding-left: 0;"><canvas id="plant" height="200px"></canvas></div>
-		</div>
-		<p>of the world's plant species</p>
-	</div>
-	<div class="col-md-3">
-		<div class="row">
-			<div class="col-sm-6" style="text-align: right; font-size: 3em;  line-height: 0.9em; padding-right: 0; font-weight: bold;">
-				<span style="font-size: 0.6em;">With<br></span>7%
-				<img src="/static/img/animal-icon.png" style="width: 33px; position: absolute; top: 50%; right: -40%; z-index: 1;">
-			</div>
-			<!--<div class="col-sm-6" style="text-align: right; font-size: 3em; padding-right: 0; padding-top: 10px;">7%</div>-->
-			<div class="col-sm-6" style="padding-left: 0;"><canvas id="terrestrial" height="200px"></canvas></div>
-		</div>
-		<p>of the world's reptile, bird and mammal species</p>
-	</div>
-	<div class="col-md-3">
-		<div class="row">
-			<div class="col-sm-6" style="text-align: right; font-size: 3em;  line-height: 0.9em; padding-right: 0; font-weight: bold;">
-				<span style="font-size: 0.6em;">And<br></span>15%
-				<img src="/static/img/marine-icon.png" style="width: 40px; position: absolute; top: 50%; right: -40%; z-index: 1;">
-			</div>
-			<!--<div class="col-sm-6" style="text-align: right; font-size: 3em; padding-right: 0; padding-top: 10px;">15%</div>-->
-			<div class="col-sm-6" style="padding-left: 0;"><canvas id="marine" height="200px"></canvas></div>
-		</div>
-		<p>of the world's marine species</p>
-	</div>
-</div>
-<div class="row blue blue-end"><p style="text-align: center; font-weight: bold">Also, 56% of our amphibian species, 65% of our plant species and 70% of certain invertebrate groups are "endemic" - found nowhere else on earth.</p></div>
-<hr>
 <div class="row">
 	<div class="col-md-12">
-		<h2 class="main-heading">An overview of our data<br><small>(SANBI are working on adding new species and assessments)</small></h2>
+		<!--<h2 class="main-heading">An overview of our data<br><small>(SANBI are working on adding new species and assessments)</small></h2>-->
 		<canvas id="canvas" height="80"></canvas>
+    <img src="{% static 'img/thumbnails.jpg' %}" style="margin-left: 60px;">
 	</div>
 </div>
-<div class="row">
+
+<!--<div class="row">
 	<hr>
 	<div class="col-md-8" id="assessments">
 		<h2>Latest assessments</h2><hr>
@@ -119,7 +39,7 @@
 		<div id="rss-feed"></div>
 		<p class="rss-footer">Read more news on <a href="http://www.sanbi.org/news">sanbi.org</a></p>
 	</div>
-</div>
+</div>-->
 {% endblock content %}
 
 {% block js %}

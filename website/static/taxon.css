@@ -5,6 +5,8 @@
   font-weight: bold;
   /*text-align: center;*/
   font-size: 1.1em;
+  background-color: #888;
+  padding-top: 20px;
 }
 #breadcrumb { margin-bottom: 5px; }
 #breadcrumb a { font-weight: bold; font-size: 0.9em; }

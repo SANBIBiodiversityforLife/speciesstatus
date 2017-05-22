@@ -78,7 +78,7 @@ $(document).ready(function() {
 
         if(index == data.length - 1) {
           $('#breadcrumb').append(' <a href="' + lineage_url.replace('0', ancestor.id) + '" type="button" class="btn btn-warning btn-sm">View tree</a>')
-          $('h1').append(ancestor.get_full_name);
+          //$('h1').append(ancestor.get_full_name);
         }
 
       });
@@ -103,7 +103,7 @@ $(document).ready(function() {
         y_colors: 'match_x'
       };
       var pattern = new Trianglify(params);
-      $('.triangles').attr('style', 'background: url(' + pattern.png() + ') no-repeat center center');
+      //$('.triangles').attr('style', 'background: url(' + pattern.png() + ') no-repeat center center');
 
       // Toggle bootstrap tooltips
       $('[data-toggle="tooltip"]').tooltip();

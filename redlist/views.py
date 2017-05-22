@@ -58,7 +58,9 @@ class ContributionWrite(generics.ListCreateAPIView):
 @api_view(['GET'])
 def redlist_citation(request, pk):
     if request.method == 'GET':
-        assessment = models.Assessment.objects.get(pk=pk)
+        # assessment = models.Assessment.objects.get(pk=pk)
+        taxon = taxa_models.Taxon.objects.get(pk=pk)
+        assessment = taxon.get_latest_assessment()
         contributions = models.Contribution.objects.filter(assessment=assessment, type=models.Contribution.ASSESSOR)
         author_strings = []
         for c in contributions:
