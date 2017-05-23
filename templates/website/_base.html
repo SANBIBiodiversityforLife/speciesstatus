@@ -54,7 +54,7 @@
         {% block content %}{% endblock %}
     </div>
 	  {% block subcontent %}{% endblock %}
-  <footer><div class="container">SANBI website | Terms and conditions | Contact us</div></footer>
+    <footer><div class="container">SANBI website | Terms and conditions | Contact us</div></footer>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
@@ -63,6 +63,11 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
     <!-- Custom js -->
+    <script>
+      var searchAutoCompleteUrl = "{% url 'search_autocomplete' %}";
+      var searchRedirectUrl = "{% url 'last_assessment_detail' 0 %}";
+    </script>
+    <script src="{% static 'search.js' %}"></script>
     {% block js %}{% endblock %}
   </body>
 </html>

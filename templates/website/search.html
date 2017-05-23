@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block heading %}
-<div class="container no-banner">
+<div class="container">
 <h1>Search for "{{ request.GET.search }}" <small>({{ count }} results)</small></h1><hr>
   <form action="{% url 'search_autocomplete' %}" class="navbar-form search-form" method="get">
     <div class="input-group col-md-8">

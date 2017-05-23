@@ -78,7 +78,7 @@ $(document).ready(function() {
 
         if(index == data.length - 1) {
           $('#breadcrumb').append(' <a href="' + lineage_url.replace('0', ancestor.id) + '" type="button" class="btn btn-warning btn-sm">View tree</a>')
-          //$('h1').append(ancestor.get_full_name);
+          $('#taxonName').append(ancestor.get_full_name);
         }
 
       });
