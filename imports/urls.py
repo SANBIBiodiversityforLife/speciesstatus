@@ -11,7 +11,8 @@ urlpatterns = [
     url(r'^spstatus/$', views.spstatus, name='import_spstatus'),
     url(r'^seakeys/$', views.seakeys, name='import_seakeys'),
     url(r'^lc-birds/$', views.lc_birds, name='lc_birds'),
-    url(r'^clean_points/$', views.st_process, name='processing'),
+    url(r'^clean_points/$', views.st_process, name='st_process'),
+    url(r'^clean_origin_codes/$', views.clean_origin_codes, name='clean_origin_codes'),
 
     url(r'^populate-cns/$', views.populate_higher_level_common_names, name='populate_higher_level_common_names'),
     url(r'^convert-criteria/$', views.convert_all_criteria_strings, name='convert_all_criteria_strings'),

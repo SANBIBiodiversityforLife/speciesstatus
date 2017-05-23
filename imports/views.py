@@ -414,3 +414,11 @@ def st_process(request):
     # Retrieve a list of points falling within the oceans and delete them
     points_for_deleting = models.PointDistribution.objects.filter(point__within=polygon_union)
     points_for_deleting.delete()
+
+
+def clean_origin_codes(request):
+    pwd = os.path.abspath(os.path.dirname(__file__))
+    file = os.path.join(pwd, '..', 'data-sources', 'distribution_attributions.csv')
+    df = pd.read_csv(file, encoding='latin-1') #  encoding='latin-1'
+    for index, mapping in df.iterrows():
+        models.PointDistribution.objects.filter(origin_code=mapping['institution_code']).update(origin_code=mapping['use'])
