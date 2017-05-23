@@ -58,13 +58,18 @@ class ContributionWrite(generics.ListCreateAPIView):
 @api_view(['GET'])
 def redlist_citation(request, pk):
     if request.method == 'GET':
-        # assessment = models.Assessment.objects.get(pk=pk)
-        taxon = taxa_models.Taxon.objects.get(pk=pk)
-        assessment = taxon.get_latest_assessment()
+        assessment = models.Assessment.objects.get(pk=pk)
+        # taxon = taxa_models.Taxon.objects.get(pk=pk)
+        # assessment = taxon.get_latest_assessment()
         contributions = models.Contribution.objects.filter(assessment=assessment, type=models.Contribution.ASSESSOR)
         author_strings = []
         for c in contributions:
-            author_strings.append(c.person.surname + ' ' + c.person.first[0] + '.')
+            author_string = c.person.surname
+            if c.person.first:
+                author_string += c.person.first[0]
+            author_string += '.'
+            author_strings.append(author_string)
+
         resp =  ', '.join(author_strings) + ' ' +  str(assessment.date.year) + '. A conservation assessment of ' + \
                assessment.taxon.name + ' ' + assessment.taxon.rank.name.lower() + '.'
 
@@ -86,7 +91,7 @@ def redlist_citation(request, pk):
             elif order == 'odonata':
                 resp += ' <strong>SAMWAYS, M.J. & SIMAIKA, J.P. 2016. Manual of Freshwater Assessment for South Africa: Dragonfly Biotic Index. Suricata 2. South African National Biodiversity Institute, Pretoria.</strong>'
 
-        resp += ' National Assessment: Red List of South Africa version 2017.1 from Species Status &amp; Information. Accessed on ' + datetime.now().strftime("%Y/%m/%d") + '.'
+        resp += ' National Assessment: Red List of South Africa version 2017.1 from Species African Species Information &amp; Red Lists. Accessed on ' + datetime.now().strftime("%Y/%m/%d") + '.'
 
         return Response(resp, status=status.HTTP_202_ACCEPTED)
 
