@@ -40,4 +40,5 @@ urlpatterns = [
     # Index
     url(r'^$', xframe_options_exempt(website_views.IndexView.as_view()), name='index'),
     url(r'^about/$', website_views.AboutView.as_view(), name='about'),
+    url(r'^partners/$', website_views.PartnerView.as_view(), name='partner'),
 ]
