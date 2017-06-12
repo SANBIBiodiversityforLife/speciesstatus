@@ -48,9 +48,7 @@ $(document).ready(function() {
       $.ajax({
         url: dist_url_poly,
         success: function(poly_data, textStatus, jqXHR) {
-          console.log(poly_data);
-          console.log(point_data);
-          if(poly_data['count'] || point_data['features']) {
+          if(poly_data['count'] != 0 || point_data['features'].length != 0) {
             init_map(point_data, poly_data);
           }
           else {

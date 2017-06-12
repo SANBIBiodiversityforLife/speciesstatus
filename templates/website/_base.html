@@ -22,6 +22,7 @@
     <![endif]-->
 
     <!-- Custom css -->
+    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
     {% block css %}{% endblock %}
   </head>
   <body{% block body_attributes %}{% endblock %}>
@@ -29,18 +30,18 @@
       <div class="container"><div class="row"><h1>South African species <span>information &amp; red lists</span></h1></div></div>
     </header>
       <div class="container"><div class="row">
-        <a href="/" id="logo"><img src="{% static 'img/logo.png' %}" alt="Home"></a>
-
-      <form action="{% url 'search_autocomplete' %}" method="get" class="navbar-form navbar-right">
-        <div class="form-group form-group-sm">
-          <input name="search" id="search" type="text" class="search-query form-control" autocomplete="off" placeholder="Enter common name, ecological traits, scientific names, etc." data-provide="typeahead" data-items="4" data-source="">
+        <div class="col-sm-4"><a href="/" id="logo"><img src="{% static 'img/logo.png' %}" alt="Home"></a></div>
+        <div class="col-sm-8" style="text-align: right; margin-top: 10px;">
+          <form action="{% url 'search_autocomplete' %}" method="get" class="form-inline">
+            <div class="form-group form-group-sm">
+              <input name="search" id="search" type="text" class="search-query form-control" autocomplete="off" placeholder="Enter common name, ecological traits, scientific names, etc." data-provide="typeahead" data-items="4" data-source="">
+            </div>
+            <button type="submit" class="btn btn-sm" style="background-color: #888; color: white;">Search species <span class="glyphicon glyphicon-search"></span></button>
+          </form>
+          <div style="margin-top: 3px;">
+            Alternatively, <a href="{% url 'lineage_pk' 4 %}" class="btn btn-sm" style="background-color: #888; color: white;">Explore species</a>
+          </div>
         </div>
-        <button type="submit" class="btn btn-sm">Search species <span class="glyphicon glyphicon-search"></span></button>
-      </form>
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="{% url 'lineage_pk' 4 %}">Explore species</a></li>
-      </ul>
-
       </div></div>
   <div style="background-color: #888; text-align: right; padding: 10px 0; font-size: 0.9em; margin-bottom: 15px;">
     <div class="container"><div class="row">
@@ -63,6 +64,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
     <!-- Custom js -->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script>
       var searchAutoCompleteUrl = "{% url 'search_autocomplete' %}";
       var searchRedirectUrl = "{% url 'last_assessment_detail' 0 %}";

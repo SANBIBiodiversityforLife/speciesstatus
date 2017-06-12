@@ -417,8 +417,34 @@ def st_process(request):
 
 
 def clean_origin_codes(request):
+    auditors_report()
+    import pdb; pdb.set_trace()
     pwd = os.path.abspath(os.path.dirname(__file__))
     file = os.path.join(pwd, '..', 'data-sources', 'distribution_attributions.csv')
     df = pd.read_csv(file, encoding='latin-1') #  encoding='latin-1'
     for index, mapping in df.iterrows():
         models.PointDistribution.objects.filter(origin_code=mapping['institution_code']).update(origin_code=mapping['use'])
+
+
+def auditors_report():
+    pwd = os.path.abspath(os.path.dirname(__file__))
+    ranks = models.Rank.objects.filter(name__in=['Species', 'Subspecies'])
+    actin = models.Taxon.objects.get(name='Actinopterygii')
+    elas = models.Taxon.objects.get(name='Elasmobranchii')
+    holo = models.Taxon.objects.get(name='Holocephali')
+    actin_fishes = actin.get_descendants().filter(rank__in=ranks)
+    elas_fishes = elas.get_descendants().filter(rank__in=ranks)
+    holo_fishes = holo.get_descendants().filter(rank__in=ranks)
+    import csv
+    from itertools import chain
+    # joined = list(chain(holo_fishes, elas_fishes, actin_fishes))
+    url = 'http://speciesstatus.sanbi.org/assessment/last-assessment/'
+    with open(os.path.join(pwd, '..', 'fishes.csv'), 'w', newline='') as csvfile:
+        spamwriter = csv.writer(csvfile)
+        spamwriter.writerow(['scientific_name', 'class', 'redlist status', 'url'])
+        for fish in actin_fishes:
+            spamwriter.writerow([fish.name, 'Actinopterygii', fish.get_latest_assessment().redlist_category, url + str(fish.pk)])
+        for fish in elas_fishes:
+            spamwriter.writerow([fish.name, 'Elasmobranchii', fish.get_latest_assessment().redlist_category, url + str(fish.pk)])
+        for fish in holo_fishes:
+            spamwriter.writerow([fish.name, 'Holocephali', fish.get_latest_assessment().redlist_category, url + str(fish.pk)])

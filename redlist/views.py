@@ -70,15 +70,15 @@ def redlist_citation(request, pk):
             author_string += '.'
             author_strings.append(author_string)
 
-        resp =  ', '.join(author_strings) + ' ' +  str(assessment.date.year) + '. A conservation assessment of ' + \
-               assessment.taxon.name + ' ' + assessment.taxon.rank.name.lower() + '.'
+        resp =  ', '.join(author_strings) + ' ' +  str(assessment.date.year) + '. A conservation assessment of <em>' + \
+               assessment.taxon.name + '</em> ' + assessment.taxon.rank.name.lower() + '.'
 
         class_rank = taxa_models.Rank.objects.get(name='Class')
         class_ = assessment.taxon.get_ancestors().get(rank=class_rank).name.lower()
         if class_ == 'mammalia':
             resp += ' <strong>In Child MF, Roxburgh L, Do Linh San E, Raimondo D, Davies-Mostert HT, editors. The Red List of Mammals of South Africa, Swaziland and Lesotho. South African National Biodiversity Institute and Endangered Wildlife Trust, South Africa.</strong>'
         elif class_ == 'reptilia':
-            resp += ' <strong>In M.F. Bate, W.R. Branch, A.M. Bauer, M. Burger, J. Marias, G.J. Alexander & M.S. de Villiers (eds), Atlas and Red List of Reptiles of South Africa, Lesothos and Swaziland. Suricata 1. South African National Biodiversity Institute, Pretoria.</strong>'
+            resp += ' <strong>In M.F. Bate, W.R. Branch, A.M. Bauer, M. Burger, J. Marais, G.J. Alexander & M.S. de Villiers (eds), Atlas and Red List of Reptiles of South Africa, Lesotho and Swaziland. Suricata 1. South African National Biodiversity Institute, Pretoria.</strong>'
         elif class_ == 'aves':
             resp += ' <strong>In The Eskom Red Data Book of Birds of South Africa, Lesotho and Swaziland. Taylor, MR, Peacock F, Wanless RW (eds). BirdLife South Africa, Johannesburg, South Africa.</strong>'
         elif class_ == 'actinopterygii' or class_ == 'elasmobranchii' or class_ == 'holocephali':
