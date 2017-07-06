@@ -23,6 +23,6 @@ urlpatterns = [
         name='last_assessment_detail'),
     url(r'^statistics/$', views.redlist_statistics, name='redlist_statistics'),
     url(r'^citation/(?P<pk>[0-9]+)/$', views.redlist_citation, name='redlist_citation'),
-
+    url(r'^threat-affects/(?P<threat_pk>[0-9]+)/(?P<taxon_group>[A-Za-z]+)/$', views.redlist_threats, name='redlist_threats'),
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)

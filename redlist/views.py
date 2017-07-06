@@ -138,3 +138,19 @@ def redlist_statistics(request):
 
         resp = {'statistics': reformatted_data, 'names': node_names, 'common_names': node_common_names, 'statuses': [s[1] for s in statuses]}
         return Response(resp, status=status.HTTP_202_ACCEPTED)
+
+
+@api_view(['GET'])
+def redlist_threats(request, taxon_group, threat_pk):
+    """
+    Returns threats and the number of species they affect, for Dewidine's stats
+    """
+    if request.method == 'GET':
+        taxon_group = taxa_models.Taxon.objects.get(name=taxon_group) # request.data['taxon_group'])
+        taxon_group_descendants = taxon_group.get_descendants().exclude(assessment__isnull=True)
+        threat = models.Threat.objects.get(id=threat_pk)
+        affected_by_threat = threat.assessment_set.filter(taxon__in=taxon_group_descendants)
+
+        resp = {'threat': threat.name, 'taxon_group': taxon_group.name, 'affected_total': len(affected_by_threat),
+                'affected_list': [a.taxon.name for a in affected_by_threat]}
+    return Response(resp, status=status.HTTP_202_ACCEPTED)
