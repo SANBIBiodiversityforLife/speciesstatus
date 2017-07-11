@@ -79,6 +79,7 @@ $(document).ready(function() {
         if(index == data.length - 1) {
           $('#breadcrumb').append(' <a href="' + lineage_url.replace('0', ancestor.id) + '" type="button" class="btn btn-warning btn-sm">View tree</a>')
           $('#taxonName').append(ancestor.get_full_name);
+          $('#taxonFeedback').attr('href', 'mailto:D.VanDerColff@sanbi.org.za?Subject=' + ancestor.name.replace(' ', '%20') + '%20-%20redlist%20assessment%20feedback')
         }
 
       });
