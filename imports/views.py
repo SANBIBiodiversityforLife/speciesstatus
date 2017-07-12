@@ -2,7 +2,7 @@ from taxa import models, helpers
 from redlist import models as redlist_models
 from people import models as people_models
 import pandas as pd
-from imports import sis_import, spstatus_import, sarca_sabca, sabca
+from imports import sis_import, spstatus_import, sarca_sabca
 from imports import sis_import, spstatus_import
 from imports import seakeys as seakeys_import
 import json
@@ -14,7 +14,7 @@ from django.contrib.gis.geos import Point, Polygon
 from django.utils.text import slugify
 
 
-# Run after all of the imports have gone through
+# Run after all of the imports have gone through to get common names for classes, families, etc
 def populate_higher_level_common_names(request):
     ranks = models.Rank.objects.filter(name__in=['Genus', 'Family', 'Order', 'Phylum', 'Class'])
     taxa = models.Taxon.objects.filter(rank__in=ranks, common_names__isnull=True)
@@ -62,10 +62,6 @@ def populate_higher_level_common_names(request):
     #r.json()
 
 
-def import_phylums(request):
-    sis_import.import_phylums()
-
-
 # SIS: Amphibian, Mammals, Dragonflies, Reptiles, Freshwater Fish
 def sis(request):
     sis_import.import_sis()
@@ -76,12 +72,7 @@ def sarca(request):
     sarca_sabca.import_sql()
 
 
-# Reptiles - going to move to SIS though
-def sabca_r(request):
-    sabca.import_sabca_sql()
-
-
-# Legacy data - we're not importing this
+# Legacy data - we're not importing this, it's not used.
 def spstatus(request):
     spstatus_import.import_spstatus()
 
@@ -417,8 +408,8 @@ def st_process(request):
 
 
 def clean_origin_codes(request):
-    auditors_report()
-    import pdb; pdb.set_trace()
+    #auditors_report()
+    #import pdb; pdb.set_trace()
     pwd = os.path.abspath(os.path.dirname(__file__))
     file = os.path.join(pwd, '..', 'data-sources', 'distribution_attributions.csv')
     df = pd.read_csv(file, encoding='latin-1') #  encoding='latin-1'

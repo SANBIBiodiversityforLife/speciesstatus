@@ -142,7 +142,8 @@ def get_or_create_author(surname, first=''):
         return f
     else:
         p.first = first
-        p.initials = initials
+        if len(initials) < 5:
+            p.initials = initials
         p.save()
         return p
 

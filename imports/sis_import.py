@@ -14,6 +14,7 @@ def import_phylums():
     """
     Used to create a basic taxa skeleton when you have flushed the db.
     Run python manage.py loaddata taxa_rank.json first to get ranks in
+    Not currently used
     """
     life = models.Taxon.objects.create(name='Life', rank_id=9)
     eukaryota = models.Taxon.objects.create(parent=life, name='Eukaryota', rank_id=1)
@@ -43,7 +44,7 @@ def import_sis():
     for animal_dir_name in animal_dirs:
         animal_dir = os.path.join(pwd, animal_dir_name)
         af = pd.read_csv(os.path.join(animal_dir, 'allfields.csv'), encoding='UTF-8') # iso-8859-1
-        tx = pd.read_csv(os.path.join(animal_dir, 'taxonomy.csv'), encoding='iso-8859-1')
+        tx = pd.read_csv(os.path.join(animal_dir, 'taxonomy.csv'), encoding='UTF-8') # iso-8859-1
         cn = pd.read_csv(os.path.join(animal_dir, 'commonnames.csv'), encoding='UTF-8') # UTF-8
         assess = pd.read_csv(os.path.join(animal_dir, 'assessments.csv'), encoding='UTF-8')
         cons_actions = pd.read_csv(os.path.join(animal_dir, 'conservationneeded.csv'), encoding='UTF-8')

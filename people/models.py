@@ -4,9 +4,9 @@ from django.utils.text import slugify
 
 
 class Person(models.Model):
-    first = models.CharField(max_length=200, blank=True, null=True)
+    first = models.CharField(max_length=300, blank=True, null=True)
     initials = models.CharField(max_length=15, blank=True, null=True)
-    surname = models.CharField(max_length=200)
+    surname = models.CharField(max_length=300)
     slug = models.SlugField(max_length=500)
 
     lifetime = IntegerRangeField(blank=True, null=True)
