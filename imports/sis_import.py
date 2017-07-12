@@ -105,6 +105,8 @@ def import_sis():
         # Iterate through the taxa table, 1 row represents 1 assessment for a taxon
         for index, taxon_row in tx.iterrows():
         # for index, row in af.iterrows():
+            if taxon_row['species'] != 'aureus':
+                continue
 
             print('----------------------------------------------------------')
             print('row: ' + str(index))
@@ -136,7 +138,7 @@ def import_sis():
                 row = row.iloc[0]
             except IndexError:
                 print('Cannot find row in allfields table')
-                import pdb; pdb.set_trace()
+                #import pdb; pdb.set_trace()
                 continue
             # Remove all row columns which do not contain info
             row = {k: v for k, v in row.items() if pd.notnull(v)}
@@ -145,7 +147,7 @@ def import_sis():
             assess_row = assess.loc[assess['internal_taxon_id'] == row['internal_taxon_id']]
             if len(assess_row) == 0:
                 print('No assessment for ' + taxon_row['genus'] + ' ' +  taxon_row['species'])
-                import pdb; pdb.set_trace()
+                #import pdb; pdb.set_trace()
                 continue
 
             # The iloc is used because you have to refer to the items via the index e.g. v[0] for row 1, v[1] for row 2, etc
@@ -476,10 +478,13 @@ def import_sis():
                 if pd.isnull(p['firstName']):
                     person, created = people_models.Person.objects.get_or_create(surname=p['lastName'])
                 else:
+                    if p['firstName'] != p['firstName']: # This is checking to see if we are dealing with a NaN
+                        p['firstName'] = ''
                     person, created = people_models.Person.objects.get_or_create(first=p['firstName'], surname=p['lastName'])
                 if created:
                     person.email = [p['email']]
-                    person.initials = p['initials']
+                    if p['initials'] != p['initials']: # NaN?
+                        person.initials = ''
                     person.save()
                 c = redlist_models.Contribution(person=person, assessment=a, weight=p['Order'],
                                                 type=contribution_type_lookup[p['credit_type']])

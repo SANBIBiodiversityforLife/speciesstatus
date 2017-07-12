@@ -53,6 +53,13 @@ def get_or_create_person(surname, initials):
 
             if p is None:
                 # Otherwise if we can't find anyone with the same surname make a new person
+
+                # Check for nans
+                if first_name_letter != first_name_letter:
+                    first_name_letter = ''
+                if initials == initials:
+                    initials = ''
+
                 p, created = models.Person.objects.get_or_create(surname=surname, initials=initials, first=first_name_letter)
                 # p = models.Person(surname=surname, initials=initials)
             else:
@@ -121,6 +128,12 @@ def get_or_create_author(surname, first=''):
             first = initials.pop(0).strip()
             initials = [a[0] for a in initials]
             initials = ''.join(initials)
+
+        # Check for nans
+        if first != first: # NaN
+            first = ''
+        if initials != initials: # NaN
+            initials = ''
 
     # Get people with correct surname first
     p = people_models.Person.objects.filter(surname=surname).first()
