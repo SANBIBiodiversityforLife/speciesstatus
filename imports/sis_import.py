@@ -105,8 +105,8 @@ def import_sis():
         # Iterate through the taxa table, 1 row represents 1 assessment for a taxon
         for index, taxon_row in tx.iterrows():
         # for index, row in af.iterrows():
-            if taxon_row['species'] != 'aureus':
-                continue
+            #if taxon_row['species'] != 'taurinus':
+            #    continue
 
             print('----------------------------------------------------------')
             print('row: ' + str(index))

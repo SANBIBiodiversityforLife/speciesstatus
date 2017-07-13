@@ -295,6 +295,10 @@ def create_point_distribution(row):
         import pdb; pdb.set_trace()
 
     try:
+        if not row['long'] or pd.isnull(row['long']) or str(row['long']).strip() == '' or len(str(row['long']).strip()) == 0:
+            return False
+        if not row['lat'] or pd.isnull(row['lat']) or str(row['lat']).strip() == '' or len(str(row['lat']).strip()) == 0:
+            return False
         pt = models.PointDistribution(taxon=taxon, point=Point(float(row['long']), float(row['lat'])))
         optional_fields = ['precision', 'origin_code', 'qds']
         for optional_field in optional_fields:
