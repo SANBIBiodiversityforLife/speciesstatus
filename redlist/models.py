@@ -115,7 +115,7 @@ class Assessment(models.Model):
     references = models.ManyToManyField(Reference, blank=True)
 
     def __str__(self):
-        return self.redlist_category
+        return str(self.taxon) + ' ' + self.redlist_category + ' - ' + str(self.id)
 
     class Meta:
         ordering = ['date']
@@ -174,6 +174,9 @@ class ThreatNature(models.Model):
     rationale = models.TextField(blank=True)
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
     threat = models.ForeignKey(Threat, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.assessment) + ' - ' + str(self.threat)
 
 
 class Contribution(models.Model):

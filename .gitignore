@@ -70,3 +70,8 @@ tmp/*
 species/local_settings.py
 
 # File uploads
+species/static/
+species/static/*
+
+# IIS
+web.config
