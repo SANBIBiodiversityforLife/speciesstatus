@@ -138,17 +138,18 @@ class ActionNature(models.Model):
 class ThreatNature(models.Model):
     # Unknown is common to all
     UNKNOWN = 'UN'
-
     EXTREME = 'EX'
     SEVERE = 'SE'
     MODERATE = 'MO'
     SLIGHT = 'SL'
+    NEGLIGIBLE = 'NG'
     NONE = 'NO'
     SEVERITY_CHOICES = (
-        (EXTREME, 'Extremely severe'),
-        (SEVERE, 'Severe'),
-        (MODERATE, 'Moderate'),
-        (SLIGHT, 'Slight'),
+        (EXTREME, "Very Rapid Declines"),
+        (SEVERE, "Rapid Declines"),
+        (MODERATE, "Slow, Significant Declines"),
+        (SLIGHT, "Causing/Could cause fluctuations"),
+        (NEGLIGIBLE, 'Negligible declines'),
         (NONE, 'No decline'),
         (UNKNOWN, 'Unknown'),
     )
@@ -161,7 +162,6 @@ class ThreatNature(models.Model):
     FUTURE = 'FU'
     POTENTIAL = 'PO'
     TIMING_CHOICES = (
-        (PAST, 'Past'),
         (UNLIKELY_TO_RETURN, 'Past, Unlikely to return'),
         (LIKELY_TO_RETURN, 'Past, Likely to return'),
         (ONGOING, 'Ongoing'),
@@ -171,6 +171,8 @@ class ThreatNature(models.Model):
     )
     timing = models.CharField(max_length=2, choices=TIMING_CHOICES, default=UNKNOWN, null=True, blank=True)
 
+    scope = models.TextField(blank=True)
+    stresses = models.TextField(blank=True)
     rationale = models.TextField(blank=True)
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
     threat = models.ForeignKey(Threat, on_delete=models.CASCADE)

@@ -39,8 +39,11 @@ def import_sis():
     pwd = os.path.join(pwd, '..', 'data-sources')
 
     # Amphibians
-    animal_dirs = ['SIS_Reptiles', os.path.join('SIS_Amphibians', 'draft'), os.path.join('SIS_Amphibians', 'published'),
-                   'SIS_Dragonflies', 'SIS_Mammals']
+    animal_dirs = [os.path.join('SIS_Freshwater_Fish', 'Batch_1'), os.path.join('SIS_Freshwater_Fish', 'Batch_2'),
+                   os.path.join('SIS_Reptiles', 'Reptiles_endemic'), os.path.join('SIS_Reptiles', 'Reptiles_non-endemic'),
+                   os.path.join('SIS_Amphibians', 'Amphibians_2018.1'), os.path.join('SIS_Amphibians', 'Amphibians_2018.2'),
+                   'SIS_Dragonflies', 'SIS_Mammals', 'SIS_Sparids']
+    # animal_dirs = ['SIS_Sparids']
     for animal_dir_name in animal_dirs:
         animal_dir = os.path.join(pwd, animal_dir_name)
         af = pd.read_csv(os.path.join(animal_dir, 'allfields.csv'), encoding='UTF-8') # iso-8859-1
@@ -86,7 +89,7 @@ def import_sis():
             'Facilitator': redlist_models.Contribution.FACILITATOR
         }
         threat_timing_lookup = {
-            'Ongoing': redlist_models.ThreatNature.PAST,
+            'Ongoing': redlist_models.ThreatNature.ONGOING,
             'Future': redlist_models.ThreatNature.FUTURE,
             'Unknown': redlist_models.ThreatNature.UNKNOWN,
             'Past, Likely to Return': redlist_models.ThreatNature.LIKELY_TO_RETURN,
@@ -95,9 +98,9 @@ def import_sis():
         threat_severity_lookup = {
             'Very Rapid Declines': redlist_models.ThreatNature.EXTREME,
             'Rapid Declines': redlist_models.ThreatNature.SEVERE,
-            'Slow, Significant Declines': redlist_models.ThreatNature.SEVERE,
-            'Causing/Could cause fluctuations': redlist_models.ThreatNature.MODERATE,
-            'Negligible declines': redlist_models.ThreatNature.SLIGHT,
+            'Slow, Significant Declines': redlist_models.ThreatNature.MODERATE,
+            'Causing/Could cause fluctuations': redlist_models.ThreatNature.SLIGHT,
+            'Negligible declines': redlist_models.ThreatNature.NEGLIGIBLE,
             'No decline': redlist_models.ThreatNature.NONE,
             'Unknown': redlist_models.ThreatNature.UNKNOWN
         }
@@ -192,8 +195,8 @@ def import_sis():
 
                 # Get the taxon info stuff from the assessment csv
                 info.habitat_narrative = ''
-                #if 'System.value' in assess_row:
-                #    info.habitat_narrative = '<p class="system">' + assess_row['System.value'] + '</p>'
+                if 'System.value' in assess_row:
+                    info.habitat_narrative = '<p class="system">' + assess_row['System.value'] + '</p>'
                 if 'HabitatDocumentation.narrative' in assess_row:
                     info.habitat_narrative += assess_row['HabitatDocumentation.narrative']
 
@@ -286,7 +289,7 @@ def import_sis():
                     e_o = e_o_upper.split('-')
                     e_o_lower = e_o[0]
                     e_o_upper = e_o[1]
-                a.extent_occurrence = NumericRange(int(e_o_lower), int(e_o_upper))
+                a.extent_occurrence = NumericRange(int(float(e_o_lower)), int(float(e_o_upper)))
             if 'RedListCriteria.manualCategory' in assess_row:
                 a.redlist_category = assess_row['RedListCriteria.manualCategory']
             if 'RedListCriteria.manualCriteria' in assess_row:
@@ -437,7 +440,7 @@ def import_sis():
                         if not pd.isnull(th['Threats.ThreatsSubfield.timing']):
                             tn.timing = threat_timing_lookup[th['Threats.ThreatsSubfield.timing']]
                         if not pd.isnull(th['Threats.ThreatsSubfield.StressesSubfield.stress']):
-                            tn.rationale = th['Threats.ThreatsSubfield.StressesSubfield.stress']
+                            tn.stresses = th['Threats.ThreatsSubfield.StressesSubfield.stress']
                         tn.save()
                     except:
                         print('Skipping threat ' + lkup)
@@ -541,12 +544,11 @@ def create_taxon_from_sis(row, mendeley_session):
 
     if not created:
         print('species already exists in db')
-        import pdb; pdb.set_trace()
     else:
         # Add taxon notes if there are any
         taxon_notes = row['TaxonomicNotes.value']
-        if taxon_notes is not None and taxon_notes != '':
-            species.notes = taxon_notes
+        if taxon_notes is not None and taxon_notes != '' and taxon_notes != 'nan':
+            species.taxonomic_notes = taxon_notes
             species.save()
 
         # Create a description and set of references

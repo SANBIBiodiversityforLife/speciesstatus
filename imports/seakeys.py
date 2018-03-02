@@ -12,6 +12,7 @@ import shutil
 from django.conf import settings
 import subprocess
 import datetime
+import pandas as pd
 
 
 def import_helper(item, rank_name, parent, mendeley_session):
@@ -89,20 +90,67 @@ def import_seakeys():
     url = 'http://www.marinespecies.org/aphia.php?p=soap&wsdl=1'
     client = Client(url)
 
+    # Get threats
+    threats_lookup = pd.read_csv(os.path.join(pwd, '..', 'threat_lookup.csv'), encoding='UTF-8')
+    threats_csv = os.path.join(pwd, 'threats', 'threats.csv')
+    reader = csv.DictReader(open(threats_csv, encoding='ISO-8859-1'))
+    threats = {}
+    for row in reader:
+        nid = row['nid']
+        threat = row['Threats.lookup']
+        if nid not in threats:
+            threats[nid] = {}
+        if threat in threats[nid]: # You can have multiple stresses per threat
+            threats[nid][threat]['stress'].append(row['Threats.stress'])
+        else:
+            threats[nid][threat] = {
+                'timing': row['Threats.timing'],
+                'scope': row['Threats.scope'],
+                'severity': row['Threats.severity'],
+                'stress': [row['Threats.stress']]
+            }
+    threat_timing_lookup = {
+        'Ongoing': redlist_models.ThreatNature.ONGOING,
+        'Future': redlist_models.ThreatNature.FUTURE,
+        'Unknown': redlist_models.ThreatNature.UNKNOWN,
+        'Past, Likely to Return': redlist_models.ThreatNature.LIKELY_TO_RETURN,
+        'Past, Unlikely to Return': redlist_models.ThreatNature.UNLIKELY_TO_RETURN
+    }
+    threat_severity_lookup = {
+        'Very Rapid Declines': redlist_models.ThreatNature.EXTREME,
+        'Rapid Declines': redlist_models.ThreatNature.SEVERE,
+        'Slow, Significant Declines': redlist_models.ThreatNature.MODERATE,
+        'Causing/Could cause fluctuations': redlist_models.ThreatNature.SLIGHT,
+        'Negligible declines': redlist_models.ThreatNature.NEGLIGIBLE,
+        'No decline': redlist_models.ThreatNature.NONE,
+        'Unknown': redlist_models.ThreatNature.UNKNOWN
+    }
+
+    redlist_categories = []
+    for (acronym, long) in redlist_models.Assessment.REDLIST_CATEGORY_CHOICES:
+        redlist_categories.append(acronym)
+
     # Iterate through the csv
     csv_file = os.path.join(pwd, 'seakeys.csv')
     reader = csv.DictReader(open(csv_file, encoding='ISO-8859-1'))
     for row in reader:
-        #if reader.line_num < 114:
+        #if reader.line_num != 17:
         #    continue
         print(row['Genus'] + ' ' + row['Species'])
         # Skip all of the species with no assessments
-        if row['Regional status 2015'].strip() == '':
+        if row['Regional status 2015'].strip() not in redlist_categories:
             continue
 
         # Start at the bottom, find the species and grab higher taxa from WoRMS
-        species_name = row['Genus'] + ' ' + row['Species']
+        species_name = row['Genus'].strip() + ' ' + row['Species'].strip()
         rank = 'Species'
+
+        # If it exists already then skip it
+        try:
+            taxon = models.Taxon.objects.get(name=species_name)
+            continue
+        except models.Taxon.DoesNotExist:
+            pass
 
         # In one or two cases we add genuses not species
         if row['Species'].strip() == '':
@@ -164,8 +212,7 @@ def import_seakeys():
         # Legislation
         # Other
         # Residency status
-        description.save()
-
+        #description.save()
         assessment = redlist_models.Assessment(taxon=parent,
                                                population_trend_narrative=row['Population description'],
                                                temp_field={'Trend': row['Population trend']},
@@ -177,7 +224,10 @@ def import_seakeys():
                                                threats_narrative=row['Threats'],
                                                distribution_narrative=row['Southern Africa distribution'],
                                                use_trade_narrative=row['Uses and exploitation'])
-        assessment.save()
+        try:
+            assessment.save()
+        except:
+            import pdb; pdb.set_trace()
 
         # Add the contributors, they come in this format: Rose Thornycroft, Rukaya Johaadien
         for i, contributor in enumerate(row['Redlist assessor'].split(',')):
@@ -207,6 +257,22 @@ def import_seakeys():
                                             type=redlist_models.Contribution.REVIEWER)
             c.save()
 
+        if row['Nid'] in threats:
+            for threat_title, threat_info in threats[row['Nid']].items():
+                lkup = threat_title.split('"')[1]
+                name = threats_lookup.loc[threats_lookup['code'] == lkup, 'value']
+                threat, created = redlist_models.Threat.objects.get_or_create(name=name.iloc[0])
+                tn = redlist_models.ThreatNature(assessment=assessment, threat=threat)
+                if threat_info['severity']:
+                    tn.severity = threat_severity_lookup[threat_info['severity'].strip()]
+                if threat_info['timing']:
+                    tn.timing = threat_timing_lookup[threat_info['timing'].strip()]
+                if threat_info['scope']:
+                    tn.scope = threat_info['scope'].strip()
+                if threat_info['stress']:
+                    tn.stresses = '|'.join(threat_info['stress'])
+                tn.save()
+
         if row['References'].strip():
             for ref_nid in row['References'].split(','):
                 ref_nid = ref_nid.strip()
@@ -233,6 +299,7 @@ def import_seakeys():
                 regex = r'((?:[A-Z]\.)+)\s+([^;]+)(?:;|$)'
                 matches = re.findall(regex, reference['Authors'])
                 authors = []
+
                 for m in matches:
                     try:
                         surname = m[1].strip()
@@ -241,21 +308,21 @@ def import_seakeys():
                         import pdb; pdb.set_trace()
 
                     # Try and get all possible people in the database first
-                    p = people_models.Person.objects.filter(surname=surname, initials=initials).first()
+                    person = people_models.Person.objects.filter(surname=surname, initials=initials).first()
 
                     # If there's nobody there then try get same surname and no initials, it's probably the same person
                     # Someone can split it out later manually if it's not
-                    if p is None:
-                        p = people_models.Person.objects.filter(surname=surname, initials__isnull=True,
+                    if person is None:
+                        person = people_models.Person.objects.filter(surname=surname, initials__isnull=True,
                                                                 initials__exact='').first()
-                        if p is None:
+                        if person is None:
                             # Otherwise if we can't find anyone with the same surname make a new person
-                            p = people_models.Person(surname=surname, initials=initials)
+                            person = people_models.Person(surname=surname, initials=initials)
                         else:
-                            p.initials = initials
-                        p.save()
+                            person.initials = initials
+                        person.save()
 
-                        authors.append(p)
+                    authors.append(person)
 
                 author_string = [x.surname + " " + x.initials for x in authors]
                 author_string = ' and '.join(author_string)
@@ -354,4 +421,3 @@ def import_seakeys():
 
                     # Use get or create so we don't add same common name twice
                     models.CommonName.objects.get_or_create(language=english, taxon=parent, name=name)
-

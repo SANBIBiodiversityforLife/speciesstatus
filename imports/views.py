@@ -149,9 +149,49 @@ def bird_distribs(request):
                 distrib.save()
 
 
-def frog_distribs(request):
-    # Do the points first
+def ffish_distribs(request):
     pwd = os.path.abspath(os.path.dirname(__file__))
+    dir = os.path.join(pwd, '..', 'data-sources', 'distribs_freshwater_fish')
+
+    classes = ['Actinopterygii', '']
+    parent_node = models.Taxon.objects.get(name='Chordata')
+    species_rank = models.Rank.objects.get(name='Species')
+    subspecies_rank = models.Rank.objects.get(name='Subspecies')
+    nodes = parent_node.get_descendants().filter(rank__in=[species_rank, subspecies_rank])
+
+    for node in nodes:
+        node_file = os.path.join(dir, node.name.capitalize() + '.json')
+        if not os.path.exists(node_file):
+            continue
+        print('found ' + node_file)
+        with open(node_file) as data_file:
+            distributions = json.load(data_file)
+            for distribution in distributions['features']:
+                if distribution['geometry']['type'] == 'Polygon':
+                    polygon_points = []
+                    for ring in distribution['geometry']['coordinates'][0]:
+                        polygon_points.append((ring[0], ring[1]))
+                    polygon_tuple = tuple(polygon_points)
+                    polygon = Polygon(polygon_tuple, srid=4326)
+                    print('creating distrib for ' + node.name)
+                    distrib = models.GeneralDistribution(taxon=node, distribution_polygon=polygon)
+                    distrib.save()
+                elif distribution['geometry']['type'] == 'MultiPolygon':
+                    for ring in distribution['geometry']['coordinates']:
+                        polygon_points = []
+                        for wtf in ring[0]:
+                            polygon_points.append((wtf[0], wtf[1]))
+                        polygon_tuple = tuple(polygon_points)
+                        polygon = Polygon(polygon_tuple, srid=4326)
+                        print('creating distrib for ' + node.name)
+                        distrib = models.GeneralDistribution(taxon=node, distribution_polygon=polygon)
+                        distrib.save()
+
+
+def frog_distribs(request):
+    pwd = os.path.abspath(os.path.dirname(__file__))
+    '''
+    # Do the points first
     dir = os.path.join(pwd, '..', 'data-sources', 'distribs_frog_pts')
     df = pd.read_csv(os.path.join(dir, 'simple.csv'), encoding='latin-1')
     mapping = {'decimallatitude': 'lat',
@@ -168,7 +208,7 @@ def frog_distribs(request):
             row['subspecies'] = name_parts[2]
         pt = create_point_distribution(row)
 
-    import pdb; pdb.set_trace()
+    import pdb; pdb.set_trace()'''
 
     # Then the polygons
     dir = os.path.join(pwd, '..', 'data-sources', 'distribs_frog')
@@ -268,7 +308,12 @@ def convert_criteria_string(string):
 
 
 def create_point_distribution(row):
-    """Used by the import distribution functions"""
+    """
+    Used by the import distribution functions
+    Ok this really needs to get refactored at some point. First there should be a get_species function
+    then the create_point_distribution function should contain long, lat, species,
+    [precision, origin_code, qds, year, month, day (optional)]
+    """
     if 'species' not in row or 'genus' not in row or 'long' not in row or 'lat' not in row:
         import pdb; pdb.set_trace()
         return False
@@ -305,9 +350,6 @@ def create_point_distribution(row):
             if optional_field in row:
                 setattr(pt, optional_field, row[optional_field])
 
-        #if 'collector' in row:
-        #    pt.
-
         if 'year' in row and row['year'] > 0:
             month = int(float(str(row['month']).strip())) if 'month' in row else 1
             month = month if month > 0 and month < 13 else 1
@@ -325,6 +367,44 @@ def create_point_distribution(row):
 
 
 def reptile_distribs(request):
+    pwd = os.path.abspath(os.path.dirname(__file__))
+    dir = os.path.join(pwd, '..', 'data-sources', 'distribs_reptile')
+    parent_node = models.Taxon.objects.get(name='Reptilia')
+    species_rank = models.Rank.objects.get(name='Species')
+    subspecies_rank = models.Rank.objects.get(name='Subspecies')
+    nodes = parent_node.get_descendants().filter(rank__in=[species_rank, subspecies_rank])
+
+    for node in nodes:
+        node_file = os.path.join(dir, node.name.replace(' ', '_').capitalize() + '.json')
+        if not os.path.exists(node_file):
+            continue
+        print('found ' + node_file)
+        with open(node_file) as data_file:
+            distributions = json.load(data_file)
+
+            for distribution in distributions['features']:
+                if distribution['geometry']['type'] == 'Polygon':
+                    polygon_points = []
+                    for ring in distribution['geometry']['coordinates'][0]:
+                        polygon_points.append((ring[0], ring[1]))
+                    polygon_tuple = tuple(polygon_points)
+                    polygon = Polygon(polygon_tuple, srid=4326)
+                    print('creating distrib for ' + node.name)
+                    distrib = models.GeneralDistribution(taxon=node, distribution_polygon=polygon)
+                    distrib.save()
+                elif distribution['geometry']['type'] == 'MultiPolygon':
+                    for ring in distribution['geometry']['coordinates']:
+                        polygon_points = []
+                        for wtf in ring[0]:
+                            polygon_points.append((wtf[0], wtf[1]))
+                        polygon_tuple = tuple(polygon_points)
+                        polygon = Polygon(polygon_tuple, srid=4326)
+                        print('creating distrib for ' + node.name)
+                        distrib = models.GeneralDistribution(taxon=node, distribution_polygon=polygon)
+                        distrib.save()
+
+
+def reptile_distribs_old(request):
     pwd = os.path.abspath(os.path.dirname(__file__))
     dir = os.path.join(pwd, '..', 'data-sources', 'distribs_reptile')
     df = pd.read_csv(os.path.join(dir, 'simple.csv'), encoding='latin-1')
@@ -376,6 +456,37 @@ def mammal_distribs(request):
         for index, row in df.iterrows():
             print(index)
             pt = create_point_distribution(row)
+
+
+def butterfly_distribs(request):
+    # Note this function is a bit different as there is already butterfly distribution data in the db
+    # from fhatani's sarca/sabca script. So first all previous distribution points for that species must be deleted
+    pwd = os.path.abspath(os.path.dirname(__file__))
+    dir = os.path.join(pwd, '..', 'data-sources', 'distribs_butterfly')
+    df = pd.read_csv(os.path.join(dir, 'simple.csv'), encoding='latin1')
+    extract = df['rec_date'].str.extract('^(\d{4})-(\d\d)-(\d\d)')
+    df['year'], df['month'], df['day'] = extract[0], extract[1], extract[2]
+
+    # Delete distributions for all non-LC butterflies
+    distinct_names = {}
+    for name in df['new_name'].unique():
+        try:
+            taxon = models.Taxon.objects.get(name=name)
+            taxon.general_distributions.delete()
+            taxon.point_distributions.delete()
+            distinct_names[name] = taxon
+        except models.Taxon.DoesNotExist:
+            print('could not find ' + name)
+            return False
+        except models.Taxon.MultipleObjectsReturned:
+            import pdb; pdb.set_trace()
+
+    for index, row in df.iterrows():
+        pt = models.PointDistribution(taxon=distinct_names[row['new_name']], point=Point(float(row['SUGGESTED_GPS_NS']), float(row['SUGGESTED_GPS_EW'])))
+        if row['REC_SOURCE']:
+            pt.origin_code = row['REC_SOURCE']
+        pt.date = datetime.date(year=row['year'], month=row['month'], day=row['day'])
+        pt.save()
 
 
 def st_process(request):
@@ -443,3 +554,4 @@ def auditors_report():
             spamwriter.writerow([fish.name, 'Elasmobranchii', fish.get_latest_assessment().redlist_category, url + str(fish.pk)])
         for fish in holo_fishes:
             spamwriter.writerow([fish.name, 'Holocephali', fish.get_latest_assessment().redlist_category, url + str(fish.pk)])
+
