@@ -104,3 +104,9 @@ header h1 span {
   text-transform: capitalize;
   font-size: 1.22em;
 }
+p.system {
+  background-color: #FFFFD9;
+  border: 1px solid #EEEED1;
+  padding: 10px;
+  display: block;
+}
