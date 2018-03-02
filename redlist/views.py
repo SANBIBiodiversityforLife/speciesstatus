@@ -36,6 +36,7 @@ class LastAssessmentDetail(generics.RetrieveAPIView):
     serializer_class = serializers.AssessmentSerializer
     template_name = 'website/assessment.html'
     def get_object(self):
+        import pdb; pdb.set_trace()
         return models.Assessment.objects.filter(taxon=self.kwargs['taxon_pk']).first()
 
 
