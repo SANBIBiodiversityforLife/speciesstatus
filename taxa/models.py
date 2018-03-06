@@ -416,6 +416,8 @@ class AnimalInfo(models.Model):
 
 
 class Image(models.Model):
+    # NOTE This is not actually used. Images are getting linked up based on scientific name + being in the correct folder instead
+    # I thought this would make things easier when images have to get integrated into a proper image management system (SEIS or other)
     taxon = models.ForeignKey(Taxon, related_name='images')
     url = models.CharField(max_length=200)
 

@@ -198,7 +198,7 @@ class Contribution(models.Model):
     type = models.CharField(max_length=1, choices=TYPE_CHOICES)
 
     def __str__(self):
-        return str(self.person)
+        return str(str(self.assessment) + ' - ' + str(self.person))
 
     class Meta:
         ordering = ['type', 'weight']
