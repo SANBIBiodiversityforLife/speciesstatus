@@ -141,6 +141,10 @@ def import_seakeys():
         if row['Regional status 2015'].strip() not in redlist_categories:
             continue
 
+        # Skip species where they haven't entered a redlist reviewer/assessor
+        if row['Redlist assessor'].strip() == '' or row['Redlist reviewer'].strip() == '':
+            continue
+
         # Start at the bottom, find the species and grab higher taxa from WoRMS
         species_name = row['Genus'].strip() + ' ' + row['Species'].strip()
         rank = 'Species'
