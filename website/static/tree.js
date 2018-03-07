@@ -33,12 +33,12 @@ function modify_node(node, depth=1) {
 function tree_view() {
   $('#jstree').on('select_node.jstree', function (e, data) {
       node = data.node;
-      if(node.original.rank.id == 8 || node.original.rank.id == 10) {
+      if((node.original.rank.id == 8 || node.original.rank.id == 10) && node.original.child_count == 0) {
         window.location.href = taxaDetailUrl.slice(0, -1) + node.id;
       } else {
-        console.log(node);
+        data.instance.toggle_node(data.node);
       }
-      data.instance.toggle_node(data.node);
+      //data.instance.toggle_node(data.node);
   })
   .jstree({
     "core" : {
