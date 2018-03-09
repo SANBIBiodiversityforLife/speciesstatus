@@ -452,10 +452,12 @@ def mammal_distribs(request):
         print(file)
         df = pd.read_excel(os.path.join(dir, file))
         df.columns = map(str.lower, df.columns)
+        # Fix for #56
+        df.loc[pd.isnull(df['institutioncode']), 'institutioncode'] = df.loc[pd.isnull(df['institutioncode']), 'recordedby']
         df.rename(columns=mapping, inplace=True)
         for index, row in df.iterrows():
             print(index)
-            pt = create_point_distribution(row)
+            #pt = create_point_distribution(row)
 
 
 def butterfly_distribs(request):
