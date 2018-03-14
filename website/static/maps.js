@@ -76,6 +76,9 @@ function init_map(point_data, poly_data) {
     onEachFeature: function (feature, layer) {
       coords.push([feature.geometry.coordinates[1], feature.geometry.coordinates[0]]);
       var actualCode = feature.properties.origin_code.split('|')[0];
+      if(actualCode in mapsAbbrvReplacements) {
+        actualCode = mapsAbbrvReplacements[actualCode];
+      }
       if(!institutionCodes.includes(actualCode)) {
         institutionCodes.push(actualCode);
       }

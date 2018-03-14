@@ -37,6 +37,7 @@
 <script src="{% static 'leaflet/leaflet-measure.min.js' %}"></script>
 <script src="{% static 'Leaflet.heat-gh-pages/dist/leaflet-heat.js' %}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js"></script>
+<script src="{% static 'maps-abbrv-replacements.js' %}"></script>
 <script src="{% static 'maps.js' %}"></script>
 <script>
 var dist_url = ("{% url 'distribution_list' 0 %}" + "?format=json").replace('0', id);
