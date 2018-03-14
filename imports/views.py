@@ -525,8 +525,8 @@ def st_process(request):
 
 
 def clean_origin_codes(request):
-    #auditors_report()
-    #import pdb; pdb.set_trace()
+    auditors_report()
+    import pdb; pdb.set_trace()
     pwd = os.path.abspath(os.path.dirname(__file__))
     file = os.path.join(pwd, '..', 'data-sources', 'distribution_attributions.csv')
     df = pd.read_csv(file, encoding='latin-1') #  encoding='latin-1'
@@ -535,15 +535,66 @@ def clean_origin_codes(request):
 
 
 def auditors_report():
+    # This has come to be a general purpose report type function, there's some random stuff in here
+    import csv
     pwd = os.path.abspath(os.path.dirname(__file__))
+    url = 'http://speciesstatus.sanbi.org/assessment/last-assessment/'
+
+    # First report = list of species with no distribution data
     ranks = models.Rank.objects.filter(name__in=['Species', 'Subspecies'])
+    order_rank = models.Rank.objects.get(name='Order')
+    class_rank = models.Rank.objects.get(name='Class')
+
+    with open(os.path.join(pwd, '..', 'no_distributions.csv'), 'w', newline='') as csvfile, \
+            open(os.path.join(pwd, '..', 'no_images.csv'), 'w', newline='') as noimagefile:
+        dwriter = csv.writer(csvfile)
+        dwriter.writerow(['order', 'class', 'scientific_name', 'redlist status', 'url'])
+        iwriter = csv.writer(noimagefile)
+        iwriter.writerow(['order', 'class', 'scientific_name', 'redlist status', 'url'])
+        classes = models.Taxon.objects.filter(rank=class_rank)
+        for class_ in classes:
+            orders = class_.get_descendants().filter(rank=order_rank)
+            for order in orders:
+                species = order.get_descendants().filter(rank__in=ranks)
+                species_without_distribs = order.get_descendants().filter(rank__in=ranks, point_distributions__isnull=True, general_distributions__isnull=True)
+                for sp in species:
+                    assessment = sp.get_latest_assessment()
+                    subspecies_count = sp.get_descendant_count()
+                    if (subspecies_count == 0 and assessment is None) or subspecies_count != 0:
+                        print(sp.name)
+                        if 'rosei' not in sp.name and sp.name != 'Myosorex cafer' and 'Heleophryne' not in sp.name:
+                            #import pdb; pdb.set_trace()
+                            pass
+                        continue
+
+                    # Does not have an image
+                    csv_args = [order.name, class_.name, sp.name, sp.get_latest_assessment().redlist_category,
+                                url + str(sp.pk)]
+                    if not has_images(sp.name, class_.name, order.name):
+                        iwriter.writerow(csv_args)
+                    if sp in species_without_distribs:  # Also does not have a distrib
+                        dwriter.writerow(csv_args)
+
+    #birds = models.Taxon.objects.get(name="Aves")
+    #bird_sp = birds.get_descendants().filter(rank__in=ranks, point_distributions__isnull=True, general_distributions__isnull=True)
+    #with open(os.path.join(pwd, '..', 'threatened-birds.csv'), 'w', newline='') as csvfile:
+    #    spamwriter = csv.writer(csvfile)
+    #    spamwriter.writerow(['scientific_name', 'redlist status', 'url'])
+    #    for bird in bird_sp:
+    #        spamwriter.writerow([bird.name, bird.get_latest_assessment().redlist_category, url + str(bird.pk)])
+    print('finished')
+    import pdb; pdb.set_trace()
+
+
+    no_points = models.Taxon.objects.filter(rank__in=ranks, point_distributions__isnull=True, general_distributions__isnull=True)
+
     actin = models.Taxon.objects.get(name='Actinopterygii')
     elas = models.Taxon.objects.get(name='Elasmobranchii')
     holo = models.Taxon.objects.get(name='Holocephali')
     actin_fishes = actin.get_descendants().filter(rank__in=ranks)
     elas_fishes = elas.get_descendants().filter(rank__in=ranks)
     holo_fishes = holo.get_descendants().filter(rank__in=ranks)
-    import csv
+
     from itertools import chain
     # joined = list(chain(holo_fishes, elas_fishes, actin_fishes))
     url = 'http://speciesstatus.sanbi.org/assessment/last-assessment/'
@@ -557,3 +608,45 @@ def auditors_report():
         for fish in holo_fishes:
             spamwriter.writerow([fish.name, 'Holocephali', fish.get_latest_assessment().redlist_category, url + str(fish.pk)])
 
+def has_images(taxon, class_, order):
+    import subprocess as subp
+    from django.conf import settings
+    folder = class_.lower()
+    if folder == 'actinopterygii' or folder == 'elasmobranchii' or folder == 'holocephali':
+        folder = 'fish'
+    elif folder == 'insecta':
+        folder = order.lower()
+    file_name_template = taxon.replace(' ', '_')
+    file_location = os.path.join(settings.BASE_DIR, 'website', 'static', 'sp-imgs', folder, file_name_template)
+    # Check the file exists, and then extract the IPTC information embedded in the image for attribution & copyright
+    # 'thumb': 'sp-imgs/' + taxon.replace(' ', '_') + '__thumb.jpg' - might need to do this later
+    i = 1
+    file_info = []
+
+    while (os.path.isfile(file_location + '_' + str(i) + '.jpg')):
+        file_name = file_name_template + '_' + str(i) + '.jpg'
+
+        # info = p.get_json(file_location + '_' + str(i) + '.jpg')
+        # Replacing exiftool code as it doesn't work in IIS
+        sb = subp.Popen(['exiftool', '-G', '-j', '-sort', file_location + '_' + str(i) + '.jpg'], stdin=subp.PIPE,
+                        stdout=subp.PIPE, stderr=subp.STDOUT)
+        s = sb.stdout.read()
+        s = s.strip()
+        if s:
+            s = s.decode('utf-8').rstrip('\r\n')
+            info = json.loads(s)
+        else:
+            s = False
+
+        return_data = {'file': 'sp-imgs/' + folder + '/' + file_name}
+        return_data['author'] = 'Unknown' if 'IPTC:By-line' not in info[0] else info[0]['IPTC:By-line']
+        return_data['copyright'] = '[None given]' if 'IPTC:CopyrightNotice' not in info[0] else info[0][
+            'IPTC:CopyrightNotice']
+        return_data['source'] = '' if 'IPTC:Source' not in info[0] else info[0]['IPTC:Source']
+        file_info.append(return_data)
+        i += 1
+
+    if file_info:
+        return True
+    else:
+        return False
