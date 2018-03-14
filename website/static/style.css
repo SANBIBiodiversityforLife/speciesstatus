@@ -105,8 +105,9 @@ header h1 span {
   font-size: 1.22em;
 }
 p.system {
-  background-color: #FFFFD9;
+  /*background-color: #FFFFD9;
   border: 1px solid #EEEED1;
   padding: 10px;
-  display: block;
+  display: block;*/
+  font-weight: bold;
 }
