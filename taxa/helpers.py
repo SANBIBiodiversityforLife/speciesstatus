@@ -81,14 +81,23 @@ def create_authors(author_string):
     author_string = author_string.replace(' & ', ', ')
     author_string = author_string.replace(' and ', ', ')
     author_string = author_string.replace(';', ', ')
+
+    # Assumes the format is "Jones, A.B., Khatieb, S.W, ..."
     regex = r'([A-Z][a-z]+),\s+(([A-Z]\.?)+)(,|$)'
     matches = re.findall(regex, author_string)
     people = []
+
+    # Sometimes the format is "Jones A.B, Khatieb SW, ...",
+    if not matches:
+        regex = r'([A-Z][a-z]+)\s+(([A-Z]\.?)+)(,|$)'
+        matches = re.findall(regex, author_string)
+
     for m in matches:
         surname = m[0]
         initials = m[1]
         person = get_or_create_person(surname=surname, initials=initials)
         people.append(person)
+
     return people
 
 
