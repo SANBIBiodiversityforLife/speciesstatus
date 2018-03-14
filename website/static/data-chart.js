@@ -1,5 +1,5 @@
 $(document).ready(function() {
-  var colorMapping = {
+  /*var colorMapping = {
     "Extinct (EX)": '#000',
     "Extinct in the Wild (EW)": '#cd4444',
     "Critically Endangered (CR)": '#cd5844',
@@ -9,6 +9,17 @@ $(document).ready(function() {
     "Least Concern (LC)": '#d1ecff',
     "Data Deficient (DD)": '#b4b4b4',
     "Not Evaluated (NE)": '#b4b4b4'
+  }*/
+  var colorMapping = {
+    "Extinct (EX)": '#000',
+    "Extinct in the Wild (EW)": '#542344',
+    "Critically Endangered (CR)": '#d81e05',
+    "Endangered (EN)": '#fc7f3f',
+    "Vulnerable (VU)": '#f9e814',
+    "Near Threatened (NT)": '#cce226', // bad267
+    "Least Concern (LC)": '#60c659',
+    "Data Deficient (DD)": '#d1d1c6',
+    "Not Evaluated (NE)": '#fff'
   }
 	$.ajax({
 		url: chartDataUrl,
