@@ -188,8 +188,9 @@
 				marker.appendTo('body'); //.show();
 			})
 			.on('dnd_move.vakata.jstree', function (e, data) {
+				var isDifferentNode = data.event.target !== lastev.target;
 				if(opento) {
-					if (!data.event || data.event.type !== 'dragover' || data.event.target !== lastev.target) {
+					if (!data.event || data.event.type !== 'dragover' || isDifferentNode) {
 						clearTimeout(opento);
 					}
 				}
@@ -288,7 +289,10 @@
 									}
 								}
 								if(v === 'i' && ref.parent().is('.jstree-closed') && ins.settings.dnd.open_timeout) {
-									opento = setTimeout((function (x, z) { return function () { x.open_node(z); }; }(ins, ref)), ins.settings.dnd.open_timeout);
+									if (!data.event || data.event.type !== 'dragover' || isDifferentNode) {
+										if (opento) { clearTimeout(opento); }
+										opento = setTimeout((function (x, z) { return function () { x.open_node(z); }; }(ins, ref)), ins.settings.dnd.open_timeout);
+									}
 								}
 								if(ok) {
 									pn = ins.get_node(p, true);
@@ -408,7 +412,7 @@
 				helper_left			: 5,
 				helper_top			: 10,
 				threshold			: 5,
-				threshold_touch		: 50
+				threshold_touch		: 10
 			},
 			_trigger : function (event_name, e, data) {
 				if (data === undefined) {

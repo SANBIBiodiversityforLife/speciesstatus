@@ -68,7 +68,11 @@
 						var inst = $.jstree.reference(data.reference),
 							obj = inst.get_node(data.reference);
 						inst.create_node(obj, {}, "last", function (new_node) {
-							setTimeout(function () { inst.edit(new_node); },0);
+							try {
+								inst.edit(new_node);
+							} catch (ex) {
+								setTimeout(function () { inst.edit(new_node); },0);
+							}
 						});
 					}
 				},
@@ -169,6 +173,9 @@
 
 			var last_ts = 0, cto = null, ex, ey;
 			this.element
+				.on("init.jstree loading.jstree ready.jstree", $.proxy(function () {
+						this.get_container_ul().addClass('jstree-contextmenu');
+					}, this))
 				.on("contextmenu.jstree", ".jstree-anchor", $.proxy(function (e, data) {
 						if (e.target.tagName.toLowerCase() === 'input') {
 							return;
@@ -202,8 +209,9 @@
 						}, 750);
 					})
 				.on('touchmove.vakata.jstree', function (e) {
-						if(cto && e.originalEvent && e.originalEvent.changedTouches && e.originalEvent.changedTouches[0] && (Math.abs(ex - e.originalEvent.changedTouches[0].clientX) > 50 || Math.abs(ey - e.originalEvent.changedTouches[0].clientY) > 50)) {
+						if(cto && e.originalEvent && e.originalEvent.changedTouches && e.originalEvent.changedTouches[0] && (Math.abs(ex - e.originalEvent.changedTouches[0].clientX) > 10 || Math.abs(ey - e.originalEvent.changedTouches[0].clientY) > 10)) {
 							clearTimeout(cto);
+							$.vakata.context.hide();
 						}
 					})
 				.on('touchend.vakata.jstree', function (e) {
@@ -635,7 +643,7 @@
 
 			$(document)
 				.on("mousedown.vakata.jstree", function (e) {
-					if(vakata_context.is_visible && !$.contains(vakata_context.element[0], e.target)) {
+					if(vakata_context.is_visible && vakata_context.element[0] !== e.target  && !$.contains(vakata_context.element[0], e.target)) {
 						$.vakata.context.hide();
 					}
 				})

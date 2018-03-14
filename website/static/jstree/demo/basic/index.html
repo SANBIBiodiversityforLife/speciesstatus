@@ -43,7 +43,7 @@
 	<button id="evts_button">select node with id 1</button> <em>either click the button or a node in the tree</em>
 	<div id="evts" class="demo"></div>
 
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 	<script src="./../../dist/jstree.min.js"></script>
 	
 	<script>
@@ -58,9 +58,8 @@
 						{ "text" : "Child node 1" },
 						{ "text" : "Child node 2" }
 				]}
-			],
-		},
-    "plugins" : ["contextmenu", "dnd", "search", "state", "types", "wholerow"]
+			]
+		}
 	});
 
 	// data format demo
@@ -87,7 +86,7 @@
 	$('#ajax').jstree({
 		'core' : {
 			'data' : {
-				"url" : "root.json",
+				"url" : "./root.json",
 				"dataType" : "json" // needed only if you do not supply JSON headers
 			}
 		}
@@ -97,7 +96,7 @@
 	$('#lazy').jstree({
 		'core' : {
 			'data' : {
-				"url" : "http://www.jstree.com/fiddle/?lazy",
+				"url" : "//www.jstree.com/fiddle/?lazy",
 				"data" : function (node) {
 					return { "id" : node.id };
 				}
