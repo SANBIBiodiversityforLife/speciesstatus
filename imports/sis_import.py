@@ -43,7 +43,7 @@ def import_sis():
                    os.path.join('SIS_Reptiles', 'Reptiles_endemic'), os.path.join('SIS_Reptiles', 'Reptiles_non-endemic'),
                    os.path.join('SIS_Amphibians', 'Amphibians_2018.1'), os.path.join('SIS_Amphibians', 'Amphibians_2018.2'),
                    'SIS_Dragonflies', 'SIS_Mammals', 'SIS_Sparids']
-    # animal_dirs = ['SIS_Sparids']
+    # animal_dirs = ['SIS_Mammals']
     for animal_dir_name in animal_dirs:
         animal_dir = os.path.join(pwd, animal_dir_name)
         af = pd.read_csv(os.path.join(animal_dir, 'allfields.csv'), encoding='UTF-8') # iso-8859-1
@@ -108,32 +108,26 @@ def import_sis():
         # Iterate through the taxa table, 1 row represents 1 assessment for a taxon
         for index, taxon_row in tx.iterrows():
         # for index, row in af.iterrows():
-            #if taxon_row['species'] != 'taurinus':
+            #if taxon_row['species'] != 'taurinus' or index != 95:
             #    continue
 
             print('----------------------------------------------------------')
             print('row: ' + str(index))
-            #if index != 95:
-            #    continue
 
-            # Retrieve the taxon info and the assessment we're on
-            # taxon_row = t.loc[t['internal_taxon_id'] == row['internal_taxon_id']]
-            # taxon_row = taxon_row.iloc[0]
+            # Exclude certain taxa
             if 'Exclude' in taxon_row:
                 if taxon_row['Exclude'] == 1:
                     print('skipping ' + taxon_row['genus'] + ' ' + taxon_row['species'])
                     continue
 
-            species, species_was_created = create_taxon_from_sis(taxon_row, mendeley_session)
-
-            if 'Exclude' in taxon_row:
-                if taxon_row['Exclude'] > 1:
-                    print('Excluding species ' + species.name)
-                    if 'eptile' in animal_dir_name:
-                        a = redlist_models.Assessment(taxon=species, date=datetime.strptime('16/05/2016', '%d/%m/%Y'),
-                            redlist_category=taxon_row['status_only'])
-                        a.save()
-                    continue
+            #if 'Exclude' in taxon_row: # - looks like this is no longer relevant
+            #    if taxon_row['Exclude'] > 1:
+            #        print('Excluding species ' + species.name)
+            #        if 'eptile' in animal_dir_name:
+            #            a = redlist_models.Assessment(taxon=species, date=datetime.strptime('16/05/2016', '%d/%m/%Y'),
+            #                redlist_category=taxon_row['status_only'])
+            #            a.save()
+            #        continue
 
             # Replacing this. Should be a one to one mapping between allfields and and taxa anyway
             row = af.loc[af['internal_taxon_id'] == taxon_row['internal_taxon_id']]
@@ -141,7 +135,7 @@ def import_sis():
                 row = row.iloc[0]
             except IndexError:
                 print('Cannot find row in allfields table')
-                #import pdb; pdb.set_trace()
+                #import pdb; pdb.set_trace() - should really log to an error file
                 continue
             # Remove all row columns which do not contain info
             row = {k: v for k, v in row.items() if pd.notnull(v)}
@@ -152,6 +146,8 @@ def import_sis():
                 print('No assessment for ' + taxon_row['genus'] + ' ' +  taxon_row['species'])
                 #import pdb; pdb.set_trace()
                 continue
+
+            species, species_was_created = create_taxon_from_sis(taxon_row, mendeley_session)
 
             # The iloc is used because you have to refer to the items via the index e.g. v[0] for row 1, v[1] for row 2, etc
             assess_row = {k: v.iloc[0] for k, v in assess_row.items() if pd.notnull(v.iloc[0])}
@@ -315,7 +311,8 @@ def import_sis():
                 except:
                     import pdb; pdb.set_trace()
                 author_string = [x.surname + " " + x.initials for x in authors]
-                author_string = ' and '.join(author_string)
+                # author_string = ' and '.join(author_string)
+                author_string = r['author']
 
                 # Sometimes these idiots didn't enter a year, in which case I am throwing the whole reference out
                 if pd.isnull(r['year']) or pd.isnull(r['title']):
