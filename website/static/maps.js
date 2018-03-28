@@ -38,7 +38,7 @@ function init_map(point_data, poly_data) {
   var polys = new L.geoJson(poly_data['results'], {
     onEachFeature: function (feature, layer) {
       area = Math.round((L.GeometryUtil.geodesicArea(layer.getLatLngs()[0]))/1000000);
-      popup = 'Area of occupancy: ' + area + ' km<sup>2</sup>'
+      popup = 'Geographic area of polygon: ' + area + ' km<sup>2</sup>'
       if(feature.properties.residency_status) {
         popup = '<h4>' + feature.properties.residency_status  + '</h4>' + popup;
       }
