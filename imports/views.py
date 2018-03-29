@@ -534,17 +534,52 @@ def clean_origin_codes(request):
         models.PointDistribution.objects.filter(origin_code=mapping['institution_code']).update(origin_code=mapping['use'])
 
 
-def auditors_report():
+#def auditors_report():
+def auditors_report(request):
     # This has come to be a general purpose report type function, there's some random stuff in here
     import csv
     pwd = os.path.abspath(os.path.dirname(__file__))
     url = 'http://speciesstatus.sanbi.org/assessment/last-assessment/'
 
-    # First report = list of species with no distribution data
+    # This is used in almost all the stats/reports generated
     ranks = models.Rank.objects.filter(name__in=['Species', 'Subspecies'])
     order_rank = models.Rank.objects.get(name='Order')
     class_rank = models.Rank.objects.get(name='Class')
 
+    # The script below prints out all freshwater species to a csv
+    with open(os.path.join(pwd, '..', 'freshwater.csv'), 'w', newline='') as csvfile:
+        dwriter = csv.writer(csvfile)
+        freshwater_str = '<p class="system">Freshwater (=Inland waters)</p>'
+        fresh_species = models.Taxon.objects.filter(info__habitat_narrative__icontains = freshwater_str)
+        for species in fresh_species:
+            csv_args = []
+
+            # Assessment info
+            assessment = species.get_latest_assessment()
+            csv_args.append(assessment.redlist_category)
+            csv_args.append(assessment.redlist_criteria)
+            csv_args.append(assessment.rationale)
+            csv_args.append(assessment.scope)
+            csv_args.append(assessment.threats_narrative)
+
+            # Threat codings
+            threats = redlist_models.ThreatNature.objects.filter(assessment=assessment).values_list('threat__name', flat=True)
+            threats_str = '|'.join(threats)
+            csv_args.append(threats_str)
+
+
+            # Append all taxonomic levels for this sp
+            ancestors = species.get_ancestors().values_list('name', flat=True)
+            for ancestor in ancestors:
+                csv_args.append(ancestor)
+
+            dwriter.writerow(csv_args)
+
+        import pdb; pdb.set_trace()
+
+    return
+
+    # The script below prints to 2 csvs the species with no images and no distributions
     with open(os.path.join(pwd, '..', 'no_distributions.csv'), 'w', newline='') as csvfile, \
             open(os.path.join(pwd, '..', 'no_images.csv'), 'w', newline='') as noimagefile:
         dwriter = csv.writer(csvfile)

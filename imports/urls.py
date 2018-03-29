@@ -23,5 +23,8 @@ urlpatterns = [
     url(r'^frog-distribs/$', views.frog_distribs, name='frog_distribs'),
     url(r'^ffish-distribs/$', views.ffish_distribs, name='ffish_distribs'),
     url(r'^butterfly-distribs/$', views.butterfly_distribs, name='butterfly_distribs'),
+
+    # stats stuff
+    url(r'^stats/$', views.auditors_report, name='auditors_report'),
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)
