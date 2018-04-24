@@ -549,7 +549,7 @@ def auditors_report(request):
     # The script below prints out all freshwater species to a csv
     with open(os.path.join(pwd, '..', 'freshwater.csv'), 'w', newline='') as csvfile:
         dwriter = csv.writer(csvfile)
-        freshwater_str = '<p class="system">Freshwater (=Inland waters)</p>'
+        freshwater_str = 'Freshwater (=Inland waters)'
         fresh_species = models.Taxon.objects.filter(info__habitat_narrative__icontains = freshwater_str)
         for species in fresh_species:
             csv_args = []
