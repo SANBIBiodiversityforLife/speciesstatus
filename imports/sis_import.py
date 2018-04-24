@@ -39,10 +39,14 @@ def import_sis():
     pwd = os.path.join(pwd, '..', 'data-sources')
 
     # Amphibians
-    animal_dirs = [os.path.join('SIS_Freshwater_Fish', 'Batch_1'), os.path.join('SIS_Freshwater_Fish', 'Batch_2'),
-                   os.path.join('SIS_Reptiles', 'Reptiles_endemic'), os.path.join('SIS_Reptiles', 'Reptiles_non-endemic'),
-                   os.path.join('SIS_Amphibians', 'Amphibians_2018.1'), os.path.join('SIS_Amphibians', 'Amphibians_2018.2'),
-                   'SIS_Dragonflies', 'SIS_Mammals', 'SIS_Sparids']
+    animal_dirs = [os.path.join('SIS_Freshwater_Fish', 'Batch_1')
+					, os.path.join('SIS_Freshwater_Fish', 'Batch_2'),os.path.join('SIS_Freshwater_Fish', 'Batch_3')
+					, os.path.join('SIS_Freshwater_Fish', 'Batch_4'),os.path.join('SIS_Freshwater_Fish', 'Batch_5')
+					, os.path.join('SIS_Reptiles', 'Reptiles_endemics'), os.path.join('SIS_Reptiles', 'Reptiles_non_endemic')
+					, os.path.join('SIS_Amphibians', 'draft'), os.path.join('SIS_Amphibians', 'published')
+					, os.path.join('SIS_Dragonflies', 'Odanata_national'),os.path.join('SIS_Dragonflies', 'Odonata_global')
+					, os.path.join('SIS_Mammals', 'Mammals_endemics')
+					, os.path.join('SIS_Mammals', 'Mammals_nonendemics'), 'SIS_Sparids']
     # animal_dirs = ['SIS_Mammals']
     for animal_dir_name in animal_dirs:
         animal_dir = os.path.join(pwd, animal_dir_name)
