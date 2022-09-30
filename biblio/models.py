@@ -37,8 +37,8 @@ class Reference(PolymorphicModel):
 
 
 class Authorship(models.Model):
-    person = models.ForeignKey(Person)
-    reference = models.ForeignKey(Reference)
+    person = models.ForeignKey(Person, on_delete=models.CASCADE,)
+    reference = models.ForeignKey(Reference, on_delete=models.CASCADE,)
     weight = models.PositiveIntegerField(default=0)
 
 
